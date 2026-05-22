@@ -14,44 +14,16 @@
             --dark-text: #1e2d3d;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
 
-        body {
-            background-color: var(--warm-sand);
-            color: var(--dark-text);
-            padding: 40px 20px;
-        }
+        body { background-color: var(--warm-sand); color: var(--dark-text); padding: 40px 20px; }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .container { max-width: 900px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { color: var(--deep-blue); font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        header p { font-size: 1.1rem; font-weight: 600; color: var(--sky-blue); }
 
-        header h1 {
-            color: var(--deep-blue);
-            font-size: 2.2rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--sky-blue);
-        }
-
-        /* Карточки для карт */
         .map-card {
             background: #ffffff;
             border-radius: 20px;
@@ -61,31 +33,16 @@
             border: 2px solid #e2e8f0;
         }
 
-        .map-card h2 {
-            color: var(--deep-blue);
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .map-card h2 { color: var(--deep-blue); font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; }
 
-        /* Обёртка, чтобы Яндекс.Карты подстраивались под мобилки и были по центру */
+        /* Адаптивная обертка для карт */
         .map-wrapper {
             position: relative;
             width: 100%;
-            display: flex;
-            justify-content: center;
+            height: 400px; /* Фиксируем высоту */
             border-radius: 12px;
             overflow: hidden;
             background: #f1f5f9;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        /* Корректируем ширину виджета Яндекса для адаптивности */
-        .map-wrapper ymaps {
-            max-width: 100% !important;
         }
 
         .back-link {
@@ -97,14 +54,12 @@
             transition: color 0.2s;
         }
 
-        .back-link:hover {
-            color: var(--sky-blue);
-        }
+        .back-link:hover { color: var(--sky-blue); }
 
         @media (max-width: 600px) {
             header h1 { font-size: 1.6rem; }
             .map-card { padding: 15px; }
-            .map-card h2 { font-size: 1.2rem; }
+            .map-wrapper { height: 300px; }
         }
     </style>
 </head>
@@ -116,30 +71,30 @@
             <p>SUP CLUB ASTANA</p>
         </header>
 
-   <div class="map-card">
-    <h2>🔥 1) Сап тур</h2>
-    <div class="map-wrapper">
-        <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A34a99697c1457727a1f993989480c4afed4de49cfbf7a876106d4a2aafd798d1&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
-    </div>
-</div>
+        <div class="map-card">
+            <h2>🔥 1) SUP тур</h2>
+            <div class="map-wrapper">
+                <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A34a99697c1457727a1f993989480c4afed4de49cfbf7a876106d4a2aafd798d1&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
+            </div>
+        </div>
 
         <div class="map-card">
-            <h2>☀️ 2) Лайт сплав</h2>
+            <h2>☀️ 2) Городской лайт сплав</h2>
             <div class="map-wrapper">
                 <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A174d72934f01929110f3340e443f284983ace1e51e8d1e4046e0a98cc69f2389&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
             </div>
         </div>
 
         <div class="map-card">
-            <h2>🌅 3) Утренний 4-х часовой сплав</h2>
+            <h2>🌅 3) Утренний сплав</h2>
             <div class="map-wrapper">
                 <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ad5bb19acc45e6f9158ad94443ea255953eecb26799a7639173e44aa6ca25ce80&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
             </div>
         </div>
 
-        <center>
+        <div style="text-align: center;">
             <a href="index.html" class="back-link">← Вернуться на главную страницу</a>
-        </center>
+        </div>
     </div>
 
 </body>
