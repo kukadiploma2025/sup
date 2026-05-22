@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUP CLUB ASTANA | Прокат и прогулки на SUP-бордах в Астане</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Базовые настройки и палитра */
+        :root {
+            --deep-blue: #124076;    /* Глубокий водный синий */
+            --sky-blue: #2989d8;     /* Небесно-голубой */
+            --sun-yellow: #FEC02A;   /* Теплый солнечный */
+            --warm-sand: #FFF9E6;    /* Песочный фон */
+            --dark-text: #1e2d3d;    /* Цвет текста */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            color: var(--dark-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Промо-линия над шапкой */
+        .promo-bar {
+            background: linear-gradient(90deg, #ff4a4a 0%, #d62828 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 8px 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1001;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Шапка сайта */
+        header {
+            background-color: var(--deep-blue);
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 36px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+        .logo span {
+            color: var(--sun-yellow);
+        }
+
+        .insta-link {
+            background-color: transparent;
+            border: 2px solid var(--sun-yellow);
+            color: var(--sun-yellow);
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .insta-link:hover {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+        }
+
+        /* Главный экран (Hero) */
+        .hero {
+            background: linear-gradient(135deg, rgba(18,64,118,0.85) 0%, rgba(41,137,216,0.75) 50%, rgba(254,192,42,0.6) 100%), 
+                        url('https://images.unsplash.com/photo-1517176118179-65244903d13c?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+            padding: 0 20px;
+            margin-top: 96px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            max-width: 1000px;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            max-width: 750px;
+            font-weight: 600;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Кнопки */
+        .btn-cta {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(254,192,42,0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(254,192,42,0.6);
+        }
+
+        /* Специфические Стили для Баннера Конкурса */
+        .instagram-contest-banner {
+            background: linear-gradient(135deg, #ff4a4a 0%, #c31432 100%);
+            padding: 60px 20px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .contest-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contest-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .contest-details {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .embed-wrapper {
+            margin: 0 auto 30px auto;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-contest {
+            background-color: #ffffff;
+            color: #c31432;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-contest:hover {
+            transform: translateY(-3px);
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+        }
+
+        /* Секции общего назначения */
+        section {
+            padding: 80px 10%;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--deep-blue);
+            margin-bottom: 50px;
+            position: relative;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 4px;
+            background-color: var(--sun-yellow);
+            margin: 10px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Преимущества */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            background-color: #ffffff;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: var(--deep-blue);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Календарь Сплавов */
+        .calendar-section {
+            background-color: #ffffff;
+            padding-top: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .calendar-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+            box-shadow: 0 10px 25px rgba(18,64,118,0.1);
+        }
+
+        .calendar-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #ff4a4a;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-date {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--deep-blue);
+            line-height: 1.2;
+        }
+
+        .calendar-time {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--sky-blue);
+            margin-bottom: 10px;
+        }
+
+        .calendar-tour {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin: 0 auto 20px auto;
+        }
+
+        .status-few { background-color: #fce8e6; color: #c5221f; animation: pulse 2s infinite; }
+
+        .calendar-btn {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .calendar-btn:hover { background-color: var(--sky-blue); }
+
+        /* Программы и цены */
+        .prices {
+            background-color: var(--warm-sand);
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 35px 22px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(18,64,118,0.05);
+            border: 2px solid transparent;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price-card.popular {
+            border-color: var(--sun-yellow);
+            position: relative;
+        }
+
+        .price-card.popular .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+            padding: 4px 15px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Настройки неоновой рамки (Хит Сезона) */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .price-card.hit-season {
+            position: relative;
+            background: #ffffff;
+            border-radius: 15px; 
+            z-index: 1;
+        }
+
+        .price-card.hit-season::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: -4px;
+            left: -4px;
+            bottom: -4px;
+            right: -4px;
+            background: conic-gradient(from var(--angle), #ff1a1a, #ff4a4a, #ff0055, #ff1a1a);
+            border-radius: 19px;
+            animation: rotateGradient 3s linear infinite, neonGlow 2s ease-in-out infinite alternate;
+        }
+
+        .price-card.hit-season::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: #ffffff;
+            border-radius: 15px;
+        }
+
+        @keyframes rotateGradient {
+            0% { --angle: 0deg; }
+            100% { --angle: 360deg; }
+        }
+
+        @keyframes neonGlow {
+            0% { box-shadow: 0 0 7px rgba(255, 26, 26, 0.5), 0 0 15px rgba(255, 74, 74, 0.3); }
+            100% { box-shadow: 0 0 18px rgba(255, 26, 26, 0.9), 0 0 35px rgba(255, 74, 74, 0.6); }
+        }
+
+        .price-card h3 {
+            font-size: 1.3rem;
+            color: var(--deep-blue);
+            margin-bottom: 15px;
+        }
+
+        .price-card .cost {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--deep-blue);
+            margin-bottom: 20px;
+        }
+
+        .price-card ul {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .price-card ul li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 22px;
+            line-height: 1.4;
+        }
+
+        .price-card ul li::before {
+            content: '🌊';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        /* Блок безопасности */
+        .safety {
+            background-color: #ffffff;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .safety-box {
+            background: var(--deep-blue);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .safety-box h3 {
+            color: var(--sun-yellow);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Стили Секции Инструкторов */
+        .instructors-section {
+            background-color: var(--warm-sand);
+        }
+
+        .instructors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .instructor-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            text-align: center;
+            padding: 35px 25px;
+            box-shadow: 0 10px 25px rgba(18,64,118,0.05);
+            border: 2px solid #e2e8f0;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .instructor-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+        }
+
+        .instructor-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 4px solid var(--sun-yellow);
+            display: block;
+        }
+
+        .instructor-card h3 {
+            color: var(--deep-blue);
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .instructor-card p {
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Локации */
+        .locations-section {
+            background-color: #ffffff;
+        }
+
+        .single-location-container {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .location-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(18,64,118,0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+        }
+
+        .location-img {
+            width: 100%;
+            height: 240px;
+            background-color: #cbd5e1;
+            background-image: url('location.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .location-body {
+            padding: 35px;
+            text-align: center;
+        }
+
+        .location-body h3 {
+            color: var(--deep-blue);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .location-body p {
+            font-size: 1rem;
+            color: var(--dark-text);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .location-btn {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            padding: 16px 32px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.05rem;
+            text-align: center;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(18,64,118,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .location-btn:hover {
+            background-color: var(--sky-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Подвал */
+        footer {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        footer p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            padding: 12px 28px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .whatsapp-btn:hover { background-color: #128C7E; }
+
+        .credits {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #7b93a4;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .promo-bar { font-size: 0.75rem; padding: 6px 5px; }
+            header { top: 30px; }
+            .hero { margin-top: 80px; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 0.95rem; }
+            section { padding: 50px 5%; }
+            section h2 { font-size: 1.8rem; }
+            .contest-title { font-size: 1.5rem; }
+            .contest-details { font-size: 0.95rem; }
+            .cost-container .old-price { font-size: 1.05rem !important; }
+            .cost-container .new-price { font-size: 2.0rem !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="promo-bar">
+        🔥 ЗАБЕРИ СВОЙ БИЛЕТ В ЛЕТО: КАЖДЫЙ 5-Й ТУР ЗА НАШ СЧЕТ + РОЗЫГРЫШ СЕРТИФИКАТОВ! 🎟️
+    </div>
+
+    <header>
+        <div class="logo">SUP CLUB <span>ASTANA</span></div>
+        <a href="https://www.instagram.com/sup.club.astana" target="_blank" class="insta-link">Мы в Instagram</a>
+    </header>
+
+    <div class="hero">
+        <h1>Катайся на SUP-бордах в Астане!</h1>
+        <p>Каждый 5-й тур стоимостью 30 000 ₸ для тебя БЕСПЛАТНО + участвуй в розыгрыше подарков в нашей инсте!</p>
+        <a href="#schedule" class="btn-cta">Смотреть расписание сплавов</a>
+    </div>
+
+    <div class="instagram-contest-banner">
+        <div class="contest-container">
+            <div class="contest-title">🔥 МЕГА-РОЗЫГРЫШ В INSTAGRAM! 🔥</div>
+            <div class="contest-details">
+                Разыгрываем <span style="font-weight: 800; color: #fffb00;">2 БЕСПЛАТНЫХ СЕРТИФИКАТА</span> на любой наш SUP-тур! <br>
+                Условия очень простые — переходи прямо к публикации ниже, выполняй всё по пунктам и забирай свой подарок! Итоги подведем <span style="font-weight: 800; text-decoration: underline;">1 июня</span> в прямом эфире.
+            </div>
+
+            <div class="embed-wrapper">
+                <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DX_r6jbjAzZ/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 0; width:100%;"><div style="padding:16px;"> <a href="https://www.instagram.com/p/DX_r6jbjAzZ/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">Посмотреть эту публикацию в Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/p/DX_r6jbjAzZ/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">Публикация от SUP-серфинг | Астана (@sup.club.astana)</a></p></div></blockquote>
+            </div>
+
+            <a href="https://www.instagram.com/p/DX_r6jbjAzZ/" target="_blank" class="btn-contest">
+                📸 Открыть конкурс в Instagram
+            </a>
+        </div>
+    </div>
+    <script async src="//www.instagram.com/embed.js"></script>
+
+    <section class="features">
+        <h2>Почему выбирают нас</h2>
+        <div class="feature-card">
+            <div class="icon">✨</div>
+            <h3>Незабываемые эмоции</h3>
+            <p>Каждый маршрут — это атмосфера свободы, воды и заката, которую невозможно забыть после первого катания.</p>
+        </div>
+        <div class="feature-card">
+            <div class="icon">🌅</div>
+            <h3>Уникальные маршруты</h3>
+            <p>Катание по самым красивым и фотогеничным участкам водной акватории нашей столицы.</p>
+        </div>
+    </section>
+
+    <section class="calendar-section" id="schedule">
+        <h2>Ближайшие сплавы</h2>
+        <div class="calendar-grid">
+            <div class="calendar-card">
+                <div class="calendar-badge">🌅 Утренний маршрут</div>
+                <div class="calendar-date">В субботу</div>
+                <div class="calendar-time">Старт в 06:00 (4 часа)</div>
+                <div class="calendar-tour">
+                    Живописный утренний заплыв по зеркальной глади воды в лучах рассвета
+                    <br><span style="color: #124076; font-weight: 800; font-size: 1.3rem; display:block; margin-top:10px;">15 000 ₸</span>
+                </div>
+                <div class="status-badge status-few">⚠️ Места ограничены</div>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20Утренний%20SUP-сплав%20(15000%20тг)%20на%20субботу%20в%2006:00" target="_blank" class="calendar-btn">Забронировать тур</a>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-badge">☀️ Дневной «лайт»</div>
+                <div class="calendar-date">В субботу</div>
+                <div class="calendar-time">Старт в 13:00 (2 часа)</div>
+                <div class="calendar-tour">
+                    Спокойный расслабленный маршрут по набережной города
+                    <br><span style="color: #124076; font-weight: 800; font-size: 1.3rem; display:block; margin-top:10px;">10 000 ₸</span>
+                </div>
+                <div class="status-badge status-few">⚠️ Места ограничены</div>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20Дневной%20лайт%20SUP-сплав%20(10000%20тг)%20на%20субботу%20в%2013:00" target="_blank" class="calendar-btn">Занять место</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="prices" id="prices-container">
+        <h2>Программы и Цены</h2>
+        <div class="price-grid">
+            
+            <div class="price-card hit-season">
+                <div style="color: #ff4a4a; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px;">🔥 Хит сезона!</div>
+                <h3>SUP - Тур в зону отдыха</h3>
+                
+                <div class="cost-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <span class="old-price" style="text-decoration: line-through; color: #a0aab5; font-size: 1.2rem; font-weight: 600; margin-bottom: 2px; letter-spacing: 0.5px;">35 000 ₸</span>
+                    <span class="new-price" style="color: #e63946; font-size: 2.4rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(230, 57, 70, 0.15);">30 000 ₸</span>
+                </div>
+
+                <div style="background: #FFF9E6; border: 1px dashed #FEC02A; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #124076; font-weight: 700; text-align: center; line-height: 1.4;">
+                    🔥 КАЖДЫЙ 5-Й ТУР БЕСПЛАТНО! <br>
+                    + Участие в розыгрыше путевки в Египет! ✈️
+                </div>
+                <ul>
+                    <li>Трансфер туда и обратно</li>
+                    <li>Вкусный обед включен</li>
+                    <li>Полный комплект (доска, весло, лиш)</li>
+                    <li>Сопровождение опытного инструктора на воде</li>
+                    <li>Подробный инструктаж на суше</li>
+                    <li>Спасательный жилет выдается каждому</li>
+                    <li>Бутылка чистой воды 0,5 л</li>
+                    <li>Водонепроницаемый чехол для телефона</li>
+                </ul>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20Премиум%20SUP-Тур%20в%20зону%20отдыха%20за%2030000%20тг" target="_blank" class="btn-cta" style="padding: 10px 20px; font-size: 0.9rem;">Выбрать</a>
+            </div>
+
+            <div class="price-card popular">
+                <div class="badge">Популярно</div>
+                <h3>Дневной «лайт» сплав</h3>
+                <div class="cost">10 000 ₸</div>
+                <ul>
+                    <li>Продолжительность: 2 часа спокойного хода</li>
+                    <li>Маршрут по живописной набережной города</li>
+                    <li>Полный SUP-комплект (доска, весло, лиш)</li>
+                    <li>Сопровождение и обучение от инструктора</li>
+                    <li>Спасательный жилет и чехол для телефона</li>
+                    <li>Бутылка чистой воды 0,5 л</li>
+                    <li>Идеально подходит для absolute-новичков</li>
+                </ul>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20Дневной%20лайт%20сплав%20за%2010000%20тг" target="_blank" class="btn-cta" style="padding: 10px 20px; font-size: 0.9rem;">Выбрать</a>
+            </div>
+
+            <div class="price-card">
+                <h3>Утренний маршрут</h3>
+                <div class="cost">15 000 ₸</div>
+                <ul>
+                    <li>Длительный и насыщенный маршрут</li>
+                    <li>Продолжительность: 4 часа на воде</li>
+                    <li>Полный SUP-комплект (доска, весло, лиш)</li>
+                    <li>Сопровождение и обучение от инструктора</li>
+                    <li>Спасательный жилет выдается каждому</li>
+                    <li>Водонепроницаемый чехол для телефона</li>
+                    <li>Бутылка чистой воды 0,5 л</li>
+                </ul>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20Утренний%20маршрут%20за%2015000%20тг" target="_blank" class="btn-cta" style="padding: 10px 20px; font-size: 0.9rem;">Выбрать</a>
+            </div>
+
+            <div class="price-card">
+                <h3>Дикий сплав 🦁</h3>
+                <div class="cost">20 000 ₸</div>
+                <div style="background: #fff0f0; border: 1px dashed #ff4a4a; padding: 8px; border-radius: 8px; margin-bottom: 15px; font-size: 0.8rem; color: #ff4a4a; font-weight: 800; text-align: center; text-transform: uppercase;">
+                    ⚠️ ТОЛЬКО ДЛЯ ОПЫТНЫХ!
+                </div>
+                <ul>
+                    <li>Маневренная местность и крутые повороты</li>
+                    <li>Настоящие волны и максимум чистых эмоций</li>
+                    <li>Трансфер туда и обратно включен</li>
+                    <li>Обед НЕ включен (берем с собой сытный перекус)</li>
+                    <li>Полный комплект (доска, весло, лиш)</li>
+                    <li>Сопровождение и инструктаж от опытного тренера</li>
+                    <li>Спасательный жилет выдается каждому</li>
+                    <li>Бутылка чистой воды 0,5 л</li>
+                    <li>Водонепроницаемый чехол для телефона</li>
+                </ul>
+                <a href="https://wa.me/77054055142?text=Хочу%20забронировать%20ДИКИЙ%20СПЛАВ%20за%2020000%20тг" target="_blank" class="btn-cta" style="padding: 10px 20px; font-size: 0.9rem;">Выбрать</a>
+            </div>
+
+            <div class="price-card">
+                <h3>Аренда сап борда</h3>
+                <div class="cost">15 000 ₸</div>
+                <ul>
+                    <li>Полный комплект (доска, весло, лиш)</li>
+                    <li>Спасательный жилет в комплекте</li>
+                    <li>Отличный вариант для самостоятельного отдыха</li>
+                </ul>
+                <a href="https://wa.me/77054055142?text=Хочу%20арендовать%20сап%20борд%20за%2015000%20тг" target="_blank" class="btn-cta" style="padding: 10px 20px; font-size: 0.9rem;">Выбрать</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="safety">
+        <div class="safety-box">
+            <h3>Боитесь, что не получится?</h3>
+            <p>95% наших гостей впервые встают на SUP-борд именно у нас и начинают уверенно плыть уже через 15 минут инструктажа. Мы выдаем профессиональные спасательные жители, а наши опытные сертифицированные гиды находятся рядом на воде каждую секунду сплава!</p>
+        </div>
+    </section>
+
+    <section class="instructors-section">
+        <h2>Наши инструкторы</h2>
+        <div class="instructors-grid">
+            <div class="instructor-card">
+                <img src="bekzat.png" alt="Бекзат" class="instructor-img">
+                <h3>Бекзат</h3>
+                <p>Стаж на SUP-бордах более 4 лет. Проведёт подробный инструктаж и научит держать баланс за 10 минут!</p>
+            </div>
+            <div class="instructor-card">
+                <img src="kuanysh.png" alt="Қуаныш" class="instructor-img">
+                <h3>Қуаныш</h3>
+                <p>Стаж на SUP-бордах более 3 лет. Проведёт подробный инструктаж и научит держать баланс за 10 минут!</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="locations-section">
+        <h2>ЛОКАЦИЯ И МЕСТОПОЛОЖЕНИЕ</h2>
+        <div class="single-location-container">
+            <div class="location-card">
+                <div class="location-img"></div>
+                <div class="location-body">
+                    <h3>Наши Маршруты в Астане</h3>
+                    <p>Мы подготовили для вас интерактивную карту, на которой отмечены все наши ключевые локации: точка сбора на Центральной Набережной, городские мосты, секретные фото-зоны и финиш. Нажмите на кнопку ниже, чтобы открыть созданную карту Яндекса в новой вкладке.</p>
+                    <a href="locations.html" target="_blank" class="location-btn">Посмотреть локации на карте 🗺️</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="booking">
+        <h2>Лови волну, держи баланс!</h2>
+        <p>Катаемся каждый день при хорошей погоде. Места на сплавы разлетаются очень быстро!</p>
+        <p><strong>Для быстрой брони пишите координатору в WhatsApp:</strong></p>
+        
+        <a href="https://wa.me/77054055142?text=Здравствуйте!%20Хочу%20забронировать%20тур" target="_blank" class="whatsapp-btn">
+            💬 Забронировать через WhatsApp
+        </a>
+        
+        <div class="credits">
+            © 2026 SUP CLUB ASTANA. Все права защищены. Лето в столице.
+        </div>
+    </footer>
+
+</body>
+</html>
