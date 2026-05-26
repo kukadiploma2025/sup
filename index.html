@@ -102,16 +102,111 @@
         }
 
       <section class="hero">
-    <video autoplay muted loop playsinline class="hero-video">
-        <source src="fonvideo.mp4" type="video/mp4">
-    </video>
+     /* Главный экран (Hero) */
 
-    <div class="hero-content">
-        <h1>SUP CLUB ASTANA</h1>
-        <p>Лучший отдых на воде</p>
-        <a href="#" class="btn-cta">Смотреть расписание</a>
-    </div>
-</section>
+        .hero {
+
+            background: linear-gradient(135deg, rgba(18,64,118,0.85) 0%, rgba(41,137,216,0.75) 50%, rgba(254,192,42,0.6) 100%), 
+
+                        url('https://images.unsplash.com/photo-1517176118179-65244903d13c?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+
+            height: 100vh;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            color: #ffffff;
+
+            padding: 0 20px;
+
+            margin-top: 85px;
+
+        }
+
+
+
+        .hero h1 {
+
+            font-size: 3rem;
+
+            font-weight: 800;
+
+            margin-bottom: 15px;
+
+            text-transform: uppercase;
+
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+
+            max-width: 1000px;
+
+        }
+
+
+
+        .hero p {
+
+            font-size: 1.3rem;
+
+            margin-bottom: 35px;
+
+            max-width: 750px;
+
+            font-weight: 600;
+
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+
+        }
+
+
+
+        /* Кнопки */
+
+        .btn-cta {
+
+            background-color: var(--sun-yellow);
+
+            color: var(--deep-blue);
+
+            padding: 16px 36px;
+
+            font-size: 1.1rem;
+
+            font-weight: 800;
+
+            text-decoration: none;
+
+            border-radius: 30px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            box-shadow: 0 5px 15px rgba(254,192,42,0.4);
+
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+            display: inline-block;
+
+        }
+
+
+
+        .btn-cta:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow: 0 8px 20px rgba(254,192,42,0.6);
+
+        }
+
+
         /* Кнопки */
         .btn-cta {
             background-color: var(--sun-yellow);
