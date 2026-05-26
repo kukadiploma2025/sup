@@ -19,21 +19,19 @@
     <link rel="apple-touch-icon" href="logo.jpg">
     <style>
 
-        /* Отступ для всей страницы, чтобы контент не прятался под промо-бар */
-body {
-    padding-top: 60px; /* подбери высоту под свой блок, обычно 50-70px хватает */
+ .promo-bar {
+    width: 100%;
+    background-color: #d32f2f; /* Твой красный цвет */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    /* Убери position: fixed, если он есть */
+    /* Убери top: 0, если он есть */
+    position: relative; 
+    z-index: 10;
 }
 
-/* Фиксируем промо-бар наверху */
-.promo-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* чтобы он был поверх всего */
-    height: 60px; /* высота твоего бара */
-}
-    
+/* Сайт будет идти сразу после бара автоматически */
         /* Базовые настройки и палитра */
         :root {
             --deep-blue: #124076;    /* Глубокий водный синий */
