@@ -101,20 +101,17 @@
             color: var(--deep-blue);
         }
 
-        /* Главный экран (Hero) */
-        .hero {
-            background: linear-gradient(135deg, rgba(18,64,118,0.85) 0%, rgba(41,137,216,0.75) 50%, rgba(254,192,42,0.6) 100%), 
-                        url('https://images.unsplash.com/photo-1517176118179-65244903d13c?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: #ffffff;
-            padding: 0 20px;
-            margin-top: 85px;
-        }
+      <section class="hero">
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="fonvideo.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-content">
+        <h1>SUP CLUB ASTANA</h1>
+        <p>Лучший отдых на воде</p>
+        <a href="#" class="btn-cta">Смотреть расписание</a>
+    </div>
+</section>
 
         .hero h1 {
             font-size: 3rem;
