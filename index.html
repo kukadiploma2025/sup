@@ -20,45 +20,136 @@
     <style>
         /* Базовые настройки и палитра */
         :root {
-    --deep-blue: #124076;
-    --sun-yellow: #FEC02A;
-    --dark-text: #1e2d3d;
-}
+            --deep-blue: #124076;    /* Глубокий водный синий */
+            --sky-blue: #2989d8;     /* Небесно-голубой */
+            --sun-yellow: #FEC02A;   /* Теплый солнечный */
+            --warm-sand: #FFF9E6;    /* Песочный фон */
+            --dark-text: #1e2d3d;    /* Цвет текста */
+        }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
 
-body { color: var(--dark-text); background-color: #ffffff; padding-top: 100px; }
+        body {
+            color: var(--dark-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
 
-.promo-bar {
-    background: linear-gradient(90deg, #ff4a4a 0%, #d62828 100%);
-    color: #ffffff; text-align: center; padding: 10px; font-weight: 800;
-    position: fixed; top: 0; width: 100%; z-index: 1001; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
+      /* Добавь это, чтобы контент не прятался под закрепленные блоки */
+        body {
+            padding-top: 100px; 
+        }
 
-header {
-    background-color: var(--deep-blue); padding: 15px 5%;
-    position: fixed; width: 100%; top: 45px; z-index: 1000;
-    display: flex; justify-content: space-between; align-items: center;
-}
+        /* Промо-линия */
+        .promo-bar {
+            background: linear-gradient(90deg, #ff4a4a 0%, #d62828 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
 
-.logo { color: #ffffff; font-weight: 800; font-size: 1.4rem; }
-.logo span { color: var(--sun-yellow); }
+        /* Шапка сайта */
+        header {
+            background-color: var(--deep-blue);
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 45px; /* Увеличили отступ, чтобы шапка была ниже красного бара */
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-.insta-link {
-    border: 2px solid var(--sun-yellow); color: var(--sun-yellow);
-    padding: 8px 16px; border-radius: 25px; text-decoration: none; font-weight: 600;
-}
+        .logo {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+        .logo span {
+            color: var(--sun-yellow);
+        }
 
-/* Стили для Hero */
-.hero {
-    height: 100vh; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; text-align: center;
-    color: #ffffff; padding: 0 20px;
-    background: linear-gradient(135deg, rgba(18,64,118,0.85) 0%, rgba(41,137,216,0.75) 100%), 
-                url('https://images.unsplash.com/photo-1517176118179-65244903d13c?auto=format&fit=crop&w=1920&q=80') center/cover;
-}
-.hero h1 { font-size: 3rem; margin-bottom: 15px; text-transform: uppercase; }
-.btn-cta { background-color: var(--sun-yellow); color: var(--deep-blue); padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: 800; display: inline-block; }
+        .insta-link {
+            background-color: transparent;
+            border: 2px solid var(--sun-yellow);
+            color: var(--sun-yellow);
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .insta-link:hover {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+        }
+
+      <section class="hero">
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="fonvideo.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-content">
+        <h1>SUP CLUB ASTANA</h1>
+        <p>Лучший отдых на воде</p>
+        <a href="#" class="btn-cta">Смотреть расписание</a>
+    </div>
+</section>
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            max-width: 1000px;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            max-width: 750px;
+            font-weight: 600;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Кнопки */
+        .btn-cta {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(254,192,42,0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(254,192,42,0.6);
+        }
 
         /* Специфические Стили для Баннера Конкурса */
         .instagram-contest-banner {
@@ -585,7 +676,9 @@ header {
             .cost-container .old-price { font-size: 1.05rem !important; }
             .cost-container .new-price { font-size: 2.0rem !important; }
         }
-   <body>
+    </style>
+</head>
+<body>
 
     <div class="promo-bar">
         🔥 ЗАБЕРИ СВОЙ БИЛЕТ В ЛЕТО: КАЖДЫЙ 5-Й ТУР ЗА НАШ СЧЕТ + РОЗЫГРЫШ СЕРТИФИКАТОВ! 🎟️
@@ -596,19 +689,11 @@ header {
         <a href="https://www.instagram.com/sup.club.astana" target="_blank" class="insta-link">Мы в Instagram</a>
     </header>
 
-    <section class="hero">
-        <video autoplay muted loop playsinline class="hero-video">
-            <source src="fonvideo.mp4" type="video/mp4">
-        </video>
-
-        <div class="hero-content">
-            <h1>Катайся на SUP-бордах в Астане!</h1>
-            <p>Каждый 5-й тур стоимостью 30 000 ₸ для тебя БЕСПЛАТНО + участвуй в розыгрыше подарков в нашей инсте!</p>
-            <a href="#schedule" class="btn-cta">Смотреть расписание сплавов</a>
-        </div>
-    </section>
-
-</body>
+    <div class="hero">
+        <h1>Катайся на SUP-бордах в Астане!</h1>
+        <p>Каждый 5-й тур стоимостью 30 000 ₸ для тебя БЕСПЛАТНО + участвуй в розыгрыше подарков в нашей инсте!</p>
+        <a href="#schedule" class="btn-cta">Смотреть расписание сплавов</a>
+    </div>
 
     <div class="instagram-contest-banner">
         <div class="contest-container">
