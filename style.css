@@ -1,0 +1,736 @@
+        /* Базовые настройки и палитра */
+        :root {
+            --deep-blue: #124076;    /* Глубокий водный синий */
+            --sky-blue: #2989d8;     /* Небесно-голубой */
+            --sun-yellow: #FEC02A;   /* Теплый солнечный */
+            --warm-sand: #FFF9E6;    /* Песочный фон */
+            --dark-text: #1e2d3d;    /* Цвет текста */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            color: var(--dark-text);
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Промо-линия над шапкой */
+        .promo-bar {
+            background: linear-gradient(90deg, #ff4a4a 0%, #d62828 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 5px 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1001;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Шапка сайта */
+        header {
+            background-color: var(--deep-blue);
+            padding: 15px 5%;
+            position: fixed;
+            width: 100%;
+            top: 30px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+        .logo span {
+            color: var(--sun-yellow);
+        }
+
+        .insta-link {
+            background-color: transparent;
+            border: 2px solid var(--sun-yellow);
+            color: var(--sun-yellow);
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .insta-link:hover {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+        }
+
+        /* Главный экран (Hero) */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    padding: 0 20px;
+    margin-top: 85px;
+    position: relative; /* Важно: видео будет позиционироваться относительно этого блока */
+    overflow: hidden;   /* Чтобы видео не вылезало за края */
+}
+
+/* Стили для фонового видео */
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Растягивает видео на весь блок, как background-size: cover */
+    z-index: 0;        /* Видео на заднем плане */
+}
+
+/* Затемняющий слой для читаемости текста */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(18, 64, 118, 0.4); /* Полупрозрачный синий фильтр */
+    z-index: 1;
+}
+
+/* Текст и кнопки должны быть выше видео и слоя */
+.hero h1, .hero p, .hero .btn-cta, .hero div {
+    position: relative;
+    z-index: 2;
+}
+
+/* Ваши старые стили для заголовка и текста остаются прежними */
+.hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    max-width: 1000px;
+}
+
+.hero p {
+    font-size: 1.3rem;
+    margin-bottom: 35px;
+    max-width: 750px;
+    font-weight: 600;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
+        /* Кнопки */
+        .btn-cta {
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(254,192,42,0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(254,192,42,0.6);
+        }
+
+        /* Специфические Стили для Баннера Конкурса */
+        .instagram-contest-banner {
+            background: linear-gradient(135deg, #ff4a4a 0%, #c31432 100%);
+            padding: 60px 20px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .contest-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contest-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .contest-details {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .embed-wrapper {
+            margin: 0 auto 30px auto;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-contest {
+            background-color: #ffffff;
+            color: #c31432;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-contest:hover {
+            transform: translateY(-3px);
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+        }
+
+        /* Секции общего назначения */
+        section {
+            padding: 80px 10%;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: var(--deep-blue);
+            margin-bottom: 50px;
+            position: relative;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 4px;
+            background-color: var(--sun-yellow);
+            margin: 10px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Преимущества */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            background-color: #ffffff;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: var(--deep-blue);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Календарь Сплавов */
+        .calendar-section {
+            background-color: #ffffff;
+            padding-top: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .calendar-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+            box-shadow: 0 10px 25px rgba(18,64,118,0.1);
+        }
+
+        .calendar-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #ff4a4a;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-date {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--deep-blue);
+            line-height: 1.2;
+        }
+
+        .calendar-time {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--sky-blue);
+            margin-bottom: 10px;
+        }
+
+        .calendar-tour {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin: 0 auto 20px auto;
+        }
+
+        .status-few { background-color: #fce8e6; color: #c5221f; animation: pulse 2s infinite; }
+
+        .calendar-btn {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .calendar-btn:hover { background-color: var(--sky-blue); }
+
+        /* Программы и цены */
+        .prices {
+            background-color: var(--warm-sand);
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 35px 22px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(18,64,118,0.05);
+            border: 2px solid transparent;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price-card.popular {
+            border-color: var(--sun-yellow);
+            position: relative;
+        }
+
+        .price-card.popular .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--sun-yellow);
+            color: var(--deep-blue);
+            padding: 4px 15px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Настройки неоновой рамки (Хит Сезона) */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        .price-card.hit-season {
+            position: relative;
+            background: #ffffff;
+            border-radius: 15px; 
+            z-index: 1;
+        }
+
+        .price-card.hit-season::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: -4px;
+            left: -4px;
+            bottom: -4px;
+            right: -4px;
+            background: conic-gradient(from var(--angle), #ff1a1a, #ff4a4a, #ff0055, #ff1a1a);
+            border-radius: 19px;
+            animation: rotateGradient 3s linear infinite, neonGlow 2s ease-in-out infinite alternate;
+        }
+
+        .price-card.hit-season::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: #ffffff;
+            border-radius: 15px;
+        }
+
+        @keyframes rotateGradient {
+            0% { --angle: 0deg; }
+            100% { --angle: 360deg; }
+        }
+
+        @keyframes neonGlow {
+            0% { box-shadow: 0 0 7px rgba(255, 26, 26, 0.5), 0 0 15px rgba(255, 74, 74, 0.3); }
+            100% { box-shadow: 0 0 18px rgba(255, 26, 26, 0.9), 0 0 35px rgba(255, 74, 74, 0.6); }
+        }
+
+        .price-card h3 {
+            font-size: 1.3rem;
+            color: var(--deep-blue);
+            margin-bottom: 15px;
+        }
+
+        .price-card .cost {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--deep-blue);
+            margin-bottom: 20px;
+        }
+
+        .price-card ul {
+            list-style: none;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .price-card ul li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 22px;
+            line-height: 1.4;
+        }
+
+        .price-card ul li::before {
+            content: '🌊';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        /* Блок безопасности */
+        .safety {
+            background-color: #ffffff;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .safety-box {
+            background: var(--deep-blue);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .safety-box h3 {
+            color: var(--sun-yellow);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Стили Секции Инструкторов */
+        .instructors-section {
+            background-color: var(--warm-sand);
+        }
+
+        .instructors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .instructor-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            text-align: center;
+            padding: 35px 25px;
+            box-shadow: 0 10px 25px rgba(18,64,118,0.05);
+            border: 2px solid #e2e8f0;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .instructor-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+        }
+
+        .instructor-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 4px solid var(--sun-yellow);
+            display: block;
+        }
+
+        .instructor-card h3 {
+            color: var(--deep-blue);
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .instructor-card p {
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Локации */
+        .locations-section {
+            background-color: #ffffff;
+        }
+
+        .single-location-container {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .location-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(18,64,118,0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sky-blue);
+        }
+
+        .location-img {
+            width: 100%;
+            height: 240px;
+            background-color: #cbd5e1;
+            background-image: url('location.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .location-body {
+            padding: 35px;
+            text-align: center;
+        }
+
+        .location-body h3 {
+            color: var(--deep-blue);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .location-body p {
+            font-size: 1rem;
+            color: var(--dark-text);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .location-btn {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            padding: 16px 32px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.05rem;
+            text-align: center;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(18,64,118,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .location-btn:hover {
+            background-color: var(--sky-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Подвал */
+        footer {
+            background-color: var(--deep-blue);
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        footer p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            padding: 12px 28px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .whatsapp-btn:hover { background-color: #128C7E; }
+
+        .credits {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #7b93a4;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .promo-bar { font-size: 0.75rem; padding: 6px 5px; }
+            header { top: 38px; }
+            .hero { margin-top: 95px; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 0.95rem; }
+            section { padding: 50px 5%; }
+            section h2 { font-size: 1.8rem; }
+            .contest-title { font-size: 1.5rem; }
+            .contest-details { font-size: 0.95rem; }
+            .cost-container .old-price { font-size: 1.05rem !important; }
+            .cost-container .new-price { font-size: 2.0rem !important; }
+
+            /* Стили для блока FAQ */
+.faq-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.faq-item {
+    background: #ffffff;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.faq-item[open] {
+    border-color: #2989d8; /* Цвет рамки при открытии */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.faq-item summary {
+    padding: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #124076;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none; /* Убираем стандартный маркер */
+}
+
+/* Добавляем свой красивый плюс или стрелочку */
+.faq-item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: #2989d8;
+}
+
+.faq-item[open] summary::after {
+    content: '−';
+}
+
+.faq-answer {
+    padding: 0 20px 20px 20px;
+    color: #4a5568;
+    line-height: 1.6;
+}
+        }
