@@ -5,84 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUP CLUB ASTANA</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #000; /* Черный фон страницы для контраста */
-            margin: 0;
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
         }
 
         .card {
-            background: #FFD93D; /* Ярко-желтая карточка */
-            padding: 40px 30px;
+            background: #FFD93D;
+            padding: 40px 25px;
             border-radius: 40px;
-            border: 4px solid #000; /* Черная рамка */
-            box-shadow: 10px 10px 0px rgba(255, 255, 255, 0.1);
+            border: 4px solid #000;
             text-align: center;
-            width: 85%;
-            max-width: 380px;
+            width: 90%;
+            max-width: 350px;
         }
 
         .round-logo {
-            width: 130px;
-            height: 130px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #000; /* Черная обводка лого */
+            border: 4px solid #000;
             margin-bottom: 20px;
         }
 
-        h1 { color: #000; font-size: 1.5rem; margin-bottom: 30px; text-transform: uppercase; }
+        h1 { color: #000; font-size: 1.3rem; margin-bottom: 25px; text-transform: uppercase; }
 
-        .links-container { display: flex; flex-direction: column; gap: 15px; }
+        .links-container { display: flex; flex-direction: column; gap: 12px; }
 
         .contact-btn {
-            padding: 16px 20px;
+            padding: 15px;
             background: transparent;
             color: #000;
             text-decoration: none;
             border-radius: 15px;
-            border: 2px solid #000; /* Черная рамка кнопок */
+            border: 2px solid #000;
             font-weight: 800;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
+            justify-content: flex-start; /* Иконки слева */
+            gap: 15px;
             transition: 0.3s;
         }
 
-        .contact-btn:hover { 
-            background: #000; 
-            color: #FFD93D; 
-            transform: scale(1.02);
-        }
+        .contact-btn:hover { background: #000; color: #FFD93D; transform: scale(1.02); }
 
-        .icon { width: 24px; height: 24px; fill: currentColor; }
+        .icon { width: 25px; height: 25px; fill: currentColor; }
     </style>
 </head>
 <body>
 
 <div class="card">
+    <!-- Убедитесь, что файл называется именно logo.jpg -->
     <img src="logo.jpg" alt="SUP CLUB" class="round-logo">
     <h1>SUP CLUB ASTANA</h1>
     
     <div class="links-container">
+        <!-- Иконка сообщения -->
+        <a href="https://wa.me/77054055142" class="contact-btn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.67-1.613-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.955c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.549 4.142 1.594 5.945L.057 24l6.452-1.693a11.85 11.85 0 0 0 5.642 1.436h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            НАПИСАТЬ В ЛС
+        </a>
+        
         <a href="https://chat.whatsapp.com/IOkfEQDRyku02FPMGlumoq" class="contact-btn">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.281 0-5.953 2.672-5.953 5.953 0 1.055.281 2.063.797 2.953L6.047 17.5l2.625-.688c.844.469 1.828.703 2.813.703 3.281 0 5.953-2.672 5.953-5.953 0-3.281-2.672-5.953-5.953-5.953zm0 0"/></svg>
-            WhatsApp Чатик
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.155.564 4.187 1.554 5.952L0 24l6.234-1.554A11.957 11.957 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6c-1.855 0-3.59-.487-5.112-1.334l-3.674.919.98-3.578A9.563 9.563 0 0 1 2.4 12c0-5.302 4.298-9.6 9.6-9.6s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6z"/></svg>
+            ЧАТ
         </a>
-        <a href="https://instagram.com/sup.club.astana" class="contact-btn">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.808.256 2.232.422.56.217.96.477 1.38.896.42.42.68.82.896 1.38.166.424.367 1.06.422 2.232.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.256 1.808-.422 2.232-.217.56-.477.96-.896 1.38-.42.42-.82.68-1.38.896-.424.166-1.06.367-2.232.422-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.808-.256-2.232-.422-.56-.217-.96-.477-1.38-.896-.42-.42-.68-.82-.896-1.38-.166-.424-.367-1.06-.422-2.232-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.256-1.808.422-2.232.217-.56.477-.96.896-1.38.42-.42.82-.68 1.38-.896.424-.166 1.06-.367 2.232-.422 1.266-.058 1.646-.07 4.85-.07z"/></svg>
-            Instagram
-        </a>
+        
         <a href="https://tiktok.com/@sup.club.astana" class="contact-btn">
             <svg class="icon" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.76-2.89c.1 0 .2 0 .3.01V9.5a5.89 5.89 0 0 0-2.88.58 6 6 0 0 0 0 10.95 6 6 0 0 0 8.5-5.35V7.72a9.66 9.66 0 0 0 4.25 1.03V6.69z"/></svg>
-            TikTok
+            ТИКТОК
+        </a>
+        
+        <a href="https://instagram.com/sup.club.astana" class="contact-btn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.173.055 1.808.256 2.232.422.56.217.96.477 1.38.896.42.42.68.82.896 1.38.166.424.367 1.06.422 2.232.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.173-.256 1.808-.422 2.232-.217.56-.477.96-.896 1.38-.42.42-.82.68-1.38.896-.424.166-1.06.367-2.232.422-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.173-.055-1.808-.256-2.232-.422-.56-.217-.96-.477-1.38-.896-.42-.42-.68-.82-.896-1.38-.166-.424-.367-1.06-.422-2.232-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.055-1.173.256-1.808.422-2.232.217-.56.477-.96.896-1.38.42-.42.82-.68 1.38-.896.424-.166 1.06-.367 2.232-.422 1.266-.058 1.646-.07 4.85-.07z"/></svg>
+            ИНСТАГРАМ
         </a>
     </div>
 </div>
