@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUP CLUB ASTANA — Расписание сплавов</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --accent-yellow: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .header-area { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        h2 { margin: 0; color: var(--accent-yellow); font-weight: 800; }
+        .filter-group { display: flex; align-items: center; gap: 10px; }
+        label { font-weight: 700; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        input[type="date"] { padding: 10px 14px; border: 2px solid var(--border-color); border-radius: 10px; background: #151f32; color: var(--text-main); font-size: 16px; outline: none; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
+        th { background: #151f32; color: var(--accent-yellow); padding: 14px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge-route { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #334155; color: #fff; }
+        .badge-spots { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .btn-wa { color: #25d366; text-decoration: none; font-weight: 600; }
+        .btn-wa:hover { text-decoration: underline; }
+        .no-data { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
+        .summary-bar { background: #151f32; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; font-weight: 600; }
+        .summary-item span { color: var(--accent-yellow); font-weight: 800; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-area">
+        <h2>SUP CLUB ASTANA — Расписание</h2>
+        <div class="filter-group">
+            <label for="filterDate">Дата:</label>
+            <input type="date" id="filterDate">
+        </div>
+    </div>
+
+    <div class="summary-bar">
+        <div class="summary-item">Всего людей: <span id="totalSpots">0</span></div>
+        <div class="summary-item">Заказов: <span id="totalBookings">0</span></div>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    <th>Клиент</th>
+                    <th>Телефон</th>
+                    <th>Мест</th>
+                    <th>Маршрут</th>
+                    <th>Оплата</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
+    const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
+
+    // Установка сегодняшней даты без сдвига часового пояса
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    document.getElementById('filterDate').value = todayStr;
+
+    async function loadData() {
+        const tableBody = document.getElementById('tableBody');
+        const dateInput = document.getElementById('filterDate').value; // Строка формата YYYY-MM-DD
+        
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">Загрузка...</td></tr>';
+
+        try {
+            // Запрос строго по текстовому совпадению даты
+            const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}&order=booking_time.asc`, {
+                method: 'GET',
+                headers: { 
+                    'apikey': ANON_KEY, 
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            tableBody.innerHTML = '';
+            
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Нет записей на этот день.</td></tr>';
+                document.getElementById('totalSpots').textContent = '0';
+                document.getElementById('totalBookings').textContent = '0';
+                return;
+            }
+
+            let totalSpots = 0;
+            data.forEach(item => {
+                totalSpots += item.spots_count;
+                const cleanPhone = item.customer_phone.replace(/\D/g, '');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:var(--accent-yellow);">${item.booking_time}</td>
+                    <td style="font-weight:600;">${item.customer_name}</td>
+                    <td><a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-wa">${item.customer_phone}</a></td>
+                    <td><span class="badge-spots">${item.spots_count} чел.</span></td>
+                    <td><span class="badge-route">${item.route_name}</span></td>
+                    <td>${item.payment_method}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            document.getElementById('totalSpots').textContent = totalSpots;
+            document.getElementById('totalBookings').textContent = data.length;
+        } catch (e) {
+            console.error(e);
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">Ошибка загрузки.</td></tr>';
+        }
+    }
+    document.getElementById('filterDate').addEventListener('change', loadData);
+    loadData();
+</script>
