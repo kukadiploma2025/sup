@@ -3,169 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUP CLUB ASTANA — Панель Администратора</title>
+    <title>Панель управления — SUP CLUB ASTANA</title>
     <style>
         :root {
             --bg-main: #0f172a;
             --bg-card: #1e293b;
             --accent-yellow: #f59e0b;
-            --accent-red: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; display: none; } /* Скрыто до ввода пароля */
-        .container { max-width: 1000px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .header-area { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
-        h2 { margin: 0; color: var(--accent-yellow); font-weight: 800; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            padding: 30px 15px;
+            margin: 0;
+        }
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        h1 { color: var(--accent-yellow); margin: 0; font-size: 28px; }
         .filter-group { display: flex; align-items: center; gap: 10px; }
-        label { font-weight: 700; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
-        input[type="date"] { padding: 10px 14px; border: 2px solid var(--border-color); border-radius: 10px; background: #151f32; color: var(--text-main); font-size: 16px; outline: none; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        input[type="date"] {
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent-yellow);
+            margin-top: 5px;
+        }
+        .stat-card .label { color: var(--text-muted); font-size: 14px; }
         
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
-        th { background: #151f32; color: var(--accent-yellow); padding: 14px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
+        .booking-table-wrapper {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 800px;
+        }
+        th, td { padding: 14px 18px; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        tr:last-child td { border-bottom: none; }
         
-        .badge-route { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #334155; color: #fff; }
-        .badge-spots { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
-        
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 13px; }
-        .btn-delete:hover { background: var(--accent-red); color: #fff; }
-        .btn-wa { color: #25d366; text-decoration: none; font-weight: 600; }
-        .btn-wa:hover { text-decoration: underline; }
-        
-        .no-data { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
-        .summary-bar { background: #151f32; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; font-weight: 600; }
-        .summary-item span { color: var(--accent-yellow); font-weight: 800; }
+        .note-input, .prepay-input {
+            background: #151f32;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            width: 90%;
+            font-size: 14px;
+        }
+        .btn-save {
+            background: var(--accent-yellow);
+            color: #0f172a;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-save:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-area">
-        <h2>SUP CLUB ASTANA — Управление (Админ)</h2>
+<div class="admin-container">
+    <div class="header-panel">
+        <h1>SUP CLUB ASTANA | Администратор</h1>
         <div class="filter-group">
-            <label for="filterDate">Смотреть дату:</label>
-            <input type="date" id="filterDate">
+            <label style="color: var(--text-muted)">Выбрать день отчета: </label>
+            <input type="date" id="adminDate" onchange="loadAdminData()">
         </div>
     </div>
 
-    <div class="summary-bar">
-        <div class="summary-item">Всего человек на дату: <span id="totalSpots">0</span></div>
-        <div class="summary-item">Всего заказов: <span id="totalBookings">0</span></div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">Отработано человек за день</div>
+            <div id="totalPeople" class="value">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Ожидаемая касса (общая сумма)</div>
+            <div id="totalSum" class="value">0 ₸</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Заявок на дату</div>
+            <div id="totalCount" class="value">0</div>
+        </div>
     </div>
 
-    <div class="table-wrapper">
+    <div class="booking-table-wrapper">
         <table>
             <thead>
                 <tr>
                     <th>Время</th>
-                    <th>Клиент</th>
-                    <th>Телефон</th>
-                    <th>Мест</th>
-                    <th>Маршрут</th>
-                    <th>Оплата</th>
+                    <th>ФИО Клиента</th>
+                    <th>Направление</th>
+                    <th>Кол-во мест</th>
+                    <th>Чек за тур</th>
+                    <th>Предоплата / Способ</th>
+                    <th>Особые отметки (Заметки)</th>
                     <th>Действие</th>
                 </tr>
             </thead>
-            <tbody id="adminTableBody"></tbody>
+            <tbody id="adminTableBody">
+                <!-- Отрисовка динамических данных -->
+            </tbody>
         </table>
     </div>
 </div>
+
 <script>
-    const ADMIN_PASSWORD = 'sup2026';
-
-    const pass = prompt('Введите пароль администратора:');
-    if (pass !== ADMIN_PASSWORD) {
-        alert('Неверный пароль!');
-        window.location.href = 'list.html';
-    } else {
-        document.body.style.display = 'block';
-    }
-
     const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
+    // Фильтр по умолчанию на текущие сутки
     const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-    document.getElementById('filterDate').value = todayStr;
+    document.getElementById('adminDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     async function loadAdminData() {
-        const tableBody = document.getElementById('adminTableBody');
-        const dateInput = document.getElementById('filterDate').value;
-        
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Загрузка расписания...</td></tr>';
+        const selectedDate = document.getElementById('adminDate').value;
+        const tbody = document.getElementById('adminTableBody');
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding: 20px;">Загрузка актуального списка...</td></tr>';
 
         try {
-            const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}&order=booking_time.asc`, {
+            const response = await fetch(`${API_URL}?booking_date=eq.${selectedDate}&order=booking_time.asc`, {
                 method: 'GET',
-                headers: { 
-                    'apikey': ANON_KEY, 
+                headers: {
+                    'apikey': ANON_KEY,
                     'Authorization': `Bearer ${ANON_KEY}`,
                     'Content-Type': 'application/json'
                 }
             });
+
+            if (!response.ok) throw new Error('Ошибка связи с Supabase API');
             const data = await response.json();
-            tableBody.innerHTML = '';
+
+            tbody.innerHTML = '';
             
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="no-data">На этот день записей нет.</td></tr>';
-                document.getElementById('totalSpots').textContent = '0';
-                document.getElementById('totalBookings').textContent = '0';
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color: var(--text-muted); padding: 20px;">На эту дату записей нет. База чиста.</td></tr>';
+                document.getElementById('totalPeople').textContent = '0';
+                document.getElementById('totalSum').textContent = '0 ₸';
+                document.getElementById('totalCount').textContent = '0';
                 return;
             }
 
-            let totalSpots = 0;
+            let totalPeople = 0;
+            let totalSum = 0;
+
             data.forEach(item => {
-                totalSpots += item.spots_count;
-                const cleanPhone = item.customer_phone.replace(/\D/g, '');
+                const calcPrice = item.spots_count * 10000;
+                totalPeople += item.spots_count;
+                totalSum += calcPrice;
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight:700; color:var(--accent-yellow);">${item.booking_time}</td>
-                    <td style="font-weight:600;">${item.customer_name}</td>
-                    <td><a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-wa">${item.customer_phone}</a></td>
-                    <td><span class="badge-spots">${item.spots_count} чел.</span></td>
-                    <td><span class="badge-route">${item.route_name}</span></td>
-                    <td>${item.payment_method}</td>
+                    <td style="font-weight:bold; color:var(--accent-yellow);">${item.booking_time}</td>
                     <td>
-                        <button class="btn-delete" onclick="deleteBooking(${item.id}, '${item.customer_name}')">Удалить бронь</button>
+                        <strong>${item.customer_name}</strong><br>
+                        <span style="font-size:12px; color:var(--text-muted);">${item.customer_phone}</span>
+                    </td>
+                    <td style="font-size:14px;">${item.route_name}</td>
+                    <td style="font-weight:bold; text-align:center;">${item.spots_count}</td>
+                    <td style="font-weight:bold; color:#10b981;">${calcPrice.toLocaleString()} ₸</td>
+                    <td>
+                        <input type="text" class="prepay-input" id="prepay-${item.id}" value="${item.payment_method || ''}" placeholder="Напр: 5000 Каспи">
+                    </td>
+                    <td>
+                        <input type="text" class="note-input" id="note-${item.id}" value="${item.notes || ''}" placeholder="Экипировка, статус...">
+                    </td>
+                    <td>
+                        <button class="btn-save" onclick="saveRowChanges(${item.id})">OK</button>
                     </td>
                 `;
-                tableBody.appendChild(tr);
+                tbody.appendChild(tr);
             });
-            document.getElementById('totalSpots').textContent = totalSpots;
-            document.getElementById('totalBookings').textContent = data.length;
+
+            document.getElementById('totalPeople').textContent = totalPeople;
+            document.getElementById('totalSum').textContent = totalSum.toLocaleString() + ' ₸';
+            document.getElementById('totalCount').textContent = data.length;
+
         } catch (e) {
-            console.error(e);
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--accent-red);">Ошибка загрузки.</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ef4444; padding: 20px;">Критический сбой: ${e.message}</td></tr>`;
         }
     }
 
-    async function deleteBooking(id, name) {
-        if (!confirm(`Вы действительно хотите удалить запись на имя "${name}"?`)) {
-            return;
-        }
+    async function saveRowChanges(id) {
+        const prepayValue = document.getElementById(`prepay-${id}`).value.trim();
+        const noteValue = document.getElementById(`note-${id}`).value.trim();
+
         try {
             const response = await fetch(`${API_URL}?id=eq.${id}`, {
-                method: 'DELETE',
-                headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+                method: 'PATCH',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    payment_method: prepayValue,
+                    notes: noteValue
+                })
             });
+
             if (response.ok) {
                 loadAdminData();
             } else {
-                alert('Не удалось удалить.');
+                alert('Не удалось зафиксировать изменения в базе данных.');
             }
         } catch (e) {
-            alert('Ошибка сети: ' + e.message);
+            alert('Ошибка отправки: ' + e.message);
         }
     }
 
-    document.getElementById('filterDate').addEventListener('change', loadAdminData);
     loadAdminData();
 </script>
+</body>
+</html>
