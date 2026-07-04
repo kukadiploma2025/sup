@@ -24,7 +24,7 @@
         .admin-container {
             max-width: 1200px;
             margin: 0 auto;
-            display: none; /* Скрыто до успешного ввода пароля */
+            display: none;
         }
         
         /* Стили формы логина */
@@ -134,7 +134,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            min-width: 1000px;
+            min-width: 1100px;
         }
         th, td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -164,17 +164,39 @@
             accent-color: var(--accent-yellow);
         }
         
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
         .btn-save {
             background: var(--accent-yellow);
             color: #0f172a;
             border: none;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             font-size: 13px;
         }
         .btn-save:hover { opacity: 0.9; }
+
+        .btn-delete-row {
+            background: #343a40;
+            color: #ff4d4d;
+            border: 1px solid #495057;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .btn-delete-row:hover { 
+            background: var(--accent-red); 
+            color: #fff;
+            border-color: var(--accent-red);
+        }
+
         .badge-rest { font-weight: bold; color: #f43f5e; }
         .badge-done { font-weight: bold; color: #10b981; }
     </style>
@@ -191,7 +213,7 @@
     </div>
 </div>
 
-<!-- Контент админки (откроется после ввода верных данных) -->
+<!-- Контент админки -->
 <div class="admin-container" id="adminContainer">
     <div class="header-panel">
         <h1>SUP CLUB ASTANA | Управление</h1>
@@ -200,7 +222,7 @@
                 <label style="color: var(--text-muted)">Дата отчета (00:00 - 23:59): </label>
                 <input type="date" id="adminDate" onchange="loadAdminData()">
             </div>
-            <button class="btn-danger" onclick="clearDatabaseWithCode()">Очистить базу данных</button>
+            <button class="btn-danger" onclick="clearDatabaseWithCode()">Очистить всю базу</button>
         </div>
     </div>
 
@@ -236,7 +258,7 @@
                     <th>Сумма предоплаты</th>
                     <th>Остаток на пирсе</th>
                     <th>Особые отметки / Коммент</th>
-                    <th>Действие</th>
+                    <th>Действия</th>
                 </tr>
             </thead>
             <tbody id="adminTableBody">
@@ -251,18 +273,14 @@
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
     
     const DELETE_SECURITY_CODE = '123';
-
-    // НАСТРОЙКА ДОСТУПА В АДМИНКУ
     const AUTH_LOGIN = 'admin';
     const AUTH_PASS = 'supastana2026';
 
-    // Функция проверки пароля
     function checkAuth() {
         const userInp = document.getElementById('username').value.trim();
         const passInp = document.getElementById('password').value.trim();
 
         if (userInp === AUTH_LOGIN && passInp === AUTH_PASS) {
-            // Сохраняем сессию в браузере, чтобы не вводить пароль при каждой перезагрузке
             sessionStorage.setItem('sup_authenticated', 'true');
             initAdmin();
         } else {
@@ -270,7 +288,6 @@
         }
     }
 
-    // Проверка, авторизован ли уже пользователь ранее
     window.onload = function() {
         if (sessionStorage.getItem('sup_authenticated') === 'true') {
             initAdmin();
@@ -281,7 +298,6 @@
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('adminContainer').style.display = 'block';
         
-        // Автоматическая установка сегодняшнего дня
         const today = new Date();
         document.getElementById('adminDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
@@ -293,7 +309,7 @@
 
         const selectedDate = document.getElementById('adminDate').value;
         const tbody = document.getElementById('adminTableBody');
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color: var(--text-muted); padding: 25px;">Загрузка списка бронирований за день...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color: var(--text-muted); padding: 25px;">Загрузка списка бронирований...</td></tr>';
 
         try {
             const response = await fetch(`${API_URL}?booking_date=eq.${selectedDate}&order=booking_time.asc`, {
@@ -362,7 +378,10 @@
                         <input type="text" class="note-input" id="note-${item.id}" value="${cleanNotes}" placeholder="Особые отметки">
                     </td>
                     <td>
-                        <button class="btn-save" onclick="saveAdminRow(${item.id})">Сохранить</button>
+                        <div class="action-btns">
+                            <button class="btn-save" onclick="saveAdminRow(${item.id})">Сохранить</button>
+                            <button class="btn-delete-row" onclick="deleteAdminRow(${item.id}, '${item.customer_name.replace(/'/g, "\\'")}')">Удалить</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -385,11 +404,7 @@
         const currentRest = totalCost - prepayValue;
         
         restContainer.textContent = currentRest.toLocaleString() + ' ₸';
-        if (currentRest <= 0) {
-            restContainer.className = 'badge-done';
-        } else {
-            restContainer.className = 'badge-rest';
-        }
+        restContainer.className = currentRest <= 0 ? 'badge-done' : 'badge-rest';
     }
 
     async function saveAdminRow(id) {
@@ -397,9 +412,7 @@
         const prepayValue = document.getElementById(`prepay-${id}`).value.trim();
         let noteValue = document.getElementById(`note-${id}`).value.trim();
 
-        if (isChecked) {
-            noteValue = '[PAID] ' + noteValue;
-        }
+        if (isChecked) noteValue = '[PAID] ' + noteValue;
 
         try {
             const response = await fetch(`${API_URL}?id=eq.${id}`, {
@@ -410,33 +423,50 @@
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify({
-                    payment_method: prepayValue,
-                    notes: noteValue
-                })
+                body: JSON.stringify({ payment_method: prepayValue, notes: noteValue })
             });
 
-            if (response.ok) {
-                loadAdminData();
-            } else {
-                alert('Не удалось обновить ячейки в Supabase.');
-            }
+            if (response.ok) loadAdminData();
+            else alert('Не удалось обновить данные в Supabase.');
         } catch (e) {
             alert('Сбой сети при сохранении: ' + e.message);
         }
     }
 
+    // НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ ОДНОЙ СТРОКИ
+    async function deleteAdminRow(id, name) {
+        const confirmDelete = confirm(`Вы действительно хотите удалить бронирование на имя "${name}"?`);
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`${API_URL}?id=eq.${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                loadAdminData(); // Обновляем список сразу после удаления
+            } else {
+                alert('Не удалось удалить запись. Проверьте правила RLS в Supabase.');
+            }
+        } catch (e) {
+            alert('Сбой сети при удалении записи: ' + e.message);
+        }
+    }
+
     async function clearDatabaseWithCode() {
         const code = prompt('ВНИМАНИЕ! Вы собираетесь очистить ВСЮ базу данных бронирований.\nДля подтверждения введите секретный код удаления:');
-        
         if (code === null) return; 
-        
         if (code !== DELETE_SECURITY_CODE) {
             alert('Неверный код безопасности! Действие заблокировано.');
             return;
         }
 
-        const finalConfirm = confirm('Вы уверены? Это действие сотрет ВСЕ записи навсегда без возможности восстановления!');
+        const finalConfirm = confirm('Вы уверены? Это действие сотрет ВСЕ записи навсегда!');
         if (!finalConfirm) return;
 
         try {
@@ -450,10 +480,10 @@
             });
 
             if (response.ok) {
-                alert('База данных успешно и полностью очищена!');
+                alert('База данных успешно очищена!');
                 loadAdminData();
             } else {
-                alert('Ошибка при очистке. Проверьте права доступа RLS в панели Supabase.');
+                alert('Ошибка при очистке.');
             }
         } catch (e) {
             alert('Критическая ошибка удаления: ' + e.message);
