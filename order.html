@@ -132,7 +132,6 @@
             color: var(--accent-yellow); 
         }
         
-        /* Стилизация блока предупреждения */
         .redirect-notice {
             margin-top: 25px;
             padding: 12px;
@@ -144,9 +143,7 @@
             color: var(--text-muted);
             line-height: 1.4;
         }
-        .redirect-notice strong {
-            color: var(--accent-yellow);
-        }
+        .redirect-notice strong { color: var(--accent-yellow); }
 
         .btn-submit { 
             width: 100%; 
@@ -162,9 +159,7 @@
             text-transform: uppercase; 
             transition: background 0.2s, opacity 0.2s;
         }
-        .btn-submit:hover:not(:disabled) { 
-            background: var(--accent-yellow-hover); 
-        }
+        .btn-submit:hover:not(:disabled) { background: var(--accent-yellow-hover); }
         .btn-submit:disabled {
             background: #334155 !important;
             color: var(--text-muted) !important;
@@ -178,12 +173,9 @@
             color: var(--text-muted); 
             margin-top: 4px; 
         }
-        .slot-btn.active .info-spots { 
-            color: rgba(0,0,0,0.7); 
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator { 
-            filter: invert(1); 
-        }
+        .slot-btn.active .info-spots { color: rgba(0,0,0,0.7); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        
         .sunday-alert {
             background: rgba(245, 158, 11, 0.05);
             border: 2px dashed var(--accent-yellow);
@@ -248,7 +240,6 @@
 
     <div id="sundayWrapper"></div>
 
-    <!-- Текст-предупреждение -->
     <div class="redirect-notice" id="redirectNotice">
         После нажатия на кнопку бронь запишется в базу данных, и вас <strong>автоматически перенаправит в WhatsApp</strong> для завершения диалога.
     </div>
@@ -257,19 +248,16 @@
 </div>
 
 <script>
-    const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
+    const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
     const SECRET_CODES = {
-        'УТРО6': '06:00',
-        'УТРО7': '07:00',
-        'УТРО8': '08:00',
-        'УТРО9': '09:00'
+        'УТРО6': '06:00', 'УТРО7': '07:00', 'УТРО8': '08:00', 'УТРО9': '09:00'
     };
 
     let selectedRouteType = 'turan-atyrau';
     let selectedTime = '';
-    let isSubmitting = false; // Флаг для контроля повторных кликов
+    let isSubmitting = false;
 
     const today = new Date();
     document.getElementById('bookingDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
@@ -282,9 +270,7 @@
         });
     });
 
-    document.getElementById('promoCode').addEventListener('input', function() {
-        renderSlots();
-    });
+    document.getElementById('promoCode').addEventListener('input', renderSlots);
 
     function selectRoute(route) {
         if (isSubmitting) return;
@@ -310,55 +296,73 @@
         const selectedDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         const dayOfWeek = selectedDateObj.getDay();
 
+        // 1. Проверка на стандартное Воскресенье
         if (dayOfWeek === 0) {
-            submitBtn.disabled = true;
-            selectedTime = '';
-            fieldsContainer.style.display = 'none';
-            notice.style.display = 'none';
-            sundayWrapper.innerHTML = `
-                <div class="sunday-alert">
-                    <p style="color: #ef4444; text-transform: uppercase;">Воскресенье: запись на городской сплав невозможна</p>
-                    <p style="font-size: 14px; color: var(--text-main); margin-bottom: 15px;">В этот день у нас проходит загородный сап-тур!</p>
-                    <a href="https://www.instagram.com/p/DX_K02SNfkV/?hl=ru" target="_blank" class="btn-details">ПОДРОБНЕЕ В INSTAGRAM</a>
-                </div>
-            `;
+            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: запись на городской сплав невозможна', 'В этот день у нас проходит загородный сап-тур!', true);
             return;
         }
 
-        if (!isSubmitting) {
-            submitBtn.disabled = false;
-            notice.style.display = 'block';
-        }
-        fieldsContainer.style.display = 'block';
-        sundayWrapper.innerHTML = '';
-        
         wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:10px;">Проверка свободных мест...</div>';
         
-        let times = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
-        
+        let bookings = [];
+        let blocks = [];
+
+        // Получаем одновременно и брони, и админские блокировки
+        try {
+            const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
+            const [resBookings, resBlocks] = await Promise.all([
+                fetch(`${BASE_SUPABASE_URL}/bookings?booking_date=eq.${dateInput}`, { method: 'GET', headers }),
+                fetch(`${BASE_SUPABASE_URL}/blocked_slots?block_date=eq.${dateInput}`, { method: 'GET', headers })
+            ]);
+
+            if (resBookings.ok) bookings = await resBookings.json();
+            if (resBlocks.ok) blocks = await resBlocks.json();
+        } catch (e) { console.error("Ошибка загрузки данных:", e); }
+
+        // 2. Проверка: заблокирован ли весь день администратором (slot_time === 'ALL')
+        const isDayBlocked = blocks.some(b => b.slot_time === 'ALL');
+        if (isDayBlocked) {
+            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата временно недоступна', 'Все сплавы на этот день закрыты администрацией.', false);
+            return;
+        }
+
+        if (!isSubmitting) { submitBtn.disabled = false; notice.style.display = 'block'; }
+        fieldsContainer.style.display = 'block';
+        sundayWrapper.innerHTML = '';
+
+        let defaultTimes = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
         if (SECRET_CODES[promoInput]) {
             const secretTime = SECRET_CODES[promoInput];
-            if (!times.includes(secretTime)) {
-                times.unshift(secretTime);
-            }
+            if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
         }
-        
-        let bookings = [];
-        try {
-            const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}`, {
-                method: 'GET',
-                headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' }
-            });
-            if (response.ok) bookings = await response.json();
-        } catch (e) { console.error(e); }
+
+        // Фильтрация старого времени для сегодняшнего дня (Астана UTC+5)
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
 
         wrapper.innerHTML = '';
+        let visibleSlotsCount = 0;
 
-        times.forEach(time => {
+        defaultTimes.forEach(time => {
+            // А. Проверка админской блокировки конкретного часа (если заблокирован — НЕ РЕНДЕРИМ)
+            const isSlotBlocked = blocks.some(b => b.slot_time === time);
+            if (isSlotBlocked) return; 
+
+            // Б. Если выбрано сегодня — скрываем часы, которые уже прошли
+            if (dateInput === todayStr) {
+                const [slotH, slotM] = time.split(':').map(Number);
+                if (slotH < currentHour || (slotH === currentHour && slotM <= currentMinute)) {
+                    return; 
+                }
+            }
+
+            visibleSlotsCount++;
             const booked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
             const left = 6 - booked;
-            const btn = document.createElement('div');
             
+            const btn = document.createElement('div');
             if (left <= 0) {
                 btn.className = 'slot-btn disabled';
                 btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
@@ -385,13 +389,32 @@
             }
             wrapper.appendChild(btn);
         });
+
+        if (visibleSlotsCount === 0) {
+            wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:10px; font-weight:700;">Нет доступных слотов на эту дату</div>';
+            submitBtn.disabled = true;
+        }
+    }
+
+    function showClosedScreen(fields, notice, sunWrapper, btn, title, desc, showInsta) {
+        btn.disabled = true;
+        selectedTime = '';
+        fields.style.display = 'none';
+        notice.style.display = 'none';
+        let instaBtn = showInsta ? `<a href="https://www.instagram.com/p/DX_K02SNfkV/?hl=ru" target="_blank" class="btn-details">ПОДРОБНЕЕ В INSTAGRAM</a>` : '';
+        sunWrapper.innerHTML = `
+            <div class="sunday-alert">
+                <p style="color: #ef4444; text-transform: uppercase;">${title}</p>
+                <p style="font-size: 14px; color: var(--text-main); margin-bottom: 15px;">${desc}</p>
+                ${instaBtn}
+            </div>
+        `;
     }
 
     document.getElementById('bookingDate').addEventListener('change', () => { if (!isSubmitting) { selectedTime = ''; renderSlots(); } });
     renderSlots();
 
     async function handleBooking() {
-        // Если уже отправляется, блокируем повторный запуск
         if (isSubmitting) return;
 
         const name = document.getElementById('clientName').value.trim();
@@ -406,35 +429,27 @@
         if (!phone || phone.length < 18) { alert('Укажите корректный номер телефона.'); return; }
         if (!selectedTime) { alert('Выберите время сплава!'); return; }
 
-        // Включаем режим блокировки интерфейса
         isSubmitting = true;
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         submitBtn.innerText = 'Оформление... Ожидайте';
 
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(`${BASE_SUPABASE_URL}/bookings`, {
                 method: 'POST',
                 headers: {
                     'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`,
                     'Content-Type': 'application/json', 'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
-                    route_name: routeText,
-                    booking_date: date,
-                    booking_time: selectedTime,
-                    customer_name: name,
-                    customer_phone: phone,
-                    spots_count: spots,
-                    payment_method: payment
+                    route_name: routeText, booking_date: date, booking_time: selectedTime,
+                    customer_name: name, customer_phone: phone, spots_count: spots, payment_method: payment
                 })
             });
 
             if (!response.ok) { 
                 alert('Ошибка сервера при записи. Попробуйте еще раз.'); 
-                isSubmitting = false;
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Записаться через WhatsApp';
+                isSubmitting = false; submitBtn.disabled = false; submitBtn.innerText = 'Записаться через WhatsApp';
                 return; 
             }
 
@@ -442,20 +457,16 @@
             const message = `Нас ${spots} человек на ${selectedTime} по маршруту: ${routeText}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone}`;
             window.open(`https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`, '_blank');
             
-            // Очистка полей формы
             document.getElementById('clientName').value = '';
             document.getElementById('clientPhone').value = '';
             document.getElementById('promoCode').value = '';
             selectedTime = '';
             
-            // Возвращаем кнопку в исходное состояние для новых сессий
             isSubmitting = false;
             renderSlots();
         } catch (e) { 
             alert(e.message); 
-            isSubmitting = false;
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Записаться через WhatsApp';
+            isSubmitting = false; submitBtn.disabled = false; submitBtn.innerText = 'Записаться через WhatsApp';
         }
     }
 </script>
