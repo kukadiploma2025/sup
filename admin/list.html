@@ -3,185 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUP CLUB ASTANA — Расписание сплавов</title>
+    <title>SUP CLUB ASTANA — Список бронирований</title>
     <style>
         :root {
             --bg-main: #0f172a;
             --bg-card: #1e293b;
             --accent-yellow: #f59e0b;
+            --accent-green: #25d366;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
-            --success-bg: rgba(34, 197, 94, 0.15);
-            --success-text: #4ade80;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; }
-        .container { max-width: 950px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .header-area { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
-        h2 { margin: 0; color: var(--accent-yellow); font-weight: 800; }
-        .filter-group { display: flex; align-items: center; gap: 10px; }
-        label { font-weight: 700; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
-        input[type="date"] { padding: 10px 14px; border: 2px solid var(--border-color); border-radius: 10px; background: #151f32; color: var(--text-main); font-size: 16px; outline: none; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
-        th { background: #151f32; color: var(--accent-yellow); padding: 14px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; transition: background 0.2s; }
-        
-        /* Стилизация строки, когда клиент на месте */
-        tr.arrived td { background: var(--success-bg); }
-        
-        tr:hover td { background: rgba(255,255,255,0.02); }
-        tr.arrived:hover td { background: rgba(34, 197, 94, 0.2); }
-
-        .badge-route { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #334155; color: #fff; }
-        .badge-spots { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
-        
-        .btn-wa { color: #25d366; text-decoration: none; font-weight: 600; cursor: pointer; }
-        .btn-wa:hover { text-decoration: underline; }
-        
-        /* Кнопка отметки прибытия */
-        .status-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: #151f32; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; transition: all 0.2s; }
-        .status-btn.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
-        
-        .no-data { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
-        .summary-bar { background: #151f32; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; font-weight: 600; }
-        .summary-item span { color: var(--accent-yellow); font-weight: 800; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: var(--accent-yellow);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 800;
+        }
+        .booking-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .info-group strong {
+            display: block;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .info-group span {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .created-at-tag {
+            font-size: 12px;
+            color: var(--accent-yellow);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-wa {
+            background: var(--accent-green);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+        .btn-wa:hover {
+            opacity: 0.9;
+        }
+        .loader {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 18px;
+            padding: 50px 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-area">
-        <h2>SUP CLUB ASTANA — Расписание</h2>
-        <div class="filter-group">
-            <label for="filterDate">Дата:</label>
-            <input type="date" id="filterDate">
-        </div>
-    </div>
-
-    <div class="summary-bar">
-        <div class="summary-item">Всего людей: <span id="totalSpots">0</span></div>
-        <div class="summary-item">Заказов: <span id="totalBookings">0</span></div>
-    </div>
-
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Время</th>
-                    <th>Клиент</th>
-                    <th>Телефон (WA)</th>
-                    <th>Мест</th>
-                    <th>Маршрут</th>
-                    <th>Оплата</th>
-                    <th>Статус</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+    <h2>Список всех бронирований</h2>
+    <div id="bookingsList">
+        <div class="loader">Загрузка данных из базы...</div>
     </div>
 </div>
 
 <script>
-    const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
+    const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-    document.getElementById('filterDate').value = todayStr;
-
-    // Функции для работы с локальными отметками прибытия
-    function getArrivedList() {
-        return JSON.parse(localStorage.getItem('sup_arrived_clients') || '[]');
-    }
-
-    function toggleArrival(bookingId, rowElement, btnElement) {
-        let arrivedList = getArrivedList();
-        if (arrivedList.includes(bookingId)) {
-            arrivedList = arrivedList.filter(id => id !== bookingId);
-            rowElement.classList.remove('arrived');
-            btnElement.classList.remove('checked');
-            btnElement.innerHTML = '⏳ Ожидание';
-        } else {
-            arrivedList.push(bookingId);
-            rowElement.classList.add('arrived');
-            btnElement.classList.add('checked');
-            btnElement.innerHTML = '✅ Прибыл';
-        }
-        localStorage.setItem('sup_arrived_clients', JSON.stringify(arrivedList));
-    }
-
-    async function loadData() {
-        const tableBody = document.getElementById('tableBody');
-        const dateInput = document.getElementById('filterDate').value;
+    async function loadBookings() {
+        const listContainer = document.getElementById('bookingsList');
         
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Загрузка...</td></tr>';
-
         try {
-            const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}&order=booking_time.asc`, {
+            const response = await fetch(`${BASE_SUPABASE_URL}/bookings?order=booking_date.desc,booking_time.asc`, {
                 method: 'GET',
-                headers: { 
-                    'apikey': ANON_KEY, 
+                headers: {
+                    'apikey': ANON_KEY,
                     'Authorization': `Bearer ${ANON_KEY}`,
                     'Content-Type': 'application/json'
                 }
             });
-            const data = await response.json();
-            tableBody.innerHTML = '';
+
+            if (!response.ok) throw new Error('Ошибка при получении данных');
+
+            const bookings = await response.json();
             
-            if (!data || data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="no-data">Нет записей на этот день.</td></tr>';
-                document.getElementById('totalSpots').textContent = '0';
-                document.getElementById('totalBookings').textContent = '0';
+            if (bookings.length === 0) {
+                listContainer.innerHTML = '<div class="loader">Бронирований пока нет.</div>';
                 return;
             }
 
-            let totalSpots = 0;
-            const arrivedList = getArrivedList();
+            listContainer.innerHTML = ''; // Очищаем лоадер
 
-            data.forEach(item => {
-                totalSpots += item.spots_count;
-                const cleanPhone = item.customer_phone.replace(/\D/g, '');
-                const isArrived = arrivedList.includes(item.id);
-                
-                const tr = document.createElement('tr');
-                tr.id = `row-${item.id}`;
-                if (isArrived) tr.className = 'arrived';
-                
-                tr.innerHTML = `
-                    <td style="font-weight:700; color:var(--accent-yellow);">${item.booking_time}</td>
-                    <td style="font-weight:600;">${item.customer_name}</td>
-                    <td><a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-wa">${item.customer_phone}</a></td>
-                    <td><span class="badge-spots">${item.spots_count} чел.</span></td>
-                    <td><span class="badge-route">${item.route_name}</span></td>
-                    <td><b>${item.payment_method || '0'}</b></td>
-                    <td>
-                        <button class="status-btn ${isArrived ? 'checked' : ''}" id="btn-${item.id}">
-                            ${isArrived ? '✅ Прибыл' : '⏳ Ожидание'}
-                        </button>
-                    </td>
+            bookings.forEach(booking => {
+                // 1. Форматируем время создания записи (когда была нажата кнопка)
+                let formattedCreatedAt = 'Не указано';
+                if (booking.created_at) {
+                    const dateObj = new Date(booking.created_at);
+                    // Переводим в красивый вид: ДД.ММ.ГГГГ в ЧЧ:ММ
+                    formattedCreatedAt = dateObj.toLocaleString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+
+                // 2. Генерируем ссылку в WhatsApp с готовым текстом
+                const cleanPhone = booking.customer_phone.replace(/\D/g, ''); // чистим номер от скобок
+                const messageText = `Салам, ${booking.customer_name}! 🏄‍♂️\nВаша бронь в SUP CLUB ASTANA подтверждена!\n\nМаршрут: ${booking.route_name}\nДата: ${booking.booking_date}\nВремя: ${booking.booking_time}\nКоличество: ${booking.spots_count} чел.\nСпособ оплаты: ${booking.payment_method}\n\nЖдем вас! Пожалуйста, подходите за 15 минут до старта для инструктажа.`;
+                const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
+
+                // 3. Создаем карточку брони
+                const card = document.createElement('div');
+                card.className = 'booking-card';
+                card.innerHTML = `
+                    <div class="created-at-tag">Заявка оставлена: ${formattedCreatedAt}</div>
+                    <div class="grid">
+                        <div class="info-group">
+                            <strong>Клиент</strong>
+                            <span>${booking.customer_name}</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Телефон</strong>
+                            <span>${booking.customer_phone}</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Дата сплава</strong>
+                            <span style="color: var(--accent-yellow);">${booking.booking_date}</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Время сплава</strong>
+                            <span style="color: var(--accent-yellow);">${booking.booking_time}</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Маршрут</strong>
+                            <span>${booking.route_name}</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Места</strong>
+                            <span>${booking.spots_count} чел.</span>
+                        </div>
+                        <div class="info-group">
+                            <strong>Оплата</strong>
+                            <span>${booking.payment_method}</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a href="${waLink}" target="_blank" class="btn-wa">
+                            💬 Написать в WhatsApp (Подтвердить)
+                        </a>
+                    </div>
                 `;
-                
-                tableBody.appendChild(tr);
-
-                // Вешаем клик на кнопку статуса
-                const btn = tr.querySelector(`#btn-${item.id}`);
-                btn.addEventListener('click', () => toggleArrival(item.id, tr, btn));
+                listContainer.appendChild(card);
             });
 
-            document.getElementById('totalSpots').textContent = totalSpots;
-            document.getElementById('totalBookings').textContent = data.length;
-        } catch (e) {
-            console.error(e);
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">Ошибка загрузки.</td></tr>';
+        } catch (error) {
+            console.error(error);
+            listContainer.innerHTML = `<div class="loader" style="color: #ef4444;">Ошибка загрузки: ${error.message}</div>`;
         }
     }
-    document.getElementById('filterDate').addEventListener('change', loadData);
-    loadData();
+
+    // Запускаем загрузку при открытии страницы
+    window.onload = loadBookings;
 </script>
 </body>
 </html>
