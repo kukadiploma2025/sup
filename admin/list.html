@@ -12,9 +12,11 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
+            --success-bg: rgba(34, 197, 94, 0.15);
+            --success-text: #4ade80;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; }
-        .container { max-width: 900px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .container { max-width: 950px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .header-area { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
         h2 { margin: 0; color: var(--accent-yellow); font-weight: 800; }
         .filter-group { display: flex; align-items: center; gap: 10px; }
@@ -24,12 +26,24 @@
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
         th { background: #151f32; color: var(--accent-yellow); padding: 14px; font-weight: 700; border-bottom: 2px solid var(--border-color); text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        td { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; transition: background 0.2s; }
+        
+        /* Стилизация строки, когда клиент на месте */
+        tr.arrived td { background: var(--success-bg); }
+        
         tr:hover td { background: rgba(255,255,255,0.02); }
+        tr.arrived:hover td { background: rgba(34, 197, 94, 0.2); }
+
         .badge-route { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #334155; color: #fff; }
         .badge-spots { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
-        .btn-wa { color: #25d366; text-decoration: none; font-weight: 600; }
+        
+        .btn-wa { color: #25d366; text-decoration: none; font-weight: 600; cursor: pointer; }
         .btn-wa:hover { text-decoration: underline; }
+        
+        /* Кнопка отметки прибытия */
+        .status-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: #151f32; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; transition: all 0.2s; }
+        .status-btn.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
+        
         .no-data { text-align: center; padding: 40px; color: var(--text-muted); font-style: italic; }
         .summary-bar { background: #151f32; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; font-weight: 600; }
         .summary-item span { color: var(--accent-yellow); font-weight: 800; }
@@ -57,10 +71,11 @@
                 <tr>
                     <th>Время</th>
                     <th>Клиент</th>
-                    <th>Телефон</th>
+                    <th>Телефон (WA)</th>
                     <th>Мест</th>
                     <th>Маршрут</th>
                     <th>Оплата</th>
+                    <th>Статус</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -72,7 +87,6 @@
     const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
-    // Установка сегодняшней даты без сдвига часового пояса
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -80,14 +94,34 @@
     const todayStr = `${yyyy}-${mm}-${dd}`;
     document.getElementById('filterDate').value = todayStr;
 
+    // Функции для работы с локальными отметками прибытия
+    function getArrivedList() {
+        return JSON.parse(localStorage.getItem('sup_arrived_clients') || '[]');
+    }
+
+    function toggleArrival(bookingId, rowElement, btnElement) {
+        let arrivedList = getArrivedList();
+        if (arrivedList.includes(bookingId)) {
+            arrivedList = arrivedList.filter(id => id !== bookingId);
+            rowElement.classList.remove('arrived');
+            btnElement.classList.remove('checked');
+            btnElement.innerHTML = '⏳ Ожидание';
+        } else {
+            arrivedList.push(bookingId);
+            rowElement.classList.add('arrived');
+            btnElement.classList.add('checked');
+            btnElement.innerHTML = '✅ Прибыл';
+        }
+        localStorage.setItem('sup_arrived_clients', JSON.stringify(arrivedList));
+    }
+
     async function loadData() {
         const tableBody = document.getElementById('tableBody');
-        const dateInput = document.getElementById('filterDate').value; // Строка формата YYYY-MM-DD
+        const dateInput = document.getElementById('filterDate').value;
         
-        tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">Загрузка...</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">Загрузка...</td></tr>';
 
         try {
-            // Запрос строго по текстовому совпадению даты
             const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}&order=booking_time.asc`, {
                 method: 'GET',
                 headers: { 
@@ -100,34 +134,54 @@
             tableBody.innerHTML = '';
             
             if (!data || data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Нет записей на этот день.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="7" class="no-data">Нет записей на этот день.</td></tr>';
                 document.getElementById('totalSpots').textContent = '0';
                 document.getElementById('totalBookings').textContent = '0';
                 return;
             }
 
             let totalSpots = 0;
+            const arrivedList = getArrivedList();
+
             data.forEach(item => {
                 totalSpots += item.spots_count;
                 const cleanPhone = item.customer_phone.replace(/\D/g, '');
+                const isArrived = arrivedList.includes(item.id);
+                
                 const tr = document.createElement('tr');
+                tr.id = `row-${item.id}`;
+                if (isArrived) tr.className = 'arrived';
+                
                 tr.innerHTML = `
                     <td style="font-weight:700; color:var(--accent-yellow);">${item.booking_time}</td>
                     <td style="font-weight:600;">${item.customer_name}</td>
                     <td><a href="https://wa.me/${cleanPhone}" target="_blank" class="btn-wa">${item.customer_phone}</a></td>
                     <td><span class="badge-spots">${item.spots_count} чел.</span></td>
                     <td><span class="badge-route">${item.route_name}</span></td>
-                    <td>${item.payment_method}</td>
+                    <td><b>${item.payment_method || '0'}</b></td>
+                    <td>
+                        <button class="status-btn ${isArrived ? 'checked' : ''}" id="btn-${item.id}">
+                            ${isArrived ? '✅ Прибыл' : '⏳ Ожидание'}
+                        </button>
+                    </td>
                 `;
+                
                 tableBody.appendChild(tr);
+
+                // Вешаем клик на кнопку статуса
+                const btn = tr.querySelector(`#btn-${item.id}`);
+                btn.addEventListener('click', () => toggleArrival(item.id, tr, btn));
             });
+
             document.getElementById('totalSpots').textContent = totalSpots;
             document.getElementById('totalBookings').textContent = data.length;
         } catch (e) {
             console.error(e);
-            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">Ошибка загрузки.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">Ошибка загрузки.</td></tr>';
         }
     }
     document.getElementById('filterDate').addEventListener('change', loadData);
     loadData();
 </script>
+</body>
+</html>
