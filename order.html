@@ -317,7 +317,6 @@
             if (resBlocks.ok) blocks = await resBlocks.json();
         } catch (e) { console.error("Ошибка загрузки данных:", e); }
 
-        // МЯГКИЙ СТАТУС ТУТ: Если заблокирован весь день, выводим красивую заглушку для клиентов
         const isDayBlocked = blocks.some(b => b.slot_time.trim().toUpperCase() === 'ALL');
         if (isDayBlocked) {
             showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Мест нет', 'К сожалению, все доступные места на этот день уже забронированы.', false);
@@ -336,26 +335,34 @@
 
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
+        
+        const tomorrow = new Date();
+        tomorrow.setDate(now.getDate() + 1);
+        const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
 
         wrapper.innerHTML = '';
         let visibleSlotsCount = 0;
 
         defaultTimes.forEach(time => {
-            // УМНАЯ ПРОВЕРКА: чистим время от скобок и пробелов принудительно перед сравнением
             const isSlotBlocked = blocks.some(b => {
                 const cleanBlockTime = b.slot_time.replace(/[\[\]\s]/g, '');
                 return cleanBlockTime === time;
             });
-            
             if (isSlotBlocked) return; 
 
-            if (dateInput === todayStr) {
+            // АВТОБЛОКИРОВКА НА УТРО (06:00) — Стоп в 22:00 прошлого вечера
+            if (time === '06:00') {
+                if (dateInput === todayStr) return;
+                if (dateInput === tomorrowStr && now.getHours() >= 22) return; 
+            }
+
+            // АВТОБЛОКИРОВКА ДНЕВНЫХ И ВЕЧЕРНИХ (За 3 часа до старта)
+            if (dateInput === todayStr && time !== '06:00') {
                 const [slotH, slotM] = time.split(':').map(Number);
-                if (slotH < currentHour || (slotH === currentHour && slotM <= currentMinute)) {
-                    return; 
-                }
+                const slotTimeObj = new Date();
+                slotTimeObj.setHours(slotH, slotM, 0, 0);
+                const diffInHours = (slotTimeObj - now) / (1000 * 60 * 60);
+                if (diffInHours < 3) return; 
             }
 
             visibleSlotsCount++;
