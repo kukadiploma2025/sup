@@ -21,10 +21,10 @@
         label { font-weight: 700; display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
         input[type="date"] { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 14px; box-sizing: border-box; font-size: 16px; background: #0a0f1d; color: var(--text-main); outline: none; margin-bottom: 20px; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-        .item-card { background: #0a0f1d; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .item-card { background: #0a0f1d; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .item-info strong { color: var(--accent-gold); font-size: 17px; }
-        .item-info p { margin: 5px 0 0 0; font-size: 14px; color: var(--text-muted); }
-        .client-name { color: var(--text-main); font-weight: 600; }
+        .item-info p { margin: 4px 0 0 0; font-size: 14px; color: var(--text-muted); }
+        .client-name { color: var(--text-main) !important; font-weight: 600; }
         .right-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
         .btn-wa { background: var(--wa-green); color: #fff; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; text-decoration: none; }
         .status-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
@@ -32,7 +32,7 @@
         .empty-msg { text-align: center; color: var(--text-muted); padding: 20px; font-style: italic; }
         .hourly-summary { background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-gold); padding: 12px; border-radius: 14px; margin-bottom: 20px; font-size: 14px; }
         .hourly-summary span { margin-right: 15px; font-weight: 600; }
-        .attended { border-color: rgba(37, 211, 102, 0.4) !important; background: rgba(37, 211, 102, 0.02); }
+        .attended { border-color: rgba(37, 211, 102, 0.4) !important; background: rgba(37, 211, 102, 0.02) !important; }
     </style>
 </head>
 <body>
@@ -84,10 +84,8 @@
                 stats[b.booking_time] = (stats[b.booking_time] || 0) + b.spots_count;
 
                 const cleanPhone = b.customer_phone.replace(/\D/g, '');
-                const msg = `Салам, ${b.customer_name}! 🏄‍♂️\nВаша бронь в SUP CLUB ASTANA подтверждена!\n\nМаршрут: ${b.route_name}\nДата: ${b.booking_date}\nВремя: ${b.booking_time}\nКоличество: ${b.spots_count} чел.\nСпособ оплаты: ${b.payment_method}\n\nЖдем вас! Пожалуйста, подходите за 15 минут до старта.`;
+                const msg = `Салам, ${b.customer_name}! 🏄‍♂️\nВаша бронь в SUP CLUB ASTANA подтверждена!\n\nМаршрут: ${b.route_name}\nДата: ${b.booking_date}\nВремя: ${b.booking_time}\nКоличество: ${b.spots_count} чел.`;
                 const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
-
-                // Проверяем статус посещения (используем поле payment_method или кастомное, пока привяжем визуально к чекбоксу в LocalStorage, чтобы не ломать базу)
                 const isAttended = localStorage.getItem(`attended_${b.id}`) === 'true';
 
                 const card = document.createElement('div');
