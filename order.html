@@ -248,6 +248,7 @@
 </div>
 
 <script>
+    // Твои рабочие ключи подключения к базе данных Supabase
     const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
@@ -296,7 +297,6 @@
         const selectedDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         const dayOfWeek = selectedDateObj.getDay();
 
-        // 1. Проверка на стандартное Воскресенье
         if (dayOfWeek === 0) {
             showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: запись на городской сплав невозможна', 'В этот день у нас проходит загородный сап-тур!', true);
             return;
@@ -307,7 +307,6 @@
         let bookings = [];
         let blocks = [];
 
-        // Получаем одновременно и брони, и админские блокировки
         try {
             const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
             const [resBookings, resBlocks] = await Promise.all([
@@ -319,7 +318,6 @@
             if (resBlocks.ok) blocks = await resBlocks.json();
         } catch (e) { console.error("Ошибка загрузки данных:", e); }
 
-        // 2. Проверка: заблокирован ли весь день администратором (slot_time === 'ALL')
         const isDayBlocked = blocks.some(b => b.slot_time === 'ALL');
         if (isDayBlocked) {
             showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата временно недоступна', 'Все сплавы на этот день закрыты администрацией.', false);
@@ -336,7 +334,6 @@
             if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
         }
 
-        // Фильтрация старого времени для сегодняшнего дня (Астана UTC+5)
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         const currentHour = now.getHours();
@@ -346,11 +343,9 @@
         let visibleSlotsCount = 0;
 
         defaultTimes.forEach(time => {
-            // А. Проверка админской блокировки конкретного часа (если заблокирован — НЕ РЕНДЕРИМ)
             const isSlotBlocked = blocks.some(b => b.slot_time === time);
             if (isSlotBlocked) return; 
 
-            // Б. Если выбрано сегодня — скрываем часы, которые уже прошли
             if (dateInput === todayStr) {
                 const [slotH, slotM] = time.split(':').map(Number);
                 if (slotH < currentHour || (slotH === currentHour && slotM <= currentMinute)) {
