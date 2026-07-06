@@ -317,9 +317,10 @@
             if (resBlocks.ok) blocks = await resBlocks.json();
         } catch (e) { console.error("Ошибка загрузки данных:", e); }
 
+        // МЯГКИЙ СТАТУС ТУТ: Если заблокирован весь день, выводим красивую заглушку для клиентов
         const isDayBlocked = blocks.some(b => b.slot_time.trim().toUpperCase() === 'ALL');
         if (isDayBlocked) {
-            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата временно недоступна', 'Все сплавы на этот день закрыты администрацией.', false);
+            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Мест нет', 'К сожалению, все доступные места на этот день уже забронированы.', false);
             return;
         }
 
@@ -342,7 +343,7 @@
         let visibleSlotsCount = 0;
 
         defaultTimes.forEach(time => {
-            // ФИКС ТУТ: очищаем админское время от скобок и пробелов перед проверкой
+            // УМНАЯ ПРОВЕРКА: чистим время от скобок и пробелов принудительно перед сравнением
             const isSlotBlocked = blocks.some(b => {
                 const cleanBlockTime = b.slot_time.replace(/[\[\]\s]/g, '');
                 return cleanBlockTime === time;
