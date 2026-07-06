@@ -248,7 +248,6 @@
 </div>
 
 <script>
-    // Твои рабочие ключи подключения к базе данных Supabase
     const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
@@ -318,7 +317,7 @@
             if (resBlocks.ok) blocks = await resBlocks.json();
         } catch (e) { console.error("Ошибка загрузки данных:", e); }
 
-        const isDayBlocked = blocks.some(b => b.slot_time === 'ALL');
+        const isDayBlocked = blocks.some(b => b.slot_time.trim().toUpperCase() === 'ALL');
         if (isDayBlocked) {
             showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата временно недоступна', 'Все сплавы на этот день закрыты администрацией.', false);
             return;
@@ -343,7 +342,12 @@
         let visibleSlotsCount = 0;
 
         defaultTimes.forEach(time => {
-            const isSlotBlocked = blocks.some(b => b.slot_time === time);
+            // ФИКС ТУТ: очищаем админское время от скобок и пробелов перед проверкой
+            const isSlotBlocked = blocks.some(b => {
+                const cleanBlockTime = b.slot_time.replace(/[\[\]\s]/g, '');
+                return cleanBlockTime === time;
+            });
+            
             if (isSlotBlocked) return; 
 
             if (dateInput === todayStr) {
