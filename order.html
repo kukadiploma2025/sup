@@ -6,18 +6,72 @@
     <title>Бронирование сплава — SUP CLUB ASTANA</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Стили для слотов (активные, заблокированные, с ошибками) */
+        /* Возвращаем сочный Deep Dark & Gold дизайн */
+        body.dark-theme {
+            background-color: #0b0b0b;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #d4af37; /* Золотой заголовок */
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e5e7eb;
+            font-size: 0.95rem;
+        }
+
+        /* Поля ввода в стиле Deep Dark */
+        .form-group select, 
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .form-group select:focus, 
+        .form-group input:focus {
+            outline: none;
+            border-color: #d4af37; /* Золотой фокус */
+        }
+
+        /* Сетка слотов времени */
         .slots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
         }
+
+        /* Кнопки слотов */
         .slot-btn {
-            background: #111111;
-            border: 2px solid #222222;
+            background: #141414;
+            border: 1px solid #2a2a2a;
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -26,45 +80,87 @@
             justify-content: center;
             align-items: center;
         }
+
         .slot-btn strong {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: #ffffff;
             display: block;
             margin-bottom: 4px;
         }
+
         .slot-btn .info-spots {
-            font-size: 0.85rem;
-            color: #d1d5db;
+            font-size: 0.8rem;
+            color: #9ca3af;
         }
+
+        /* Наведение и Активное состояние (Золото) */
         .slot-btn:hover:not(.disabled) {
-            border-color: #d4af37; /* Золотой при наведении */
-            background: #161616;
+            border-color: #d4af37;
+            background: #1c1c1c;
         }
+
         .slot-btn.active {
             border-color: #d4af37;
             background: #d4af37;
         }
-        .slot-btn.active strong, .slot-btn.active .info-spots {
+
+        .slot-btn.active strong, 
+        .slot-btn.active .info-spots {
             color: #000000;
+            font-weight: bold;
         }
+
+        /* Обычный заблокированный слот (Кончились места) */
         .slot-btn.disabled {
-            background: #1a1a1a;
-            border-color: #2a2a2a;
-            opacity: 0.6;
+            background: #101010;
+            border-color: #1a1a1a;
+            opacity: 0.4;
             cursor: not-allowed;
         }
+
         .slot-btn.disabled strong {
-            color: #666666;
+            color: #4b5563;
         }
+
         .slot-btn.disabled .info-spots {
-            color: #888888;
+            color: #4b5563;
         }
+
+        /* Автоблокировка по времени («Стоп за 3 часа», «Закрыто в 22:00») */
         .slot-btn.auto-blocked {
-            background: #1a1111;
+            background: #1a1111; /* Слегка красноватый глубокий фон */
+            border-color: #7f1d1d; /* Темно-красный бордер */
             opacity: 0.85;
+            cursor: not-allowed;
         }
+
         .slot-btn.auto-blocked strong {
-            color: #999999;
+            color: #9ca3af;
+        }
+
+        /* Кнопка отправки */
+        .btn-primary {
+            background: #d4af37;
+            color: #000000;
+            border: none;
+            padding: 15px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #f1c43f;
+        }
+
+        .btn-primary:disabled {
+            background: #2a2a2a;
+            color: #666666;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -75,7 +171,7 @@
         
         <!-- Выбор маршрута -->
         <div class="form-group">
-            <label>Выберите маршрут:</label>
+            <label>Маршрут сплава:</label>
             <select id="routeType" onchange="onRouteChange()">
                 <option value="turan-atyrau">Городской сплав (ЖК Туран — мост Атырау)</option>
                 <option value="sunrise">Рассветный сплав (06:00)</option>
@@ -84,7 +180,7 @@
 
         <!-- Выбор даты -->
         <div class="form-group">
-            <label>Выберите дату:</label>
+            <label>Дата сплава:</label>
             <input type="date" id="bookingDate" onchange="renderSlots()">
         </div>
 
@@ -97,26 +193,25 @@
         <!-- Контейнер для вывода экранов закрытия (Воскресенье / Мест нет) -->
         <div id="sundayWrapper"></div>
 
-        <!-- Поля бронирования, которые скрываются, если день полностью закрыт -->
+        <!-- Поля бронирования -->
         <div id="bookingFieldsContainer">
             <div class="form-group">
                 <label>Доступное время и места:</label>
                 <div id="slotsWrapper" class="slots-grid">
-                    <!-- Слоты генерируются динамически через JS -->
+                    <!-- Генерируется из JS -->
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 20px;">
+            <div class="form-group" style="margin-top: 25px;">
                 <label>Количество человек:</label>
                 <select id="spotsCount">
                     <option value="">Сначала выберите время</option>
                 </select>
             </div>
 
-            <!-- Дополнительные поля формы (Имя, Телефон и т.д.) -->
             <div class="form-group">
                 <label>Ваше имя:</label>
-                <input type="text" id="customerName" required placeholder="Иван">
+                <input type="text" id="customerName" required placeholder="Имя">
             </div>
             <div class="form-group">
                 <label>Телефон (WhatsApp):</label>
@@ -124,19 +219,17 @@
             </div>
         </div>
 
-        <p id="redirectNotice" style="font-size: 0.9rem; color: #888; margin-top: 15px;">
+        <p id="redirectNotice" style="font-size: 0.85rem; color: #888; margin-top: 20px; text-align: center;">
             * После нажатия кнопки вы будете перенаправлены на оплату Каспи.
         </p>
-        <button id="submitBtn" class="btn-primary" onclick="handleBooking()" style="width: 100%; margin-top: 10px;">Забронировать</button>
+        <button id="submitBtn" class="btn-primary" onclick="handleBooking()" style="width: 100%; margin-top: 5px;">Забронировать</button>
     </div>
 
-    <!-- КОНФИГУРАЦИЯ И ЛОГИКА -->
     <script>
-        // ТВОИ ДАННЫЕ SUPABASE (Подставь свои реальные ссылки)
+        // ДАННЫЕ SUPABASE (Подставь свои рабочие урлы и ключи)
         const BASE_SUPABASE_URL = "https://your-supabase-url.supabase.co/rest/v1"; 
         const ANON_KEY = "your-anon-key"; 
 
-        // Секретные промокоды для скрытых слотов
         const SECRET_CODES = {
             'VIP666': '06:00',
             'NIGHTSUP': '21:00'
@@ -146,7 +239,7 @@
         let selectedTime = null;
         let isSubmitting = false;
 
-        // Инициализация даты (минимум — сегодня)
+        // Дефолтная дата — сегодня
         const todayInputStr = new Date().toISOString().split('T')[0];
         document.getElementById('bookingDate').min = todayInputStr;
         document.getElementById('bookingDate').value = todayInputStr;
@@ -163,9 +256,9 @@
             btn.disabled = true;
             
             sunWrap.innerHTML = `
-                <div style="text-align:center; padding: 30px 10px; border: 2px dashed ${isSunday ? '#d4af37' : '#ef4444'}; border-radius:12px; margin: 20px 0;">
-                    <h3 style="color:${isSunday ? '#d4af37' : '#ef4444'}; margin-bottom:10px;">${title}</h3>
-                    <p style="color:#d1d5db; font-size:0.95rem; line-height:1.4;">${text}</p>
+                <div style="text-align:center; padding: 25px 15px; border: 1px solid ${isSunday ? '#d4af37' : '#7f1d1d'}; background: #141414; border-radius:8px; margin: 20px 0;">
+                    <h3 style="color:${isSunday ? '#d4af37' : '#ef4444'}; margin-top:0; margin-bottom:10px;">${title}</h3>
+                    <p style="color:#9ca3af; font-size:0.9rem; line-height:1.4; margin:0;">${text}</p>
                 </div>
             `;
         }
@@ -185,13 +278,12 @@
             const selectedDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             const dayOfWeek = selectedDateObj.getDay();
 
-            // Воскресенье закрыто для города
             if (dayOfWeek === 0) {
-                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: запись на городской сплав невозможна', 'В этот день у нас проходит загородный сап-тур!', true);
+                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: городской сплав закрыт', 'В этот день у нас проходит большой загородный сап-тур!', true);
                 return;
             }
 
-            wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#888; padding:10px;">Проверка свободных мест...</div>';
+            wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#666; padding:10px; font-size:0.9rem;">Проверка мест...</div>';
             
             let bookings = [];
             let blocks = [];
@@ -205,12 +297,11 @@
 
                 if (resBookings.ok) bookings = await resBookings.json();
                 if (resBlocks.ok) blocks = await resBlocks.json();
-            } catch (e) { console.error("Ошибка загрузки данных:", e); }
+            } catch (e) { console.error("Ошибка:", e); }
 
-            // Полная блокировка всего дня
             const isDayBlocked = blocks.some(b => b.slot_time.trim().toUpperCase() === 'ALL');
             if (isDayBlocked) {
-                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Мест нет', 'К сожалению, все доступные места на этот день уже забронированы.', false);
+                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Все места заняты', 'К сожалению, на этот день свободных сапов больше нет.', false);
                 return;
             }
 
@@ -218,10 +309,8 @@
             fieldsContainer.style.display = 'block';
             sundayWrapper.innerHTML = '';
 
-            // Базовые слоты в зависимости от селектора
             let defaultTimes = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
             
-            // Если введен промокод
             if (SECRET_CODES[promoInput]) {
                 const secretTime = SECRET_CODES[promoInput];
                 if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
@@ -238,47 +327,40 @@
             let visibleSlotsCount = 0;
 
             defaultTimes.forEach(time => {
-                // Ищем, заблокировал ли админ этот слот (полностью или частично)
-                // Очищаем время от пробелов для точного сравнения
-                const blockData = blocks.find(b => {
-                    const cleanBlockTime = b.slot_time.replace(/\s/g, '');
-                    return cleanBlockTime.startsWith(time);
-                });
+                const blockData = blocks.find(b => b.slot_time.replace(/\s/g, '').startsWith(time));
 
-                let adminOccupiedSpots = 0; // сколько мест сожрал админ
+                let adminOccupiedSpots = 0;
                 let isFullyBlockedByAdmin = false;
 
                 if (blockData) {
                     const rawTimeValue = blockData.slot_time.trim();
-                    // Проверяем паттерн типа "13:00[5]"
                     const match = rawTimeValue.match(/\[(\d+)\]/);
                     if (match) {
                         adminOccupiedSpots = parseInt(match[1], 10);
                     } else {
-                        // Если скобок нет, значит это обычный блок "13:00" — закрываем наглухо
                         isFullyBlockedByAdmin = true;
                     }
                 }
 
-                if (isFullyBlockedByAdmin) return; // Слот убран админом полностью
+                if (isFullyBlockedByAdmin) return; 
 
                 visibleSlotsCount++;
                 
                 let isAutoBlocked = false;
                 let blockReason = '';
 
-                // АВТОБЛОК: УТРЕННИЕ (06:00) — стоп в 22:00 прошлого вечера
+                // Проверка утра
                 if (time === '06:00') {
                     if (dateInput === todayStr) {
                         isAutoBlocked = true;
-                        blockReason = 'Сплав уже прошёл';
+                        blockReason = 'Сплав прошёл';
                     } else if (dateInput === tomorrowStr && now.getHours() >= 22) {
                         isAutoBlocked = true;
-                        blockReason = 'Запись закрыта в 22:00';
+                        blockReason = 'До 22:00 вчер.';
                     }
                 }
 
-                // АВТОБЛОК: ДНЕВНЫЕ — стоп за 3 часа до старта
+                // Проверка дня (за 3 часа)
                 if (dateInput === todayStr && time !== '06:00') {
                     const [slotH, slotM] = time.split(':').map(Number);
                     const slotTimeObj = new Date();
@@ -287,33 +369,26 @@
                     
                     if (diffInHours < 0) {
                         isAutoBlocked = true;
-                        blockReason = 'Сплав уже прошёл';
+                        blockReason = 'Сплав прошёл';
                     } else if (diffInHours < 3) {
                         isAutoBlocked = true;
-                        blockReason = 'Стоп за 3 часа до старта';
+                        blockReason = 'Стоп за 3 часа';
                     }
                 }
 
-                // Считаем реальные брони клиентов из базы
                 const clientBooked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
-                
-                // Итого свободных мест: Максимум (6) минус брони, минус хотелка админа
                 const left = 6 - clientBooked - adminOccupiedSpots;
                 
                 const btn = document.createElement('div');
                 
-                // Вариант 1: Жесткий автоблок по времени (чтобы мозг не ебали)
                 if (isAutoBlocked) {
-                    btn.className = 'slot-btn disabled auto-blocked';
-                    btn.style.borderColor = '#ef4444'; 
+                    btn.className = 'slot-btn auto-blocked';
                     btn.innerHTML = `<strong>${time}</strong><span class="info-spots" style="color:#ef4444; font-weight:bold;">${blockReason}</span>`;
                 } 
-                // Вариант 2: Мест реально физически не осталось (или админ забрал)
                 else if (left <= 0) {
                     btn.className = 'slot-btn disabled';
                     btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
                 } 
-                // Вариант 3: Слот открыт и доступен
                 else {
                     btn.className = 'slot-btn';
                     if (time === selectedTime) btn.classList.add('active');
@@ -325,7 +400,6 @@
                         btn.classList.add('active');
                         selectedTime = time;
                         
-                        // Перестраиваем выпадающий список мест под этот слот
                         const select = document.getElementById('spotsCount');
                         select.innerHTML = '';
                         for (let i = 1; i <= left; i++) {
@@ -340,22 +414,18 @@
             });
 
             if (visibleSlotsCount === 0) {
-                wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:10px; font-weight:700;">Нет доступных слотов на эту дату</div>';
+                wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:10px; font-weight:700;">Нет доступных слотов</div>';
                 submitBtn.disabled = true;
             }
         }
 
-        // Логика отправки формы (заглушка для структуры)
         async function handleBooking() {
             if (!selectedTime) { alert('Пожалуйста, выберите время сплава!'); return; }
             const spots = document.getElementById('spotsCount').value;
             if (!spots) { alert('Выберите количество человек!'); return; }
-            
-            // Твоя логика сохранения в Supabase и редиректа на Каспи...
-            alert(`Отправляем бронь на время ${selectedTime}, мест: ${spots}`);
+            alert(`Бронируем время ${selectedTime}, мест: ${spots}`);
         }
 
-        // Первый запуск при загрузке страницы
         renderSlots();
     </script>
 </body>
