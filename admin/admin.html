@@ -13,6 +13,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
+            --accent-green: #10b981;
         }
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -82,7 +83,7 @@
         h1 { color: var(--accent-yellow); margin: 0; font-size: 28px; }
         .controls-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .filter-group { display: flex; align-items: center; gap: 10px; }
-        input[type="date"] {
+        input[type="date"], select {
             padding: 10px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -102,6 +103,17 @@
             transition: opacity 0.2s;
         }
         .btn-danger:hover { opacity: 0.9; }
+
+        .btn-secondary {
+            background: #475569;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
         
         .stats-grid {
             display: grid;
@@ -139,6 +151,15 @@
         th, td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         th { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         tr:last-child td { border-bottom: none; }
+
+        /* Стиль для выполненной (вычеркнутой) записи */
+        tr.row-completed {
+            opacity: 0.4;
+        }
+        tr.row-completed td:not(:last-child) {
+            text-decoration: line-through;
+            text-decoration-color: var(--accent-yellow);
+        }
         
         .note-input, .prepay-input {
             background: #151f32;
@@ -166,7 +187,8 @@
         
         .action-btns {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
         .btn-save {
             background: var(--accent-yellow);
@@ -179,6 +201,21 @@
             font-size: 13px;
         }
         .btn-save:hover { opacity: 0.9; }
+
+        .btn-complete-row {
+            background: #1e293b;
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-complete-row.active {
+            background: var(--accent-green);
+            color: #fff;
+        }
 
         .btn-delete-row {
             background: #343a40;
@@ -199,6 +236,23 @@
 
         .badge-rest { font-weight: bold; color: #f43f5e; }
         .badge-done { font-weight: bold; color: #10b981; }
+
+        .wa-link {
+            color: #25d366;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .wa-link:hover { text-decoration: underline; }
+
+        /* Секретная панель выходных */
+        .weekend-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -218,11 +272,35 @@
     <div class="header-panel">
         <h1>SUP CLUB ASTANA | Управление</h1>
         <div class="controls-group">
+            <button class="btn-secondary" onclick="toggleWeekendPanel()">Настройка выходных</button>
             <div class="filter-group">
-                <label style="color: var(--text-muted)">Дата отчета (00:00 - 23:59): </label>
+                <label style="color: var(--text-muted)">Дата отчета: </label>
                 <input type="date" id="adminDate" onchange="loadAdminData()">
             </div>
             <button class="btn-danger" onclick="clearDatabaseWithCode()">Очистить всю базу</button>
+        </div>
+    </div>
+
+    <!-- Скрытая панель блокировки дат (Беспалевные выходные) -->
+    <div class="weekend-panel" id="weekendPanel">
+        <h3 style="color: var(--accent-yellow); margin-top: 0;">Управление закрытыми датами / часами</h3>
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <input type="date" id="blockDate">
+            <select id="blockTime">
+                <option value="ALL">ВСЕ СЛОТЫ (Весь день)</option>
+                <option value="06:00">06:00</option>
+                <option value="08:00">08:00</option>
+                <option value="10:00">10:00</option>
+                <option value="12:00">12:00</option>
+                <option value="14:00">14:00</option>
+                <option value="16:00">16:00</option>
+                <option value="18:00">18:00</option>
+                <option value="20:00">20:00</option>
+            </select>
+            <button class="btn-save" onclick="addDisabledSlot()">Заблокировать</button>
+        </div>
+        <div id="disabledSlotsList" style="margin-top: 15px; font-size: 14px; color: var(--text-muted);">
+            <!-- Список заблоченных дней -->
         </div>
     </div>
 
@@ -302,6 +380,44 @@
         document.getElementById('adminDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
         loadAdminData();
+        renderDisabledSlots();
+    }
+
+    // Логика секретных выходных дней (без палева в общем коде)
+    function toggleWeekendPanel() {
+        const panel = document.getElementById('weekendPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function addDisabledSlot() {
+        const dateVal = document.getElementById('blockDate').value;
+        const timeVal = document.getElementById('blockTime').value;
+        if (!dateVal) return alert('Выберите дату');
+
+        let currentSlots = JSON.parse(localStorage.getItem('sup_disabled_slots')) || [];
+        currentSlots.push({ date: dateVal, time: timeVal });
+        localStorage.setItem('sup_disabled_slots', JSON.stringify(currentSlots));
+        
+        renderDisabledSlots();
+    }
+
+    function removeDisabledSlot(index) {
+        let currentSlots = JSON.parse(localStorage.getItem('sup_disabled_slots')) || [];
+        currentSlots.splice(index, 1);
+        localStorage.setItem('sup_disabled_slots', JSON.stringify(currentSlots));
+        renderDisabledSlots();
+    }
+
+    function renderDisabledSlots() {
+        const container = document.getElementById('disabledSlotsList');
+        let currentSlots = JSON.parse(localStorage.getItem('sup_disabled_slots')) || [];
+        if (currentSlots.length === 0) {
+            container.innerHTML = 'Нет заблокированных дат.';
+            return;
+        }
+        container.innerHTML = '<strong>Заблокировано:</strong><br>' + currentSlots.map((s, idx) => 
+            `• ${s.date} [${s.time === 'ALL' ? 'Весь день' : s.time}] <button onclick="removeDisabledSlot(${idx})" style="background:none; border:none; color:red; cursor:pointer; padding:0 5px;">[Удалить]</button>`
+        ).join('<br>');
     }
 
     async function loadAdminData() {
@@ -348,19 +464,42 @@
                 
                 const restCost = totalCost - prepayCash;
                 const isPaid = item.notes && item.notes.includes('[PAID]');
-                const cleanNotes = item.notes ? item.notes.replace('[PAID]', '').trim() : '';
+                const isCompleted = item.notes && item.notes.includes('[COMPLETED]');
+                
+                let cleanNotes = item.notes ? item.notes.replace('[PAID]', '').replace('[COMPLETED]', '').trim() : '';
 
                 globalPeople += item.spots_count;
                 globalSum += totalCost;
                 globalPrepaid += prepayCash;
                 globalRemaining += restCost;
 
+                // Генерация времени создания (Timestamp)
+                let createdAtStr = '—';
+                if (item.created_at) {
+                    const cDate = new Date(item.created_at);
+                    createdAtStr = `${String(cDate.getDate()).padStart(2, '0')}.${String(cDate.getMonth() + 1).padStart(2, '0')} в ${String(cDate.getHours()).padStart(2, '0')}:${String(cDate.getMinutes()).padStart(2, '0')}`;
+                }
+
+                // Шаблон автоматического сообщения в WhatsApp
+                const rawPhone = item.customer_phone.replace(/\D/g, '');
+                const waMessage = encodeURIComponent(
+                    `На связи инструктор SUP.CLUB.ASTANA, Меня зовут Қуаныш.\n\n` +
+                    `Вижу вашу бронь на ${item.booking_date} в ${item.booking_time} на городской сплав на сапбордах.\n\n` +
+                    `Чтобы подтвердить бронирование, необходимо внести предоплату 50%. Это позволит нам заранее подготовить всё необходимое к вашему приезду.\n\n` +
+                    `Обратите внимание: при отмене бронирования или неявке менее чем за 2 часов до начала сплава предоплата не возвращается.\n\n` +
+                    `После оплаты отправьте, пожалуйста, чек в ответ на это сообщение. До встречи на воде! 🌊`
+                );
+                const waUrl = `https://wa.me/${rawPhone}?text=${waMessage}`;
+
                 const tr = document.createElement('tr');
+                if (isCompleted) tr.classList.add('row-completed');
+
                 tr.innerHTML = `
                     <td style="font-weight:bold; color:var(--accent-yellow); font-size:16px;">${item.booking_time}</td>
                     <td>
                         <strong>${item.customer_name}</strong><br>
-                        <span style="font-size:12px; color:var(--text-muted);">${item.customer_phone}</span>
+                        <a href="${waUrl}" target="_blank" class="wa-link" title="Написать в WhatsApp">📱 ${item.customer_phone}</a><br>
+                        <span style="font-size:11px; color:var(--text-muted);">Создано: ${createdAtStr}</span>
                     </td>
                     <td style="font-size:13px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.route_name}</td>
                     <td style="font-weight:bold; text-align:center; font-size:16px;">${item.spots_count}</td>
@@ -380,6 +519,7 @@
                     <td>
                         <div class="action-btns">
                             <button class="btn-save" onclick="saveAdminRow(${item.id})">Сохранить</button>
+                            <button class="btn-complete-row ${isCompleted ? 'active' : ''}" onclick="toggleCompleteRow(${item.id}, ${isCompleted})">${isCompleted ? '↩️' : '✅'}</button>
                             <button class="btn-delete-row" onclick="deleteAdminRow(${item.id}, '${item.customer_name.replace(/'/g, "\\'")}')">Удалить</button>
                         </div>
                     </td>
@@ -409,10 +549,12 @@
 
     async function saveAdminRow(id) {
         const isChecked = document.getElementById(`check-${id}`).checked;
+        const isCompleted = document.getElementById(`note-${id}`).parentNode.parentNode.classList.contains('row-completed');
         const prepayValue = document.getElementById(`prepay-${id}`).value.trim();
         let noteValue = document.getElementById(`note-${id}`).value.trim();
 
         if (isChecked) noteValue = '[PAID] ' + noteValue;
+        if (isCompleted) noteValue = '[COMPLETED] ' + noteValue;
 
         try {
             const response = await fetch(`${API_URL}?id=eq.${id}`, {
@@ -427,13 +569,42 @@
             });
 
             if (response.ok) loadAdminData();
-            else alert('Не удалось обновить данные в Supabase.');
+            else alert('Не удалось update данные в Supabase.');
         } catch (e) {
             alert('Сбой сети при сохранении: ' + e.message);
         }
     }
 
-    // НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ ОДНОЙ СТРОКИ
+    // Переключение статуса Выполнено/Вычеркнуто
+    async function toggleCompleteRow(id, currentlyCompleted) {
+        const isChecked = document.getElementById(`check-${id}`).checked;
+        const prepayValue = document.getElementById(`prepay-${id}`).value.trim();
+        let noteValue = document.getElementById(`note-${id}`).value.trim();
+
+        if (isChecked) noteValue = '[PAID] ' + noteValue;
+        
+        // Меняем статус наоборот
+        if (!currentlyCompleted) {
+            noteValue = '[COMPLETED] ' + noteValue;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}?id=eq.${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': ANON_KEY,
+                    'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ notes: noteValue })
+            });
+
+            if (response.ok) loadAdminData();
+        } catch (e) {
+            alert('Ошибка изменения статуса выполнения: ' + e.message);
+        }
+    }
+
     async function deleteAdminRow(id, name) {
         const confirmDelete = confirm(`Вы действительно хотите удалить бронирование на имя "${name}"?`);
         if (!confirmDelete) return;
@@ -449,9 +620,9 @@
             });
 
             if (response.ok) {
-                loadAdminData(); // Обновляем список сразу после удаления
+                loadAdminData();
             } else {
-                alert('Не удалось удалить запись. Проверьте правила RLS в Supabase.');
+                alert('Не удалось удалить запись.');
             }
         } catch (e) {
             alert('Сбой сети при удалении записи: ' + e.message);
