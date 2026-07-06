@@ -73,39 +73,38 @@
 </div>
 
 <script>
-    // Хеш SHA-256 для пароля "kuka2005"
-    const HASHED_PASSWORD_TARGET = "98ba56910a90409941a3fb84687d6cf6289b5832a82649bdf535fb6dfdf3692a";
-    const TARGET_USER = "admin";
-
-    // Хелпер для шифрования строки в SHA-256
-    async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function checkLogin() {
-        const user = document.getElementById('username').value.trim();
-        const pass = document.getElementById('password').value;
-        
-        const hashedPass = await sha256(pass);
-
-        if (user === TARGET_USER && hashedPass === HASHED_PASSWORD_TARGET) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            loadData();
-        } else {
-            alert('Неверный логин или пароль!');
-        }
-    }
-
     const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
     const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
 
     const today = new Date();
     document.getElementById('filterDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    // Безопасная проверка через сервер Supabase RPC
+    async function checkLogin() {
+        const user = document.getElementById('username').value.trim().toLowerCase();
+        const pass = document.getElementById('password').value.trim();
+
+        try {
+            const response = await fetch(`${BASE_SUPABASE_URL}/rpc/check_admin_login`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ p_user: user, p_pass: pass })
+            });
+
+            const isValid = await response.json();
+
+            if (isValid === true) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                loadData();
+            } else {
+                alert('Неверный логин или пароль!');
+            }
+        } catch (e) {
+            alert('Ошибка авторизации. Проверьте настройки SQL в Supabase.');
+        }
+    }
 
     async function loadData() {
         const dateInput = document.getElementById('filterDate').value;
