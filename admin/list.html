@@ -3,163 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUP CLUB ASTANA — Панель администратора</title>
+    <title>SUP CLUB ASTANA — Список бронирований</title>
     <style>
         :root {
             --bg-main: #0a0f1d;
             --bg-card: #131a30;
             --accent-gold: #f59e0b;
-            --accent-gold-hover: #d97706;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #243256;
-            --danger: #ef4444;
+            --wa-green: #25d366;
         }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg-main); 
-            color: var(--text-main); 
-            padding: 20px; 
-            margin: 0; 
-        }
-        .admin-container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            background: var(--bg-card); 
-            padding: 25px; 
-            border-radius: 24px; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        h2, h3 { 
-            color: var(--accent-gold); 
-            margin-top: 0;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-        h2 { text-align: center; margin-bottom: 25px; }
-        h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px; }
-        
-        label { 
-            font-weight: 700; 
-            display: block; 
-            margin-bottom: 8px; 
-            color: var(--text-muted); 
-            font-size: 13px; 
-            text-transform: uppercase; 
-        }
-        input[type="date"], select { 
-            width: 100%; 
-            padding: 14px; 
-            border: 2px solid var(--border-color); 
-            border-radius: 14px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
-            background: #0a0f1d; 
-            color: var(--text-main); 
-            outline: none; 
-            transition: border-color 0.2s;
-            margin-bottom: 20px;
-        }
-        input:focus, select:focus { border-color: var(--accent-gold); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; }
+        .admin-container { max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2, h3 { color: var(--accent-gold); margin-top: 0; font-weight: 800; text-align: center; }
+        h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-top: 30px; text-align: left; }
+        label { font-weight: 700; display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        input[type="date"] { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 14px; box-sizing: border-box; font-size: 16px; background: #0a0f1d; color: var(--text-main); outline: none; margin-bottom: 20px; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-
-        .block-form-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        .block-form-group select { margin-bottom: 0; flex: 2; }
-        .btn-block {
-            flex: 1;
-            background: var(--danger);
-            color: #fff;
-            border: none;
-            padding: 0 15px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: opacity 0.2s;
-        }
-        .btn-block:hover { opacity: 0.9; }
-
-        .item-card { 
-            background: #0a0f1d;
-            border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 16px; 
-            margin-bottom: 12px; 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .item-card { background: #0a0f1d; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .item-info strong { color: var(--accent-gold); font-size: 17px; }
-        .item-info p { margin: 5px 0 0 0; font-size: 14px; color: var(--text-muted); line-height: 1.4; }
+        .item-info p { margin: 5px 0 0 0; font-size: 14px; color: var(--text-muted); }
         .client-name { color: var(--text-main); font-weight: 600; }
-        
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 8px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .btn-delete:hover {
-            background: var(--danger);
-            color: #fff;
-        }
+        .right-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .btn-wa { background: var(--wa-green); color: #fff; border: none; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; text-decoration: none; }
+        .status-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+        .status-check input { width: 16px; height: 16px; accent-color: var(--accent-gold); }
         .empty-msg { text-align: center; color: var(--text-muted); padding: 20px; font-style: italic; }
-        
-        .hourly-summary {
-            background: rgba(245, 158, 11, 0.05);
-            border: 1px dashed var(--accent-gold);
-            padding: 12px;
-            border-radius: 14px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+        .hourly-summary { background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-gold); padding: 12px; border-radius: 14px; margin-bottom: 20px; font-size: 14px; }
         .hourly-summary span { margin-right: 15px; font-weight: 600; }
+        .attended { border-color: rgba(37, 211, 102, 0.4) !important; background: rgba(37, 211, 102, 0.02); }
     </style>
 </head>
 <body>
 
 <div class="admin-container">
-    <h2>SUP CLUB ASTANA <br><span style="font-size:14px; color:var(--text-muted); font-weight:400;">Панель управления</span></h2>
+    <h2>SUP CLUB ASTANA <br><span style="font-size:14px; color:var(--text-muted); font-weight:400;">Список записей и отметки</span></h2>
 
-    <!-- ВЫБОР ДАТЫ -->
-    <label for="filterDate">Выберите дату для просмотра</label>
+    <label for="filterDate">Выберите дату</label>
     <input type="date" id="filterDate" onchange="loadData()">
 
-    <!-- БЛОКИРОВКА СЛОТОВ -->
-    <h3>Заблокировать время</h3>
-    <div class="block-form-group">
-        <select id="timeToBlock">
-            <option value="10:00">10:00 (Маршрут Атырау)</option>
-            <option value="13:00">13:00 (Маршрут Атырау)</option>
-            <option value="16:00">16:00 (Маршрут Атырау)</option>
-            <option value="18:00">18:00 (Маршрут Атырау)</option>
-            <option value="06:00">06:00 (Маршрут Акорда)</option>
-            <option value="ALL">Закрыть весь день целиком</option>
-        </select>
-        <button class="btn-block" onclick="blockSlot()">Блок</button>
-    </div>
-
-    <!-- СТАТИСТИКА НА ДЕНЬ -->
     <div id="daySummary" class="hourly-summary" style="display:none;"></div>
 
-    <!-- СПИСОК БРОНЕЙ -->
     <h3>Бронирования клиентов</h3>
     <div id="bookingsList"></div>
-
-    <!-- СПИСОК БЛОКИРОВОК -->
-    <h3>Заблокированные слоты</h3>
-    <div id="blocksList"></div>
 </div>
 
 <script>
@@ -167,11 +54,9 @@
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
     const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
 
-    // Устанавливаем сегодняшнюю дату по умолчанию
     const today = new Date();
     document.getElementById('filterDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Загрузка данных при старте
     loadData();
 
     async function loadData() {
@@ -179,126 +64,69 @@
         if (!dateInput) return;
 
         const bList = document.getElementById('bookingsList');
-        const blList = document.getElementById('blocksList');
         const summaryDiv = document.getElementById('daySummary');
-        
         bList.innerHTML = '<div class="empty-msg">Загрузка броней...</div>';
-        blList.innerHTML = '<div class="empty-msg">Загрузка блокировок...</div>';
         summaryDiv.style.display = 'none';
 
         try {
-            const [resBookings, resBlocks] = await Promise.all([
-                fetch(`${BASE_SUPABASE_URL}/bookings?booking_date=eq.${dateInput}&order=booking_time.asc`, { method: 'GET', headers }),
-                fetch(`${BASE_SUPABASE_URL}/blocked_slots?block_date=eq.${dateInput}`, { method: 'GET', headers })
-            ]);
+            const response = await fetch(`${BASE_SUPABASE_URL}/bookings?booking_date=eq.${dateInput}&order=booking_time.asc`, { method: 'GET', headers });
+            const bookings = response.ok ? await response.json() : [];
 
-            const bookings = resBookings.ok ? await resBookings.json() : [];
-            const blocks = resBlocks.ok ? await resBlocks.json() : [];
-
-            // 1. РЕНДЕР БРОНЕЙ
             if (bookings.length === 0) {
                 bList.innerHTML = '<div class="empty-msg">Нет записей на этот день</div>';
-            } else {
-                bList.innerHTML = '';
-                let stats = {};
-
-                bookings.forEach(b => {
-                    stats[b.booking_time] = (stats[b.booking_time] || 0) + b.spots_count;
-
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-                    card.innerHTML = `
-                        <div class="item-info">
-                            <strong>[${b.booking_time}] — ${b.spots_count} чел.</strong>
-                            <p class="client-name">${b.customer_name} (${b.customer_phone})</p>
-                            <p>${b.route_name} | Оплата: ${b.payment_method}</p>
-                        </div>
-                        <button class="btn-delete" onclick="deleteBooking(${b.id})">Удалить</button>
-                    `;
-                    bList.appendChild(card);
-                });
-
-                // Вывод сводки по местам на день
-                let summaryHTML = '📊 <strong>Занято мест:</strong> ';
-                for (let time in stats) {
-                    summaryHTML += `<span>${time}: ${stats[time]}/6 чел.</span>`;
-                }
-                summaryDiv.innerHTML = summaryHTML;
-                summaryDiv.style.display = 'block';
+                return;
             }
 
-            // 2. РЕНДЕР БЛОКИРОВОК
-            if (blocks.length === 0) {
-                blList.innerHTML = '<div class="empty-msg">Нет заблокированных слотов</div>';
-            } else {
-                blList.innerHTML = '';
-                blocks.forEach(b => {
-                    // Очищаем отображение времени от скобок, если они записались в базу
-                    const cleanTime = b.slot_time.replace(/[\[\]\s]/g, '');
-                    
-                    const card = document.createElement('div');
-                    card.className = 'item-card';
-                    card.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-                    card.innerHTML = `
-                        <div class="item-info">
-                            <strong style="color:var(--danger)">🛑 Заблокировано: ${cleanTime === 'ALL' ? 'ВЕСЬ ДЕНЬ' : cleanTime}</strong>
-                            <p>Клиенты не смогут выбрать это время на сайте</p>
-                        </div>
-                        <button class="btn-delete" onclick="deleteBlock(${b.id})">Разблокировать</button>
-                    `;
-                    blList.appendChild(card);
-                });
-            }
+            bList.innerHTML = '';
+            let stats = {};
 
-        } catch (e) {
-            console.error(e);
-            bList.innerHTML = '<div class="empty-msg" style="color:var(--danger)">Ошибка загрузки данных</div>';
+            bookings.forEach(b => {
+                stats[b.booking_time] = (stats[b.booking_time] || 0) + b.spots_count;
+
+                const cleanPhone = b.customer_phone.replace(/\D/g, '');
+                const msg = `Салам, ${b.customer_name}! 🏄‍♂️\nВаша бронь в SUP CLUB ASTANA подтверждена!\n\nМаршрут: ${b.route_name}\nДата: ${b.booking_date}\nВремя: ${b.booking_time}\nКоличество: ${b.spots_count} чел.\nСпособ оплаты: ${b.payment_method}\n\nЖдем вас! Пожалуйста, подходите за 15 минут до старта.`;
+                const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+
+                // Проверяем статус посещения (используем поле payment_method или кастомное, пока привяжем визуально к чекбоксу в LocalStorage, чтобы не ломать базу)
+                const isAttended = localStorage.getItem(`attended_${b.id}`) === 'true';
+
+                const card = document.createElement('div');
+                card.className = `item-card ${isAttended ? 'attended' : ''}`;
+                card.id = `card_${b.id}`;
+                card.innerHTML = `
+                    <div class="item-info">
+                        <strong>[${b.booking_time}] — ${b.spots_count} чел.</strong>
+                        <p class="client-name">${b.customer_name} (${b.customer_phone})</p>
+                        <p>${b.route_name} | Оплата: ${b.payment_method}</p>
+                    </div>
+                    <div class="right-actions">
+                        <a href="${waLink}" target="_blank" class="btn-wa">💬 Чат</a>
+                        <label class="status-check">
+                            <input type="checkbox" ${isAttended ? 'checked' : ''} onchange="toggleAttendance(${b.id}, this)">
+                            <span>Пришел</span>
+                        </label>
+                    </div>
+                `;
+                bList.appendChild(card);
+            });
+
+            let summaryHTML = '📊 <strong>Занято мест:</strong> ';
+            for (let time in stats) { summaryHTML += `<span>${time}: ${stats[time]}/6 чел.</span>`; }
+            summaryDiv.innerHTML = summaryHTML;
+            summaryDiv.style.display = 'block';
+
+        } catch (e) { bList.innerHTML = '<div class="empty-msg" style="color:#ef4444">Ошибка загрузки данных</div>'; }
+    }
+
+    function toggleAttendance(id, checkbox) {
+        const card = document.getElementById(`card_${id}`);
+        if (checkbox.checked) {
+            card.classList.add('attended');
+            localStorage.setItem(`attended_${id}`, 'true');
+        } else {
+            card.classList.remove('attended');
+            localStorage.setItem(`attended_${id}`, 'false');
         }
-    }
-
-    // Добавить блокировку
-    async function blockSlot() {
-        const dateInput = document.getElementById('filterDate').value;
-        const timeInput = document.getElementById('timeToBlock').value;
-        if (!dateInput) return;
-
-        try {
-            const response = await fetch(`${BASE_SUPABASE_URL}/blocked_slots`, {
-                method: 'POST',
-                headers: { ...headers, 'Prefer': 'return=minimal' },
-                body: JSON.stringify({ block_date: dateInput, slot_time: timeInput })
-            });
-
-            if (response.ok) {
-                loadData();
-            } else {
-                alert('Ошибка при блокировке слота');
-            }
-        } catch (e) { alert(e.message); }
-    }
-
-    // Удалить блокировку
-    async function deleteBlock(id) {
-        if (!confirm('Разблокировать это время?')) return;
-        try {
-            const response = await fetch(`${BASE_SUPABASE_URL}/blocked_slots?id=eq.${id}`, {
-                method: 'DELETE',
-                headers
-            });
-            if (response.ok) loadData();
-        } catch (e) { alert(e.message); }
-    }
-
-    // Удалить бронь клиента
-    async function deleteBooking(id) {
-        if (!confirm('Вы уверены, что хотите удалить эту бронь? Места освободятся.')) return;
-        try {
-            const response = await fetch(`${BASE_SUPABASE_URL}/bookings?id=eq.${id}`, {
-                method: 'DELETE',
-                headers
-            });
-            if (response.ok) loadData();
-        } catch (e) { alert(e.message); }
     }
 </script>
 </body>
