@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUP CLUB ASTANA — Управление базой</title>
+    <title>SUP CLUB ASTANA — Панель Администратора</title>
     <style>
         :root {
             --bg-main: #0a0f1d;
@@ -13,6 +13,7 @@
             --text-muted: #94a3b8;
             --border-color: #243256;
             --danger: #ef4444;
+            --wa-green: #25d366;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-main); color: var(--text-main); padding: 20px; margin: 0; }
         .admin-container { max-width: 600px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -27,17 +28,23 @@
         .block-form-group select { margin-bottom: 0; flex: 2; }
         .btn-block { flex: 1; background: var(--danger); color: #fff; border: none; padding: 0 15px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
         .btn-login { width: 100%; background: var(--accent-gold); color: #000; border: none; padding: 14px; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
-        .item-card { background: #0a0f1d; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .item-card { background: #0a0f1d; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
         .item-info strong { color: var(--accent-gold); font-size: 17px; }
-        .item-info p { margin: 5px 0 0 0; font-size: 14px; color: var(--text-muted); }
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .item-info p { margin: 4px 0 0 0; font-size: 14px; color: var(--text-muted); }
+        .client-name { color: var(--text-main) !important; font-weight: 600; }
+        .right-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .btn-group { display: flex; gap: 8px; }
+        .btn-wa { background: var(--wa-green); color: #fff; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-block; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; }
         .btn-delete:hover { background: var(--danger); color: #fff; }
+        .status-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer; margin: 0 !important; text-transform: none !important; }
+        .status-check input { width: 16px; height: 16px; accent-color: var(--accent-gold); margin: 0; }
         .empty-msg { text-align: center; color: var(--text-muted); padding: 20px; font-style: italic; }
+        .attended { border-color: rgba(37, 211, 102, 0.4) !important; background: rgba(37, 211, 102, 0.02) !important; }
     </style>
 </head>
 <body>
 
-<!-- ОКНО АВТОРИЗАЦИИ -->
 <div id="loginScreen" class="login-screen">
     <h2>Вход в панель</h2>
     <input type="text" id="username" placeholder="Логин">
@@ -45,7 +52,6 @@
     <button class="btn-login" onclick="checkLogin()">Войти</button>
 </div>
 
-<!-- ОСНОВНОЙ КОНТЕНТ АДМИНКИ -->
 <div id="adminContent" class="admin-container" style="display: none;">
     <h2>SUP CLUB ASTANA <br><span style="font-size:14px; color:var(--text-muted); font-weight:400;">Управление Блокировками и Удалением</span></h2>
 
@@ -80,30 +86,22 @@
     const today = new Date();
     document.getElementById('filterDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // Безопасная проверка через сервер Supabase RPC
     async function checkLogin() {
         const user = document.getElementById('username').value.trim().toLowerCase();
         const pass = document.getElementById('password').value.trim();
-
         try {
             const response = await fetch(`${BASE_SUPABASE_URL}/rpc/check_admin_login`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ p_user: user, p_pass: pass })
             });
-
             const isValid = await response.json();
-
             if (isValid === true) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminContent').style.display = 'block';
                 loadData();
-            } else {
-                alert('Неверный логин или пароль!');
-            }
-        } catch (e) {
-            alert('Ошибка авторизации. Проверьте настройки SQL в Supabase.');
-        }
+            } else { alert('Неверный логин или пароль!'); }
+        } catch (e) { alert('Ошибка авторизации.'); }
     }
 
     async function loadData() {
@@ -112,7 +110,6 @@
 
         const bList = document.getElementById('bookingsList');
         const blList = document.getElementById('blocksList');
-        
         bList.innerHTML = '<div class="empty-msg">Загрузка броней...</div>';
         blList.innerHTML = '<div class="empty-msg">Загрузка блокировок...</div>';
 
@@ -130,14 +127,30 @@
             } else {
                 bList.innerHTML = '';
                 bookings.forEach(b => {
+                    const cleanPhone = b.customer_phone.replace(/\D/g, '');
+                    const msg = `Салам, ${b.customer_name}! 🏄‍♂️\nВаша бронь в SUP CLUB ASTANA подтверждена!\n\nМаршрут: ${b.route_name}\nДата: ${b.booking_date}\nВремя: ${b.booking_time}\nКоличество: ${b.spots_count} чел.`;
+                    const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+                    const isAttended = localStorage.getItem(`attended_${b.id}`) === 'true';
+
                     const card = document.createElement('div');
-                    card.className = 'item-card';
+                    card.className = `item-card ${isAttended ? 'attended' : ''}`;
+                    card.id = `card_${b.id}`;
                     card.innerHTML = `
                         <div class="item-info">
                             <strong>[${b.booking_time}] — ${b.spots_count} чел.</strong>
-                            <p>${b.customer_name} (${b.customer_phone})</p>
+                            <p class="client-name">${b.customer_name} (${b.customer_phone})</p>
+                            <p>${b.route_name} | Оплата: ${b.payment_method}</p>
                         </div>
-                        <button class="btn-delete" onclick="deleteBooking(${b.id})">Удалить</button>
+                        <div class="right-actions">
+                            <div class="btn-group">
+                                <a href="${waLink}" target="_blank" class="btn-wa">💬 Чат</a>
+                                <button class="btn-delete" onclick="deleteBooking(${b.id})">Удалить</button>
+                            </div>
+                            <label class="status-check">
+                                <input type="checkbox" ${isAttended ? 'checked' : ''} onchange="toggleAttendance(${b.id}, this)">
+                                <span>Пришел</span>
+                            </label>
+                        </div>
                     `;
                     bList.appendChild(card);
                 });
@@ -163,11 +176,21 @@
         } catch (e) { console.error(e); }
     }
 
+    function toggleAttendance(id, checkbox) {
+        const card = document.getElementById(`card_${id}`);
+        if (checkbox.checked) {
+            card.classList.add('attended');
+            localStorage.setItem(`attended_${id}`, 'true');
+        } else {
+            card.classList.remove('attended');
+            localStorage.setItem(`attended_${id}`, 'false');
+        }
+    }
+
     async function blockSlot() {
         const dateInput = document.getElementById('filterDate').value;
         const timeInput = document.getElementById('timeToBlock').value;
         if (!dateInput) return;
-
         try {
             await fetch(`${BASE_SUPABASE_URL}/blocked_slots`, {
                 method: 'POST',
