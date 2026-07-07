@@ -320,7 +320,7 @@
 
         const isDayBlocked = blocks.some(b => b.slot_time === 'ALL');
         if (isDayBlocked) {
-            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата недоступна', false);
+            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Дата временно недоступна', 'Все сплавы на этот день закрыты администрацией.', false);
             return;
         }
 
