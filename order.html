@@ -3,430 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бронирование сплава — SUP CLUB ASTANA</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>SUP CLUB ASTANA — Запись на городские сплавы</title>
     <style>
-        /* Возвращаем сочный Deep Dark & Gold дизайн */
-        body.dark-theme {
-            background-color: #0b0b0b;
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --accent-yellow: #f59e0b;
+            --accent-yellow-hover: #d97706;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
         }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg-main); 
+            color: var(--text-main); 
+            padding: 20px; 
+            margin: 0; 
         }
-
-        h2 {
-            color: #d4af37; /* Золотой заголовок */
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
+        .container { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            background: var(--bg-card); 
+            padding: 25px; 
+            border-radius: 24px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
         }
-
-        .form-group {
-            margin-bottom: 20px;
+        h2 { 
+            text-align: center; 
+            color: var(--accent-yellow); 
+            margin-bottom: 25px; 
+            font-weight: 800; 
+            letter-spacing: 0.5px; 
+            margin-top: 0;
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #e5e7eb;
-            font-size: 0.95rem;
+        label { 
+            font-weight: 700; 
+            display: block; 
+            margin: 20px 0 8px; 
+            color: var(--text-muted); 
+            font-size: 13px; 
+            text-transform: uppercase; 
         }
-
-        /* Поля ввода в стиле Deep Dark */
-        .form-group select, 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #141414;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 1rem;
-            box-sizing: border-box;
+        select, input[type="date"], input[type="text"], input[type="tel"] { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 14px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            background: #151f32; 
+            color: var(--text-main); 
+            outline: none; 
             transition: border-color 0.2s;
         }
-
-        .form-group select:focus, 
-        .form-group input:focus {
-            outline: none;
-            border-color: #d4af37; /* Золотой фокус */
+        select:focus, input:focus {
+            border-color: var(--accent-yellow);
         }
-
-        /* Сетка слотов времени */
-        .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
+        .route-card { 
+            border: 2px solid var(--border-color); 
+            border-radius: 16px; 
+            padding: 18px; 
+            margin-bottom: 15px; 
+            cursor: pointer; 
+            background: #151f32; 
+            transition: all 0.2s; 
         }
-
-        /* Кнопки слотов */
-        .slot-btn {
-            background: #141414;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 14px 10px;
+        .route-card.active { 
+            border-color: var(--accent-yellow); 
+            background: rgba(245, 158, 11, 0.08); 
+        }
+        .route-card strong { 
+            display: block; 
+            color: var(--text-main); 
+        }
+        .route-card.active strong { 
+            color: var(--accent-yellow); 
+        }
+        .slots-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-top: 5px; 
+        }
+        .slot-btn { 
+            padding: 14px; 
+            text-align: center; 
+            border: 2px solid var(--border-color); 
+            border-radius: 14px; 
+            cursor: pointer; 
+            background: #151f32; 
+            font-weight: 600; 
+            transition: all 0.2s;
+        }
+        .slot-btn.active { 
+            background: var(--accent-yellow); 
+            color: #000; 
+            border-color: var(--accent-yellow); 
+        }
+        .slot-btn.disabled { 
+            background: #0f172a; 
+            color: #475569; 
+            border-color: #1e293b; 
+            cursor: not-allowed; 
+        }
+        .payment-group { 
+            display: flex; 
+            gap: 15px; 
+        }
+        .payment-label { 
+            flex: 1; 
+            border: 2px solid var(--border-color); 
+            padding: 14px; 
+            border-radius: 14px; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: 600; 
+            background: #151f32; 
+            transition: all 0.2s;
+        }
+        .payment-group input { 
+            display: none; 
+        }
+        .payment-group input:checked + .payment-label { 
+            border-color: var(--accent-yellow); 
+            background: rgba(245, 158, 11, 0.1); 
+            color: var(--accent-yellow); 
+        }
+        .btn-submit { 
+            width: 100%; 
+            background: var(--accent-yellow); 
+            color: #0f172a; 
+            border: none; 
+            padding: 16px; 
+            border-radius: 14px; 
+            font-size: 18px; 
+            font-weight: 800; 
+            margin-top: 30px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .btn-submit:hover:not(:disabled) { 
+            background: var(--accent-yellow-hover); 
+        }
+        .info-spots { 
+            display: block; 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            margin-top: 4px; 
+        }
+        .slot-btn.active .info-spots { 
+            color: rgba(0,0,0,0.7); 
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator { 
+            filter: invert(1); 
+        }
+        .sunday-alert {
+            background: rgba(245, 158, 11, 0.05);
+            border: 2px dashed var(--accent-yellow);
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            margin: 20px 0;
         }
-
-        .slot-btn strong {
-            font-size: 1.15rem;
-            color: #ffffff;
-            display: block;
-            margin-bottom: 4px;
+        .sunday-alert p { margin: 0 0 12px 0; font-weight: 700; line-height: 1.4; }
+        .btn-details { 
+            display: inline-block; background: var(--accent-yellow); color: #0f172a; 
+            padding: 10px 20px; border-radius: 10px; text-decoration: none; 
+            font-weight: 800; font-size: 14px; text-transform: uppercase; transition: background 0.2s;
         }
-
-        .slot-btn .info-spots {
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-
-        /* Наведение и Активное состояние (Золото) */
-        .slot-btn:hover:not(.disabled) {
-            border-color: #d4af37;
-            background: #1c1c1c;
-        }
-
-        .slot-btn.active {
-            border-color: #d4af37;
-            background: #d4af37;
-        }
-
-        .slot-btn.active strong, 
-        .slot-btn.active .info-spots {
-            color: #000000;
-            font-weight: bold;
-        }
-
-        /* Обычный заблокированный слот (Кончились места) */
-        .slot-btn.disabled {
-            background: #101010;
-            border-color: #1a1a1a;
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .slot-btn.disabled strong {
-            color: #4b5563;
-        }
-
-        .slot-btn.disabled .info-spots {
-            color: #4b5563;
-        }
-
-        /* Автоблокировка по времени («Стоп за 3 часа», «Закрыто в 22:00») */
-        .slot-btn.auto-blocked {
-            background: #1a1111; /* Слегка красноватый глубокий фон */
-            border-color: #7f1d1d; /* Темно-красный бордер */
-            opacity: 0.85;
-            cursor: not-allowed;
-        }
-
-        .slot-btn.auto-blocked strong {
-            color: #9ca3af;
-        }
-
-        /* Кнопка отправки */
-        .btn-primary {
-            background: #d4af37;
-            color: #000000;
-            border: none;
-            padding: 15px;
-            font-size: 1.05rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: #f1c43f;
-        }
-
-        .btn-primary:disabled {
-            background: #2a2a2a;
-            color: #666666;
-            cursor: not-allowed;
-        }
+        .btn-details:hover { background: var(--accent-yellow-hover); }
     </style>
 </head>
-<body class="dark-theme">
+<body>
 
-    <div class="container">
-        <h2>Бронирование SUP-сплава</h2>
-        
-        <!-- Выбор маршрута -->
-        <div class="form-group">
-            <label>Маршрут сплава:</label>
-            <select id="routeType" onchange="onRouteChange()">
-                <option value="turan-atyrau">Городской сплав (ЖК Туран — мост Атырау)</option>
-                <option value="sunrise">Рассветный сплав (06:00)</option>
-            </select>
+<div class="container">
+    <h2>SUP CLUB ASTANA</h2>
+
+    <label for="clientName">Ваше имя</label>
+    <input type="text" id="clientName" placeholder="Имя" required>
+
+    <label for="clientPhone">Номер телефона</label>
+    <input type="tel" id="clientPhone" placeholder="+7 (707) 123-45-67" required>
+
+    <label for="bookingDate">Выберите дату</label>
+    <input type="date" id="bookingDate" required>
+
+    <label for="promoCode">Активация (Промокод / Сертификат)</label>
+    <input type="text" id="promoCode" placeholder="Введите код, если есть" autocomplete="off">
+
+    <div id="bookingFieldsContainer">
+        <label>Выберите маршрут</label>
+        <div id="routeTuranAtyrau" class="route-card active" onclick="selectRoute('turan-atyrau')">
+            <strong>Мост Туран — Атырауский мост</strong>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">2-х часовой сплав</div>
+        </div>
+        <div id="routeTuranAkorda" class="route-card" onclick="selectRoute('turan-akorda')">
+            <strong>Мост Туран — Триатлон парк (Акорда)</strong>
+            <div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">4-х часовой сплав</div>
         </div>
 
-        <!-- Выбор даты -->
-        <div class="form-group">
-            <label>Дата сплава:</label>
-            <input type="date" id="bookingDate" onchange="renderSlots()">
+        <label>Доступное время сплава</label>
+        <div id="slotsWrapper" class="slots-container"></div>
+
+        <label for="spotsCount">Количество человек</label>
+        <select id="spotsCount">
+            <option value="1">1 чел.</option>
+        </select>
+
+        <label>Способ оплаты</label>
+        <div class="payment-group">
+            <input type="radio" id="payKaspi" name="payment" value="Каспи" checked>
+            <label for="payKaspi" class="payment-label">Kaspi Gold</label>
+            <input type="radio" id="payCash" name="payment" value="Наличные">
+            <label for="payCash" class="payment-label">Наличные</label>
         </div>
-
-        <!-- Промокод -->
-        <div class="form-group">
-            <label>Промокод (если есть):</label>
-            <input type="text" id="promoCode" placeholder="ВВЕДИТЕ КОД" oninput="renderSlots()">
-        </div>
-
-        <!-- Контейнер для вывода экранов закрытия (Воскресенье / Мест нет) -->
-        <div id="sundayWrapper"></div>
-
-        <!-- Поля бронирования -->
-        <div id="bookingFieldsContainer">
-            <div class="form-group">
-                <label>Доступное время и места:</label>
-                <div id="slotsWrapper" class="slots-grid">
-                    <!-- Генерируется из JS -->
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 25px;">
-                <label>Количество человек:</label>
-                <select id="spotsCount">
-                    <option value="">Сначала выберите время</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Ваше имя:</label>
-                <input type="text" id="customerName" required placeholder="Имя">
-            </div>
-            <div class="form-group">
-                <label>Телефон (WhatsApp):</label>
-                <input type="tel" id="customerPhone" required placeholder="+7 (707) 000-00-00">
-            </div>
-        </div>
-
-        <p id="redirectNotice" style="font-size: 0.85rem; color: #888; margin-top: 20px; text-align: center;">
-            * После нажатия кнопки вы будете перенаправлены на оплату Каспи.
-        </p>
-        <button id="submitBtn" class="btn-primary" onclick="handleBooking()" style="width: 100%; margin-top: 5px;">Забронировать</button>
     </div>
 
-    <script>
-        // ДАННЫЕ SUPABASE (Подставь свои рабочие урлы и ключи)
-        const BASE_SUPABASE_URL = "https://your-supabase-url.supabase.co/rest/v1"; 
-        const ANON_KEY = "your-anon-key"; 
+    <div id="sundayWrapper"></div>
 
-        const SECRET_CODES = {
-            'VIP666': '06:00',
-            'NIGHTSUP': '21:00'
-        };
+    <button class="btn-submit" onclick="handleBooking()">Записаться через WhatsApp</button>
+</div>
 
-        let selectedRouteType = 'turan-atyrau';
-        let selectedTime = null;
-        let isSubmitting = false;
+<script>
+    const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
+    const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
-        // Дефолтная дата — сегодня
-        const todayInputStr = new Date().toISOString().split('T')[0];
-        document.getElementById('bookingDate').min = todayInputStr;
-        document.getElementById('bookingDate').value = todayInputStr;
+    // Конфигурация секретных кодов
+    const SECRET_CODES = {
+        'УТРО6': '06:00',
+        'УТРО7': '07:00',
+        'УТРО8': '08:00',
+        'УТРО9': '09:00'
+    };
 
-        function onRouteChange() {
-            selectedRouteType = document.getElementById('routeType').value;
-            selectedTime = null;
-            renderSlots();
-        }
+    let selectedRouteType = 'turan-atyrau';
+    let selectedTime = '';
 
-        function showClosedScreen(fields, notice, sunWrap, btn, title, text, isSunday) {
-            fields.style.display = 'none';
-            notice.style.display = 'none';
-            btn.disabled = true;
-            
-            sunWrap.innerHTML = `
-                <div style="text-align:center; padding: 25px 15px; border: 1px solid ${isSunday ? '#d4af37' : '#7f1d1d'}; background: #141414; border-radius:8px; margin: 20px 0;">
-                    <h3 style="color:${isSunday ? '#d4af37' : '#ef4444'}; margin-top:0; margin-bottom:10px;">${title}</h3>
-                    <p style="color:#9ca3af; font-size:0.9rem; line-height:1.4; margin:0;">${text}</p>
+    const today = new Date();
+    document.getElementById('bookingDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    document.getElementById('clientPhone').addEventListener('input', function () {
+        let matrix = "+7 (7__) ___-__-__", i = 0, val = this.value.replace(/\D/g, "");
+        if (matrix.replace(/\D/g, "").length >= val.length) val = matrix.replace(/\D/g, "");
+        this.value = matrix.replace(/./g, function (a) {
+            return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a
+        });
+    });
+
+    document.getElementById('promoCode').addEventListener('input', function() {
+        renderSlots();
+    });
+
+    function selectRoute(route) {
+        selectedRouteType = route;
+        selectedTime = ''; 
+        document.getElementById('routeTuranAtyrau').classList.toggle('active', route === 'turan-atyrau');
+        document.getElementById('routeTuranAkorda').classList.toggle('active', route === 'turan-akorda');
+        renderSlots();
+    }
+
+    async function renderSlots() {
+        const wrapper = document.getElementById('slotsWrapper');
+        const sundayWrapper = document.getElementById('sundayWrapper');
+        const fieldsContainer = document.getElementById('bookingFieldsContainer');
+        const dateInput = document.getElementById('bookingDate').value;
+        const promoInput = document.getElementById('promoCode').value.trim().toUpperCase();
+        const submitBtn = document.querySelector('.btn-submit');
+        
+        if (!dateInput) return;
+
+        const dateParts = dateInput.split('-');
+        const selectedDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        const dayOfWeek = selectedDateObj.getDay();
+
+        if (dayOfWeek === 0) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.3';
+            submitBtn.style.cursor = 'not-allowed';
+            selectedTime = '';
+            fieldsContainer.style.display = 'none';
+            sundayWrapper.innerHTML = `
+                <div class="sunday-alert">
+                    <p style="color: #ef4444; text-transform: uppercase;">Воскресенье: запись на городской сплав невозможна</p>
+                    <p style="font-size: 14px; color: var(--text-main); margin-bottom: 15px;">В этот день у нас проходит загородный сап-тур!</p>
+                    <a href="https://www.instagram.com/p/DX_K02SNfkV/?hl=ru" target="_blank" class="btn-details">ПОДРОБНЕЕ В INSTAGRAM</a>
                 </div>
             `;
+            return;
         }
 
-        async function renderSlots() {
-            const wrapper = document.getElementById('slotsWrapper');
-            const sundayWrapper = document.getElementById('sundayWrapper');
-            const fieldsContainer = document.getElementById('bookingFieldsContainer');
-            const dateInput = document.getElementById('bookingDate').value;
-            const promoInput = document.getElementById('promoCode').value.trim().toUpperCase();
-            const submitBtn = document.getElementById('submitBtn');
-            const notice = document.getElementById('redirectNotice');
-            
-            if (!dateInput) return;
-
-            const dateParts = dateInput.split('-');
-            const selectedDateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-            const dayOfWeek = selectedDateObj.getDay();
-
-            if (dayOfWeek === 0) {
-                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: городской сплав закрыт', 'В этот день у нас проходит большой загородный сап-тур!', true);
-                return;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        fieldsContainer.style.display = 'block';
+        sundayWrapper.innerHTML = '';
+        
+        wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:10px;">Проверка свободных мест...</div>';
+        
+        // Стандартные часы
+        let times = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
+        
+        // Добавление секретных часов по промокоду
+        if (SECRET_CODES[promoInput]) {
+            const secretTime = SECRET_CODES[promoInput];
+            if (!times.includes(secretTime)) {
+                times.unshift(secretTime);
             }
+        }
+        
+        let bookings = [];
+        try {
+            const response = await fetch(`${API_URL}?booking_date=eq.${dateInput}`, {
+                method: 'GET',
+                headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' }
+            });
+            if (response.ok) bookings = await response.json();
+        } catch (e) { console.error(e); }
 
-            wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#666; padding:10px; font-size:0.9rem;">Проверка мест...</div>';
+        wrapper.innerHTML = '';
+
+        times.forEach(time => {
+            const booked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
+            const left = 6 - booked;
+            const btn = document.createElement('div');
             
-            let bookings = [];
-            let blocks = [];
-
-            try {
-                const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
-                const [resBookings, resBlocks] = await Promise.all([
-                    fetch(`${BASE_SUPABASE_URL}/bookings?booking_date=eq.${dateInput}`, { method: 'GET', headers }),
-                    fetch(`${BASE_SUPABASE_URL}/blocked_slots?block_date=eq.${dateInput}`, { method: 'GET', headers })
-                ]);
-
-                if (resBookings.ok) bookings = await resBookings.json();
-                if (resBlocks.ok) blocks = await resBlocks.json();
-            } catch (e) { console.error("Ошибка:", e); }
-
-            const isDayBlocked = blocks.some(b => b.slot_time.trim().toUpperCase() === 'ALL');
-            if (isDayBlocked) {
-                showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Все места заняты', 'К сожалению, на этот день свободных сапов больше нет.', false);
-                return;
-            }
-
-            if (!isSubmitting) { submitBtn.disabled = false; notice.style.display = 'block'; }
-            fieldsContainer.style.display = 'block';
-            sundayWrapper.innerHTML = '';
-
-            let defaultTimes = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
-            
-            if (SECRET_CODES[promoInput]) {
-                const secretTime = SECRET_CODES[promoInput];
-                if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
-            }
-
-            const now = new Date();
-            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            
-            const tomorrow = new Date();
-            tomorrow.setDate(now.getDate() + 1);
-            const tomorrowStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
-
-            wrapper.innerHTML = '';
-            let visibleSlotsCount = 0;
-
-            defaultTimes.forEach(time => {
-                const blockData = blocks.find(b => b.slot_time.replace(/\s/g, '').startsWith(time));
-
-                let adminOccupiedSpots = 0;
-                let isFullyBlockedByAdmin = false;
-
-                if (blockData) {
-                    const rawTimeValue = blockData.slot_time.trim();
-                    const match = rawTimeValue.match(/\[(\d+)\]/);
-                    if (match) {
-                        adminOccupiedSpots = parseInt(match[1], 10);
-                    } else {
-                        isFullyBlockedByAdmin = true;
-                    }
-                }
-
-                if (isFullyBlockedByAdmin) return; 
-
-                visibleSlotsCount++;
+            if (left <= 0) {
+                btn.className = 'slot-btn disabled';
+                btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
+            } else {
+                btn.className = 'slot-btn';
+                if (time === selectedTime) btn.classList.add('active');
+                btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Свободно: ${left}</span>`;
                 
-                let isAutoBlocked = false;
-                let blockReason = '';
-
-                // Проверка утра
-                if (time === '06:00') {
-                    if (dateInput === todayStr) {
-                        isAutoBlocked = true;
-                        blockReason = 'Сплав прошёл';
-                    } else if (dateInput === tomorrowStr && now.getHours() >= 22) {
-                        isAutoBlocked = true;
-                        blockReason = 'До 22:00 вчер.';
-                    }
-                }
-
-                // Проверка дня (за 3 часа)
-                if (dateInput === todayStr && time !== '06:00') {
-                    const [slotH, slotM] = time.split(':').map(Number);
-                    const slotTimeObj = new Date();
-                    slotTimeObj.setHours(slotH, slotM, 0, 0);
-                    const diffInHours = (slotTimeObj - now) / (1000 * 60 * 60);
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedTime = time;
                     
-                    if (diffInHours < 0) {
-                        isAutoBlocked = true;
-                        blockReason = 'Сплав прошёл';
-                    } else if (diffInHours < 3) {
-                        isAutoBlocked = true;
-                        blockReason = 'Стоп за 3 часа';
+                    const select = document.getElementById('spotsCount');
+                    select.innerHTML = '';
+                    for (let i = 1; i <= left; i++) {
+                        const opt = document.createElement('option');
+                        opt.value = i;
+                        opt.textContent = `${i} чел.`;
+                        select.appendChild(opt);
                     }
-                }
+                });
+            }
+            wrapper.appendChild(btn);
+        });
+    }
 
-                const clientBooked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
-                const left = 6 - clientBooked - adminOccupiedSpots;
-                
-                const btn = document.createElement('div');
-                
-                if (isAutoBlocked) {
-                    btn.className = 'slot-btn auto-blocked';
-                    btn.innerHTML = `<strong>${time}</strong><span class="info-spots" style="color:#ef4444; font-weight:bold;">${blockReason}</span>`;
-                } 
-                else if (left <= 0) {
-                    btn.className = 'slot-btn disabled';
-                    btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
-                } 
-                else {
-                    btn.className = 'slot-btn';
-                    if (time === selectedTime) btn.classList.add('active');
-                    btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Свободно: ${left}</span>`;
-                    
-                    btn.addEventListener('click', function() {
-                        if (isSubmitting) return;
-                        document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        selectedTime = time;
-                        
-                        const select = document.getElementById('spotsCount');
-                        select.innerHTML = '';
-                        for (let i = 1; i <= left; i++) {
-                            const opt = document.createElement('option');
-                            opt.value = i;
-                            opt.textContent = `${i} чел.`;
-                            select.appendChild(opt);
-                        }
-                    });
-                }
-                wrapper.appendChild(btn);
+    document.getElementById('bookingDate').addEventListener('change', () => { selectedTime = ''; renderSlots(); });
+    renderSlots();
+
+    async function handleBooking() {
+        const name = document.getElementById('clientName').value.trim();
+        const phone = document.getElementById('clientPhone').value.trim();
+        const date = document.getElementById('bookingDate').value;
+        const spots = parseInt(document.getElementById('spotsCount').value) || 1;
+        const paymentRadio = document.querySelector('input[name="payment"]:checked');
+        const payment = paymentRadio ? paymentRadio.value : 'Не указан';
+        const routeText = selectedRouteType === 'turan-atyrau' ? 'Мост Туран — Атырауский мост' : 'Мост Туран — Triatlon Park';
+
+        if (!name) { alert('Укажите имя.'); return; }
+        if (!phone || phone.length < 18) { alert('Укажите корректный номер телефона.'); return; }
+        if (!selectedTime) { alert('Выберите время сплава!'); return; }
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`,
+                    'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    route_name: routeText,
+                    booking_date: date,
+                    booking_time: selectedTime,
+                    customer_name: name,
+                    customer_phone: phone,
+                    spots_count: spots,
+                    payment_method: payment
+                })
             });
 
-            if (visibleSlotsCount === 0) {
-                wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:10px; font-weight:700;">Нет доступных слотов</div>';
-                submitBtn.disabled = true;
-            }
-        }
+            if (!response.ok) { alert('Ошибка Supabase при записи.'); return; }
 
-        async function handleBooking() {
-            if (!selectedTime) { alert('Пожалуйста, выберите время сплава!'); return; }
-            const spots = document.getElementById('spotsCount').value;
-            if (!spots) { alert('Выберите количество человек!'); return; }
-            alert(`Бронируем время ${selectedTime}, мест: ${spots}`);
-        }
-
-        renderSlots();
-    </script>
+            const myPhone = '77479416498';
+            const message = `Нас ${spots} человек на ${selectedTime} по маршруту: ${routeText}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone}`;
+            window.open(`https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`, '_blank');
+            
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('promoCode').value = '';
+            selectedTime = '';
+            renderSlots();
+        } catch (e) { alert(e.message); }
+    }
+</script>
 </body>
 </html>
