@@ -84,7 +84,7 @@
                 stats[b.booking_time] = (stats[b.booking_time] || 0) + b.spots_count;
 
                 const cleanPhone = b.customer_phone.replace(/\D/g, '');
-               const msg = `WhasSAP🏄🌊!, на связи инструктор SUP.CLUB.ASTANA аныш ${b.customer_name}! Через сколько вы будете? 🏄‍♂️ Мы на месте!`;
+               const msg = `WhasSAP🏄🌊!, на связи инструктор SUP.CLUB.ASTANA Қуаныш ${b.customer_name}! Через сколько вы будете? 🏄‍♂️ Мы на месте!`;
                 const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
                 const isAttended = localStorage.getItem(`attended_${b.id}`) === 'true';
 
