@@ -489,6 +489,28 @@
             alert(e.message); 
             isSubmitting = false; submitBtn.disabled = false; submitBtn.innerText = 'Записаться через WhatsApp';
         }
+function selectRoute(routeId) {
+    // 1. Убираем активный класс у всех карточек маршрутов и добавляем выбранному
+    document.querySelectorAll('.route-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // 2. Получаем элементы карт
+    const map2h = document.getElementById('map-2hours');
+    const map4h = document.getElementById('map-4hours');
+
+    // 3. Переключаем видимость в зависимости от выбранного маршрута
+    if (routeId === 'turan-atyrau') {
+        document.getElementById('routeTuranAtyrau').classList.add('active');
+        map2h.style.display = 'block';
+        map4h.style.display = 'none';
+    } else if (routeId === 'turan-akorda') {
+        document.getElementById('routeTuranAkorda').classList.add('active');
+        map2h.style.display = 'none';
+        map4h.style.display = 'block';
+    }
+}
+        
     }
 </script>
 </body>
