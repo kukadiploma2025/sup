@@ -373,62 +373,59 @@
         wrapper.innerHTML = '';
         let visibleSlotsCount = 0;
 
-        // ВАШ НОВЫЙ КОД (вставить вместо старого)
-defaultTimes.forEach(time => {
-    // --- НАЧАЛО ОГРАНИЧЕНИЯ ---
-    // Если время 06:00 и выбрана суббота (день 6)
-    if (time === '06:00' && dayOfWeek === 6) {
-        const now = new Date();
-        const friday = new Date(selectedDateObj);
-        friday.setDate(selectedDateObj.getDate() - 1);
-        // Если сегодня пятница и время 20:00 или позже — пропускаем слот
-        if (now.toDateString() === friday.toDateString() && now.getHours() >= 20) {
-            return; 
-        }
-    }
-    // --- КОНЕЦ ОГРАНИЧЕНИЯ ---
-
-    const isSlotBlocked = blocks.some(b => b.slot_time === time);
-    if (isSlotBlocked) return; 
-
-    if (dateInput === todayStr) {
-        const [slotH, slotM] = time.split(':').map(Number);
-        if (slotH < currentHour || (slotH === currentHour && slotM <= currentMinute)) {
-            return; 
-        }
-    }
-
-    visibleSlotsCount++;
-    const booked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
-    const left = 6 - booked;
-    
-    const btn = document.createElement('div');
-    if (left <= 0) {
-        btn.className = 'slot-btn disabled';
-        btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
-    } else {
-        btn.className = 'slot-btn';
-        if (time === selectedTime) btn.classList.add('active');
-        btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Свободно: ${left}</span>`;
-        
-        btn.addEventListener('click', function() {
-            if (isSubmitting) return;
-            document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            selectedTime = time;
-            
-            const select = document.getElementById('spotsCount');
-            select.innerHTML = '';
-            for (let i = 1; i <= left; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = `${i} чел.`;
-                select.appendChild(opt);
+        defaultTimes.forEach(time => {
+            // ОГРАНИЧЕНИЕ: Суббота 06:00 доступна только до 20:00 пятницы
+            if (time === '06:00' && dayOfWeek === 6) {
+                const now = new Date();
+                const friday = new Date(selectedDateObj);
+                friday.setDate(selectedDateObj.getDate() - 1);
+                
+                if (now.toDateString() === friday.toDateString() && now.getHours() >= 20) {
+                    return; // Слот скрыт после 20:00 в пятницу
+                }
             }
+
+            const isSlotBlocked = blocks.some(b => b.slot_time === time);
+            if (isSlotBlocked) return; 
+
+            if (dateInput === todayStr) {
+                const [slotH, slotM] = time.split(':').map(Number);
+                if (slotH < currentHour || (slotH === currentHour && slotM <= currentMinute)) {
+                    return; 
+                }
+            }
+
+            visibleSlotsCount++;
+            const booked = bookings.filter(b => b.booking_time === time).reduce((sum, b) => sum + b.spots_count, 0);
+            const left = 6 - booked;
+            
+            const btn = document.createElement('div');
+            if (left <= 0) {
+                btn.className = 'slot-btn disabled';
+                btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Мест нет</span>`;
+            } else {
+                btn.className = 'slot-btn';
+                if (time === selectedTime) btn.classList.add('active');
+                btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Свободно: ${left}</span>`;
+                
+                btn.addEventListener('click', function() {
+                    if (isSubmitting) return;
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedTime = time;
+                    
+                    const select = document.getElementById('spotsCount');
+                    select.innerHTML = '';
+                    for (let i = 1; i <= left; i++) {
+                        const opt = document.createElement('option');
+                        opt.value = i;
+                        opt.textContent = `${i} чел.`;
+                        select.appendChild(opt);
+                    }
+                });
+            }
+            wrapper.appendChild(btn);
         });
-    }
-    wrapper.appendChild(btn);
-});
 
         if (visibleSlotsCount === 0) {
             wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:10px; font-weight:700;">Нет доступных слотов на эту дату</div>';
