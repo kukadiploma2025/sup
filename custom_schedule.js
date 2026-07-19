@@ -1,13 +1,9 @@
-// Переопределяем функцию renderSlots, чтобы она использовала вашу новую логику
-window.originalRenderSlots = window.renderSlots; // сохраняем на всякий случай
-
+// Переопределяем функцию renderSlots
 async function renderSlots() {
     const wrapper = document.getElementById('slotsWrapper');
     const sundayWrapper = document.getElementById('sundayWrapper');
     const fieldsContainer = document.getElementById('bookingFieldsContainer');
     const dateInput = document.getElementById('bookingDate').value;
-    const submitBtn = document.getElementById('submitBtn');
-    const notice = document.getElementById('redirectNotice');
     
     if (!dateInput) return;
 
@@ -16,29 +12,38 @@ async function renderSlots() {
 
     // Логика расписания
     let defaultTimes = [];
+    let errorMessage = "";
+
     if (selectedRouteType === 'turan-atyrau') {
         if (day === 6) { 
-            wrapper.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">В субботу Атырауский маршрут закрыт.</div>';
-            return;
+            errorMessage = "Маршрут Атырау недоступен в субботу.";
+        } else {
+            defaultTimes = ['10:00', '13:00', '16:00', '18:00'];
         }
-        defaultTimes = ['10:00', '13:00', '16:00', '18:00'];
     } else {
+        // Акорда
         if (day !== 6) {
-            wrapper.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Акорда доступна только в субботу.</div>';
-            return;
+            errorMessage = "Утренние сплавы (Акорда) проводятся ТОЛЬКО в субботу.";
+        } else {
+            defaultTimes = ['06:00', '13:00', '16:00', '18:00'];
         }
-        defaultTimes = ['06:00', '13:00', '16:00', '18:00'];
+    }
+
+    // Если есть ошибка (попытка выбрать не то время или не тот день)
+    if (errorMessage) {
+        wrapper.innerHTML = `<div style="color:#f59e0b; text-align:center; padding:20px; border:1px solid #f59e0b; border-radius:10px;">${errorMessage}</div>`;
+        return;
     }
 
     // Воскресенье
     if (day === 0) {
         if (typeof showClosedScreen === 'function') {
-            showClosedScreen(fieldsContainer, notice, sundayWrapper, submitBtn, 'Воскресенье: выходной', 'В этот день у нас загородный сап-тур!', true);
+            showClosedScreen(fieldsContainer, document.getElementById('redirectNotice'), sundayWrapper, document.getElementById('submitBtn'), 'Воскресенье: выходной', 'В этот день у нас загородный сап-тур!', true);
         }
         return;
     }
 
-    // Загрузка данных (используем глобальные переменные из вашего файла)
+    // Загрузка данных
     wrapper.innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; padding:10px;">Загрузка...</div>';
     
     let bookings = [];
