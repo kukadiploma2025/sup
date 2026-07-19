@@ -273,7 +273,7 @@
 </div>
 
 <script>
-    // Твои рабочие ключи подключения к базе данных Supabase
+  // Твои рабочие ключи подключения к базе данных Supabase
     const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
 
@@ -285,8 +285,10 @@
     let selectedTime = '';
     let isSubmitting = false;
 
-    const today = new Date();
-    document.getElementById('bookingDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    // Установка завтрашней даты
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('bookingDate').value = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
 
     document.getElementById('clientPhone').addEventListener('input', function () {
         let matrix = "+7 (7__) ___-__-__", i = 0, val = this.value.replace(/\D/g, "");
@@ -353,7 +355,7 @@
         fieldsContainer.style.display = 'block';
         sundayWrapper.innerHTML = '';
 
-        1et defaultTimes = [];
+        let defaultTimes = [];
         if (selectedRouteType === 'turan-atyrau') {
             defaultTimes = ['10:00', '13:00', '16:00', '18:00'];
         } else if (dayOfWeek === 6) {
@@ -374,14 +376,13 @@
         let visibleSlotsCount = 0;
 
         defaultTimes.forEach(time => {
-            // ОГРАНИЧЕНИЕ: Суббота 06:00 доступна только до 20:00 пятницы
             if (time === '06:00' && dayOfWeek === 6) {
                 const now = new Date();
                 const friday = new Date(selectedDateObj);
                 friday.setDate(selectedDateObj.getDate() - 1);
                 
                 if (now.toDateString() === friday.toDateString() && now.getHours() >= 20) {
-                    return; // Слот скрыт после 20:00 в пятницу
+                    return; 
                 }
             }
 
@@ -453,6 +454,8 @@
 
     async function handleBooking() {
         if (isSubmitting) return;
+        // ваш код отправки...
+    }
 
         const name = document.getElementById('clientName').value.trim();
         const phone = document.getElementById('clientPhone').value.trim();
