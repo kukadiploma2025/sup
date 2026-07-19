@@ -353,7 +353,13 @@
         fieldsContainer.style.display = 'block';
         sundayWrapper.innerHTML = '';
 
-        let defaultTimes = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
+        1et defaultTimes = [];
+        if (selectedRouteType === 'turan-atyrau') {
+            defaultTimes = ['10:00', '13:00', '16:00', '18:00'];
+        } else if (dayOfWeek === 6) {
+            defaultTimes = ['06:00'];
+        }
+
         if (SECRET_CODES[promoInput]) {
             const secretTime = SECRET_CODES[promoInput];
             if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
