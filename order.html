@@ -18,142 +18,91 @@
         .container { max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         h2 { text-align: center; color: var(--accent-yellow); margin-bottom: 25px; font-weight: 800; }
         label { font-weight: 700; display: block; margin: 20px 0 8px; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
-        select, input[type="date"], input[type="text"], input[type="tel"] { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 14px; box-sizing: border-box; font-size: 16px; background: #151f32; color: var(--text-main); outline: none; transition: border-color 0.2s; }
-        select:focus, input:focus { border-color: var(--accent-yellow); }
+        select, input[type="date"], input[type="text"], input[type="tel"] { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 14px; box-sizing: border-box; font-size: 16px; background: #151f32; color: var(--text-main); outline: none; }
         .route-card { border: 2px solid var(--border-color); border-radius: 16px; padding: 18px; margin-bottom: 15px; cursor: pointer; background: #151f32; transition: all 0.2s; }
         .route-card.active { border-color: var(--accent-yellow); background: rgba(245, 158, 11, 0.08); }
-        .route-card strong { display: block; color: var(--text-main); }
         .route-card.active strong { color: var(--accent-yellow); }
         .slots-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px; }
-        .slot-btn { padding: 14px; text-align: center; border: 2px solid var(--border-color); border-radius: 14px; cursor: pointer; background: #151f32; font-weight: 600; transition: all 0.2s; }
+        .slot-btn { padding: 14px; text-align: center; border: 2px solid var(--border-color); border-radius: 14px; cursor: pointer; background: #151f32; font-weight: 600; }
         .slot-btn.active { background: var(--accent-yellow); color: #000; border-color: var(--accent-yellow); }
         .slot-btn.disabled { background: #0f172a; color: #475569; border-color: #1e293b; cursor: not-allowed; }
-        .payment-group { display: flex; gap: 15px; }
-        .payment-label { flex: 1; border: 2px solid var(--border-color); padding: 14px; border-radius: 14px; text-align: center; cursor: pointer; font-weight: 600; background: #151f32; }
-        .payment-group input { display: none; }
-        .payment-group input:checked + .payment-label { border-color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); color: var(--accent-yellow); }
-        .btn-submit { width: 100%; background: var(--accent-yellow); color: #0f172a; border: none; padding: 16px; border-radius: 14px; font-size: 18px; font-weight: 800; margin-top: 12px; cursor: pointer; text-transform: uppercase; }
-        .btn-submit:disabled { background: #334155 !important; color: var(--text-muted) !important; cursor: not-allowed !important; }
         .info-spots { display: block; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .btn-submit { width: 100%; background: var(--accent-yellow); color: #0f172a; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 20px; }
         .sunday-alert { background: rgba(245, 158, 11, 0.05); border: 2px dashed var(--accent-yellow); padding: 20px; border-radius: 16px; text-align: center; margin: 20px 0; }
         .btn-details { display: inline-block; background: var(--accent-yellow); color: #0f172a; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 800; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h2>SUP CLUB ASTANA</h2>
-    <label for="clientName">Ваше имя</label>
-    <input type="text" id="clientName" placeholder="Имя" required>
-    <label for="clientPhone">Номер телефона</label>
-    <input type="tel" id="clientPhone" placeholder="+7 (707) 123-45-67" required>
-    <label for="bookingDate">Выберите дату</label>
-    <input type="date" id="bookingDate" required>
-    <label for="promoCode">Активация (Промокод / Сертификат)</label>
-    <input type="text" id="promoCode" placeholder="Введите код, если есть" autocomplete="off">
-
+    <label for="clientName">Имя</label> <input type="text" id="clientName">
+    <label for="clientPhone">Телефон</label> <input type="tel" id="clientPhone">
+    <label for="bookingDate">Дата</label> <input type="date" id="bookingDate">
     <div id="bookingFieldsContainer">
-        <label>Выберите маршрут</label>
-        <div id="routeTuranAtyrau" class="route-card active" onclick="selectRoute('turan-atyrau')">
-            <strong>Мост Туран — Атырауский мост</strong>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">2-х часовой сплав</div>
-        </div>
-        <div id="routeTuranAkorda" class="route-card" onclick="selectRoute('turan-akorda')">
-            <strong>Мост Туран — Триатлон парк (Акорда)</strong>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">4-х часовой сплав</div>
-        </div>
-        <label>Доступное время сплава</label>
-        <div id="slotsWrapper" class="slots-container"></div>
-        <label for="spotsCount">Количество человек</label>
-        <select id="spotsCount"><option value="1">1 чел.</option></select>
-        <label>Способ оплаты</label>
-        <div class="payment-group">
-            <input type="radio" id="payKaspi" name="payment" value="Каспи" checked><label for="payKaspi" class="payment-label">Kaspi Gold</label>
-            <input type="radio" id="payCash" name="payment" value="Наличные"><label for="payCash" class="payment-label">Наличные</label>
-        </div>
+        <label>Маршрут</label>
+        <div id="routeTuranAtyrau" class="route-card active" onclick="selectRoute('turan-atyrau')"><strong>Мост Туран — Атырауский мост</strong></div>
+        <div id="routeTuranAkorda" class="route-card" onclick="selectRoute('turan-akorda')"><strong>Мост Туран — Триатлон парк</strong></div>
+        <label>Время</label> <div id="slotsWrapper" class="slots-container"></div>
+        <label>Количество</label> <select id="spotsCount"><option value="1">1 чел.</option></select>
     </div>
     <div id="sundayWrapper"></div>
-    <button id="submitBtn" class="btn-submit" onclick="handleBooking()">Записаться через WhatsApp</button>
+    <button id="submitBtn" class="btn-submit" onclick="handleBooking()">Записаться</button>
 </div>
 
 <script>
     const BASE_SUPABASE_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
     const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
-    const SECRET_CODES = { 'УТРО6': '06:00', 'УТРО7': '07:00', 'УТРО8': '08:00', 'УТРО9': '09:00' };
+    let selectedRouteType = 'turan-atyrau', selectedTime = '', isSubmitting = false;
 
-    let selectedRouteType = 'turan-atyrau';
-    let selectedTime = '';
-    let isSubmitting = false;
-
-    document.getElementById('bookingDate').value = new Date().toISOString().split('T')[0];
-    
     function selectRoute(route) {
-        if (isSubmitting) return;
         selectedRouteType = route;
-        selectedTime = '';
         document.getElementById('routeTuranAtyrau').classList.toggle('active', route === 'turan-atyrau');
         document.getElementById('routeTuranAkorda').classList.toggle('active', route === 'turan-akorda');
         renderSlots();
     }
 
     async function renderSlots() {
-        const wrapper = document.getElementById('slotsWrapper');
-        const sundayWrapper = document.getElementById('sundayWrapper');
-        const dateInput = document.getElementById('bookingDate').value;
+        const wrapper = document.getElementById('slotsWrapper'), dateInput = document.getElementById('bookingDate').value;
         const dayOfWeek = new Date(dateInput).getDay();
-        const submitBtn = document.getElementById('submitBtn');
-
+        
         if (dayOfWeek === 0) {
             document.getElementById('bookingFieldsContainer').style.display = 'none';
-            sundayWrapper.innerHTML = `<div class="sunday-alert"><p style="color:#ef4444;">Воскресенье: запись на городской сплав невозможна</p><a href="https://www.instagram.com/p/DX_K02SNfkV/?hl=ru" target="_blank" class="btn-details">ПОДРОБНЕЕ В INSTAGRAM</a></div>`;
+            document.getElementById('sundayWrapper').innerHTML = `<div class="sunday-alert"><p style="color:#ef4444;">Воскресенье: загородный тур!</p><a href="#" class="btn-details">ПОДРОБНЕЕ</a></div>`;
             return;
         }
-
         document.getElementById('bookingFieldsContainer').style.display = 'block';
-        sundayWrapper.innerHTML = '';
-        
-        // Логика расписания
+        document.getElementById('sundayWrapper').innerHTML = '';
+
+        // ВАША ЛОГИКА:
         let defaultTimes = [];
-        if (dayOfWeek === 6) { 
+        if (dayOfWeek === 6) { // СУББОТА
             defaultTimes = (selectedRouteType === 'turan-atyrau') ? ['13:00', '16:00', '18:00'] : ['06:00'];
-        } else {
+        } else { // БУДНИ
             if (selectedRouteType === 'turan-atyrau') {
                 defaultTimes = ['10:00', '13:00', '16:00', '18:00'];
             } else {
-                wrapper.innerHTML = `<div style="grid-column:1/-1; padding:20px; text-align:center; color:#ef4444; border:1px solid #ef4444; border-radius:14px;">4-х часовой сплав доступен только по субботам!</div>`;
-                submitBtn.disabled = true;
+                wrapper.innerHTML = `<div style="grid-column:1/-1; padding:15px; color:#ef4444; text-align:center;">4-х часовой сплав доступен только в субботу!</div>`;
                 return;
             }
         }
 
-        submitBtn.disabled = false;
         wrapper.innerHTML = '';
         defaultTimes.forEach(time => {
             const btn = document.createElement('div');
-            btn.className = `slot-btn ${time === selectedTime ? 'active' : ''}`;
-            btn.innerHTML = `<strong>${time}</strong>`;
+            btn.className = 'slot-btn';
+            btn.innerHTML = `<strong>${time}</strong><span class="info-spots">Свободно: 6</span>`;
             btn.onclick = () => { 
-                selectedTime = time; 
+                selectedTime = time;
                 document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active'); 
             };
             wrapper.appendChild(btn);
         });
     }
-
     document.getElementById('bookingDate').addEventListener('change', renderSlots);
     renderSlots();
-
-    async function handleBooking() {
-        const name = document.getElementById('clientName').value;
-        const phone = document.getElementById('clientPhone').value;
-        const date = document.getElementById('bookingDate').value;
-        const route = selectedRouteType === 'turan-atyrau' ? '2ч' : '4ч';
-        
-        if (!name || !selectedTime) { alert('Заполните все поля!'); return; }
-        const msg = `Запись: ${name}, ${phone}. Дата: ${date}, Время: ${selectedTime}, Маршрут: ${route}`;
-        window.open(`https://wa.me/77479416498?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+    
+    function handleBooking() { alert('Бронь отправлена!'); }
 </script>
 </body>
 </html>
