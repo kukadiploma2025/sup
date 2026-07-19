@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUP CLUB ASTANA — Запись на городские сплавы</title>
+    <title>SUP CLUB ASTANA — Запись на городские утренние сплавы</title>
     <style>
         :root {
             --bg-main: #0f172a;
@@ -337,11 +337,12 @@
         fieldsContainer.style.display = 'block';
         sundayWrapper.innerHTML = '';
 
-        let defaultTimes = selectedRouteType === 'turan-atyrau' ? ['10:00', '13:00', '16:00', '18:00'] : ['06:00'];
-        if (SECRET_CODES[promoInput]) {
-            const secretTime = SECRET_CODES[promoInput];
-            if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
-        }
+       let defaultTimes= (dayOfWeek === 6) ? ['13:00', '16:00', '18:00'] : ['10:00', '13:00', '16:00', '18:00'];
+
+if (SECRET_CODES[promoInput]) {
+    const secretTime = SECRET_CODES[promoInput];
+    if (!defaultTimes.includes(secretTime)) defaultTimes.unshift(secretTime);
+}
 
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
