@@ -19,15 +19,21 @@
     <link rel="apple-touch-icon" href="logo.jpg">
    <link rel="stylesheet" href="style.css">
 </head>
-    <!-- Модальное окно -->
-<div id="docs-modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-  <div style="background-color: #fff; margin: 15% auto; padding: 30px; border-radius: 10px; width: 300px; text-align: center; position: relative;">
-    <span onclick="document.getElementById('docs-modal').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px;">&times;</span>
-    <h3>Выберите раздел</h3>
-    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
-      <a href="https://docs.google.com/document/d/1KJzK8qquyNCMmtkcxIXYqk1L1EC0OFiKRUfUCPy70rk/edit?usp=sharing" target="_blank" class="btn-cta">Для посетителей</a>
-      <a href="https://docs.google.com/document/d/1crVGwY5M0UVKUl0minwASvgX9YffO6u9B_ibYcjRp8o/edit?usp=sharing" target="_blank" class="btn-cta">Официальная информация</a>
+  <!-- Модальное окно -->
+<div id="docs-modal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);">
+  <div style="background-color: #fff; margin: 15% auto; padding: 25px; border-radius: 12px; width: 300px; text-align: center; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    
+    <!-- Кнопка закрытия -->
+    <span onclick="document.getElementById('docs-modal').style.display='none'" style="position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; font-weight: bold;">&times;</span>
+    
+    <h3 style="margin-top: 0;">Выберите раздел</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+      <a href="https://docs.google.com/document/d/1KJzK8qquyNCMmtkcxIXYqk1L1EC0OFiKRUfUCPy70rk/edit?usp=sharing" target="_blank" style="padding: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">Для посетителей</a>
+      <a href="https://docs.google.com/document/d/1crVGwY5M0UVKUl0minwASvgX9YffO6u9B_ibYcjRp8o/edit?usp=sharing" target="_blank" style="padding: 10px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">Официальная информация</a>
     </div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -59,7 +65,7 @@
     <a href="#schedule" class="btn-cta">Программы и Цены</a>
     <a href="#faq" class="btn-cta">FAQ</a>
     <a href="#locations" class="btn-cta">Маршруты</a>
-    <a href="#" id="docs-btn" class="btn-cta">Безопасность</a>
+    <a href="javascript:void(0);" onclick="document.getElementById('docs-modal').style.display='block';" class="btn-cta">Безопасность</a>
 </div>  
 
 </div>
