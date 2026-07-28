@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Все новости — SUP CLUB ASTANA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f4f6f9;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ВЕРХНИЙ КРАСНЫЙ БАННЕР */
+    .top-promo-banner {
+      background: #dc2626;
+      color: #ffffff;
+      text-align: center;
+      padding: 8px 15px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    /* ШАПКА В ФИРМЕННОМ ТЁМНО-СИНЕМ ЦВЕТЕ (#0f2a4a) */
+    header {
+      background: #0f2a4a;
+      color: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-top {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo span {
+      color: #f59e0b;
+    }
+
+    .nav-categories {
+      display: flex;
+      gap: 22px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .nav-categories a {
+      transition: color 0.2s;
+    }
+
+    .nav-categories a:hover {
+      color: #f59e0b;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* ОВАЛЬНАЯ ЖЁЛТАЯ КНОПКА "Мы в Instagram" */
+    .btn-insta {
+      border: 2px solid #f59e0b;
+      color: #f59e0b;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .btn-insta:hover {
+      background: #f59e0b;
+      color: #0f2a4a;
+    }
+
+    /* ЖЁЛТАЯ НАВИГАЦИОННАЯ ПАНЕЛЬ ПОД ШАПКОЙ (МАРШРУТЫ, ПРОГРАММЫ И Т.Д.) */
+    .sub-nav {
+      background: #1e3a5f;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 20px;
+    }
+
+    .sub-nav-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .yellow-pill {
+      background: #f59e0b;
+      color: #0f2a4a;
+      padding: 7px 18px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .yellow-pill:hover {
+      background: #d97706;
+      transform: translateY(-1px);
+    }
+
+    .yellow-pill.outline {
+      background: transparent;
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+    }
+
+    .yellow-pill.outline:hover {
+      background: #f59e0b;
+      color: #0f2a4a;
+    }
+
+    /* ОСНОВНОЙ КОНТЕЙНЕР С СЕТКОЙ ZAKON.KZ */
+    .main-container {
+      max-width: 1240px;
+      margin: 25px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 30px;
+    }
+
+    /* ЛЕВАЯ КОЛОНКА — НОВОСТИ */
+    .section-title-box {
+      margin-bottom: 15px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f2a4a;
+      margin-bottom: 6px;
+    }
+
+    /* Переключатель вида (Плитка / Список) */
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .toggle-btn.active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #0f2a4a;
+    }
+
+    /* ЛЕНТА СПИСКА НОВОСТЕЙ */
+    .news-list {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .news-list-item {
+      padding: 20px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      display: block;
+      transition: background 0.2s;
+    }
+
+    .news-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-list-item:hover {
+      background: #f8fafc;
+    }
+
+    .news-list-item:hover .item-title {
+      color: #d97706;
+    }
+
+    .item-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f2a4a;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* ПРАВАЯ КОЛОНКА — ПОПУЛЯРНЫЕ НОВОСТИ */
+    .sidebar-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .sidebar-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f2a4a;
+      margin-bottom: 16px;
+    }
+
+    /* Фильтр по времени (Сутки, Неделя, Месяц) */
+    .time-filter {
+      display: flex;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .time-tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .time-tab.active {
+      background: #ffffff;
+      color: #0f2a4a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-weight: 700;
+    }
+
+    .popular-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+      display: block;
+    }
+
+    .popular-item:last-child {
+      border-bottom: none;
+    }
+
+    .popular-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.4;
+      margin-bottom: 6px;
+      transition: color 0.2s;
+    }
+
+    .popular-item:hover .popular-title {
+      color: #d97706;
+    }
+
+    .popular-meta {
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      gap: 12px;
+    }
+
+    /* АДАПТИВНОСТЬ ПОД МОБИЛКИ */
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      .nav-categories {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ВЕРХНИЙ КРАСНЫЙ БАННЕР -->
+  <div class="top-promo-banner">
+    🔥 5-й тур БЕСПЛАТНО + РОЗЫГРЫШ ПУТЕВКИ В ЕГИПЕТ! ✈️
+  </div>
+
+  <!-- ТЁМНО-СИНЯЯ ШАПКА В СТИЛЕ SUP CLUB ASTANA -->
+  <header>
+    <div class="header-top">
+      <div class="brand-section">
+        <a href="index.html" class="logo">SUP CLUB <span>ASTANA</span></a>
+        <nav class="nav-categories">
+          <a href="#">Астана</a>
+          <a href="#">Сплавы</a>
+          <a href="#">Маршруты</a>
+          <a href="#">СМИ о нас</a>
+          <a href="#">Правила</a>
+        </nav>
+      </div>
+      <div class="header-actions">
+        <a href="https://instagram.com/sup.club.astana" target="_blank" class="btn-insta">Мы в Instagram</a>
+      </div>
+    </div>
+
+<!-- ЖЁЛТЫЕ КНОПКИ-НАВИГАТОРЫ ПОД ШАПКОЙ -->
+    <div class="sub-nav">
+      <div class="sub-nav-container">
+        <a href="https://supclubastana.kz" class="yellow-pill">ВЕРНУТЬСЯ НАЗАД</a>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="main-container">
+
+    <!-- ЛЕВАЯ КОЛОНКА (СВЕЖИЕ СВЕРХУ, СТАРЫЕ СНИЗУ) -->
+    <main>
+      <div class="section-title-box">
+        <h1 class="page-title">Новости</h1>
+      </div>
+
+
+
+      <!-- СПИСОК НОВОСТЕЙ: ИЮЛЬ -> АПРЕЛЬ -->
+      <div class="news-list">
+
+        <!-- 15 июля -->
+        <a href="news7.html" class="news-list-item">
+          <h2 class="item-title">Сюжет о SUP CLUB ASTANA вышел в эфире телепередачи «Taңшолпан» на национальном телеканале Qazaqstan</h2>
+          <div class="item-meta">10:15, 15 июля 2026</div>
+        </a>
+
+        <!-- 21 июня -->
+        <a href="news6.html" class="news-list-item">
+          <h2 class="item-title">Итоги выходных: 20 июня прошёл бесплатный 30-минутный промо-сплав для жителей столицы</h2>
+          <div class="item-meta">12:00, 21 июня 2026</div>
+        </a>
+
+        <!-- 1 июня -->
+        <a href="news5.html" class="news-list-item">
+          <h2 class="item-title">Поздравляем с Международным днём защиты детей! Проведите яркий праздник всей семьёй на воде</h2>
+          <div class="item-meta">09:00, 1 июня 2026</div>
+        </a>
+
+        <!-- 28 мая -->
+        <a href="news4.html" class="news-list-item">
+          <h2 class="item-title">Анонс: 30-минутный промо-сплав по Набережной — каждому участнику приятный сюрприз от клуба</h2>
+          <div class="item-meta">16:45, 28 мая 2026</div>
+        </a>
+
+        <!-- 1 мая -->
+        <a href="news3.html" class="news-list-item">
+          <h2 class="item-title">Официальное открытие SUP-сезона 2026 в Астане! Стартуют регулярные катания по Ишиму</h2>
+          <div class="item-meta">10:00, 1 мая 2026</div>
+        </a>
+
+        <!-- 28 апреля -->
+        <a href="news2.html" class="news-list-item">
+          <h2 class="item-title">Запуск новых утренних маршрутов: от Моста Туран-1 до Триатлон парка (Акорды) и Атырауского моста</h2>
+          <div class="item-meta">11:30, 28 апреля 2026</div>
+        </a>
+
+        <!-- 15 апреля -->
+        <a href="news1.html" class="news-list-item">
+          <h2 class="item-title">Подготовка к открытию нового сезона: обновление флота и главные правила безопасности на воде</h2>
+          <div class="item-meta">14:00, 15 апреля 2026</div>
+        </a>
+
+      </div>
+    </main>
+
+    <!-- ПРАВАЯ КОЛОНКА (ПОПУЛЯРНЫЕ НОВОСТИ) -->
+    <aside>
+      <div class="sidebar-card">
+        <h2 class="sidebar-title">Популярные новости</h2>
+
+        <div class="time-filter">
+          <div class="time-tab active">Сутки</div>
+          <div class="time-tab">Неделя</div>
+          <div class="time-tab">Месяц</div>
+        </div>
+
+        <div class="popular-list">
+
+          <a href="/news7" class="popular-item">
+            <h3 class="popular-title">Телеканал Qazaqstan снял сюжет про SUP CLUB ASTANA в передаче «Taңшолпан»</h3>
+            <div class="popular-meta">
+              <span>15.07.2026 10:15</span>
+              <span>💬 15</span>
+            </div>
+          </a>
+
+          <a href="/news2" class="popular-item">
+            <h3 class="popular-title">Утренний SUP-маршрут: Туран-1 — Триатлон парк (Акорда) и Атырауский мост</h3>
+            <div class="popular-meta">
+              <span>28.04.2026 11:30</span>
+              <span>💬 11</span>
+            </div>
+          </a>
+
+          <a href="/news6" class="popular-item">
+            <h3 class="popular-title">Бесплатный промо-сплав 20 июня: как прошло 30-минутное катание для гостей</h3>
+            <div class="popular-meta">
+              <span>21.06.2026 12:00</span>
+              <span>💬 9</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+</body>
+</html>
