@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блокировка слотов</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: #fff; padding: 20px; display: flex; justify-content: center; }
+        .box { background: #1e293b; padding: 20px; border-radius: 16px; width: 100%; max-width: 400px; }
+        h2, h3 { color: #f59e0b; text-align: center; margin-top: 0; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #151f32; color: #fff; box-sizing: border-box; font-size: 16px; }
+        button { background: #f59e0b; color: #000; font-weight: bold; cursor: pointer; border: none; margin-top: 15px; }
+        .item { display: flex; justify-content: space-between; align-items: center; background: #151f32; padding: 10px 14px; border-radius: 8px; margin-top: 8px; border: 1px solid #334155; }
+        .del-btn { width: auto; padding: 6px 10px; margin: 0; background: #ef4444; color: #fff; font-size: 12px; }
+        #loginOverlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+<!-- ВХОД -->
+<div id="loginOverlay">
+    <div class="box">
+        <h2>Вход в панель</h2>
+        <input type="text" id="pass" placeholder="Введите пароль (admin)">
+        <button onclick="login()">Войти</button>
+    </div>
+</div>
+
+<!-- ПАНЕЛЬ -->
+<div class="box" id="panel" style="display:none;">
+    <h2>🔒 Блокировка слотов</h2>
+    <input type="date" id="bDate">
+    <select id="bTime">
+        <option value="ALL">⛔ Заблокировать весь день</option>
+        <option value="06:00">06:00</option>
+        <option value="07:00">07:00</option>
+        <option value="08:00">08:00</option>
+        <option value="09:00">09:00</option>
+        <option value="10:00">10:00</option>
+        <option value="13:00">13:00</option>
+        <option value="16:00">16:00</option>
+        <option value="18:00">18:00</option>
+    </select>
+    <button onclick="addBlock()">Заблокировать</button>
+
+    <h3>Заблокировано:</h3>
+    <div id="list">Загрузка...</div>
+</div>
+
+<script>
+    const API = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/blocked_slots';
+    const KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
+
+    function login() {
+        if (document.getElementById('pass').value === 'admin') {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('panel').style.display = 'block';
+            document.getElementById('bDate').valueAsDate = new Date();
+            loadBlocks();
+        } else {
+            alert('Неверный пароль!');
+        }
+    }
+
+    async function loadBlocks() {
+        const res = await fetch(`${API}?order=blocked_date.asc`, {
+            headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+        });
+        const data = await res.json();
+        const list = document.getElementById('list');
+        list.innerHTML = data.length ? '' : '<div style="text-align:center;color:#94a3b8">Пусто</div>';
+        
+        data.forEach(item => {
+            list.innerHTML += `
+                <div class="item">
+                    <span>${item.blocked_date} — <b>${item.blocked_time === 'ALL' ? 'ВЕСЬ ДЕНЬ' : item.blocked_time}</b></span>
+                    <button class="del-btn" onclick="delBlock(${item.id})">Удалить</button>
+                </div>`;
+        });
+    }
+
+    async function addBlock() {
+        const date = document.getElementById('bDate').value;
+        const time = document.getElementById('bTime').value;
+        if (!date) return alert('Выберите дату');
+
+        await fetch(API, {
+            method: 'POST',
+            headers: { 
+                'apikey': KEY, 
+                'Authorization': 'Bearer ' + KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ blocked_date: date, blocked_time: time })
+        });
+        loadBlocks();
+    }
+
+    async function delBlock(id) {
+        await fetch(`${API}?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
+        });
+        loadBlocks();
+    }
+</script>
+</body>
+</html>
