@@ -62,7 +62,7 @@
 
     async function loadBlocks() {
         try {
-            const res = await fetch(API, {
+            const res = await fetch(`${API}?order=block_date.asc`, {
                 headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY }
             });
             const data = await res.json();
@@ -76,11 +76,9 @@
             list.innerHTML = data.length ? '' : '<div style="text-align:center;color:#94a3b8">Пусто</div>';
             
             data.forEach(item => {
-                const date = item.blocked_date || item.date;
-                const time = item.blocked_time || item.time;
                 list.innerHTML += `
                     <div class="item">
-                        <span>${date} — <b>${time === 'ALL' ? 'ВЕСЬ ДЕНЬ' : time}</b></span>
+                        <span>${item.block_date} — <b>${item.slot_time === 'ALL' ? 'ВЕСЬ ДЕНЬ' : item.slot_time}</b></span>
                         <button class="del-btn" onclick="delBlock(${item.id})">Удалить</button>
                     </div>`;
             });
@@ -94,14 +92,6 @@
         const time = document.getElementById('bTime').value;
         if (!date) return alert('Выберите дату');
 
-        // Отправляем оба варианта названий полей для гарантии совпадения с базой
-        const payload = { 
-            blocked_date: date, 
-            blocked_time: time,
-            date: date,
-            time: time 
-        };
-
         const res = await fetch(API, {
             method: 'POST',
             headers: { 
@@ -109,12 +99,12 @@
                 'Authorization': 'Bearer ' + KEY,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ block_date: date, slot_time: time })
         });
 
         if (!res.ok) {
             const err = await res.json();
-            alert('Ошибка при сохранении: ' + (err.message || res.statusText));
+            alert('Ошибка: ' + (err.message || res.statusText));
         } else {
             loadBlocks();
         }
