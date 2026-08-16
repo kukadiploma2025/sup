@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUP CLUB ASTANA — Статус выхода на воду</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+
+  <div class="max-w-md w-full bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-700 text-center">
+    <h1 class="text-xl font-bold tracking-wide text-slate-400 mb-1">SUP CLUB ASTANA</h1>
+    <h2 class="text-sm text-slate-500 mb-6">Статус безопасности на воде (Астана)</h2>
+
+    <!-- Индикатор статуса -->
+    <div id="status-card" class="p-6 rounded-2xl mb-6 transition-all border border-slate-700 bg-slate-700/50">
+      <div id="status-icon" class="text-5xl mb-3">⏳</div>
+      <div id="status-title" class="text-xl font-extrabold mb-2">Загрузка данных...</div>
+      <p id="status-desc" class="text-sm text-slate-300">Получаем актуальную погоду</p>
+    </div>
+
+    <!-- Метрики -->
+    <div class="grid grid-cols-2 gap-3 mb-6 text-left">
+      <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+        <div class="text-xs text-slate-400">Ветер / Порывы</div>
+        <div id="wind-speed" class="text-lg font-bold mt-1">-- м/с</div>
+      </div>
+      <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+        <div class="text-xs text-slate-400">Погода</div>
+        <div id="weather-condition" class="text-lg font-bold mt-1">--</div>
+      </div>
+    </div>
+
+    <button onclick="checkSafety()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 active:scale-95 transition rounded-xl font-semibold text-sm">
+      🔄 Обновить данные
+    </button>
+  </div>
+
+  <script>
+    // Бесплатный API OpenWeatherMap (Астана)
+    // Координаты Ишима в Астане (51.16939, 71.44907)
+    const API_KEY = "bd5e378503939ddaee76f12ad7a97608"; // Демо-ключ OpenWeatherMap
+    const LAT = "51.16939";
+    const LON = "71.44907";
+
+    async function checkSafety() {
+      const card = document.getElementById('status-card');
+      const icon = document.getElementById('status-icon');
+      const title = document.getElementById('status-title');
+      const desc = document.getElementById('status-desc');
+      const windEl = document.getElementById('wind-speed');
+      const weatherEl = document.getElementById('weather-condition');
+
+      title.innerText = "Загрузка...";
+      
+      try {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&appid=${API_KEY}&units=metric&lang=ru`);
+        const data = await response.json();
+
+        const windSpeed = data.wind.speed; // Скорость ветра
+        const windGust = data.wind.gust || windSpeed; // Порывы
+        const weatherMain = data.weather[0].main.toLowerCase(); // Описание (Thunderstorm, Rain и т.д.)
+        const weatherDesc = data.weather[0].description;
+        
+        // Время в Астане
+        const now = new Date();
+        const hours = now.getHours();
+
+        windEl.innerText = `${Math.round(windSpeed)} м/с (порывы ${Math.round(windGust)})`;
+        weatherEl.innerText = weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1);
+
+        // Приоритет проверок правил безопасности:
+        
+        // 1. Темное время суток (после 22:00 или до 06:00)
+        if (hours >= 22 || hours < 6) {
+          setStatus('red', '🌙', 'Выход не рекомендуется', 'Не рекомендуется выходить на воду в темное время суток из соображений безопасности.');
+          return;
+        }
+
+        // 2. Опасные метеоявления (гроза, шторм)
+        if (weatherMain.includes('thunderstorm') || weatherMain.includes('squall') || weatherMain.includes('tornado')) {
+          setStatus('red', '⚡', 'Опасность! Гроза / Шторм', 'Гроза или штормовое предупреждение. Выходить на воду категорически запрещено!');
+          return;
+        }
+
+        // 3. Сильный ветер или порывы (выше 8 м/с)
+        if (windSpeed > 8 || windGust > 10) {
+          setStatus('red', '💨', 'Опасно! Сильный ветер', `Скорость ветра ${Math.round(windSpeed)} м/с с порывами до ${Math.round(windGust)} м/с. Выход на воду запрещен.`);
+          return;
+        }
+
+        // 4. Умеренный ветер (5–8 м/с)
+        if (windSpeed >= 5 || windGust >= 7) {
+          setStatus('yellow', '⚠️', 'Осторожно! Умеренный ветер', 'Выход возможен только для опытных райдеров. Работайте веслом против ветра в начале прогулки.');
+          return;
+        }
+
+        // 5. Идеальные условия
+        setStatus('green', '🏄‍♂️', 'Погода отличная!', 'Отличные условия для катания на сапе. Не забудьте спасательный жилет и лиш.');
+
+      } catch (error) {
+        setStatus('red', '❌', 'Ошибка загрузки', 'Не удалось получить данные о погоде. Проверьте подключение к интернету.');
+      }
+    }
+
+    function setStatus(type, iconEmoji, titleText, descText) {
+      const card = document.getElementById('status-card');
+      card.className = "p-6 rounded-2xl mb-6 transition-all border ";
+
+      if (type === 'red') {
+        card.classList.add('bg-rose-950/40', 'border-rose-500/50', 'text-rose-200');
+      } else if (type === 'yellow') {
+        card.classList.add('bg-amber-950/40', 'border-amber-500/50', 'text-amber-200');
+      } else {
+        card.classList.add('bg-emerald-950/40', 'border-emerald-500/50', 'text-emerald-200');
+      }
+
+      document.getElementById('status-icon').innerText = iconEmoji;
+      document.getElementById('status-title').innerText = titleText;
+      document.getElementById('status-desc').innerText = descText;
+    }
+
+    // Запуск при открытии страницы
+    checkSafety();
+  </script>
+</body>
+</html>
