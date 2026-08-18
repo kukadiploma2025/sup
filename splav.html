@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SUP CLUB ASTANA — Проверка безопасности на воде</title>
+  <title>SUP CLUB ASTANA — Статус выхода на воду</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; }
@@ -13,12 +13,20 @@
 
   <div class="max-w-md w-full bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-700 text-center">
     <h1 class="text-xl font-bold tracking-wide text-slate-400 mb-1">SUP CLUB ASTANA</h1>
-    <h2 class="text-sm text-slate-500 mb-4">Проверка безопасности перед выплывом</h2>
+    <h2 class="text-sm text-slate-500 mb-4">Проверка безопасности на воде</h2>
 
-    <!-- Плашка настоящей локации -->
-    <div class="flex items-center justify-center gap-2 bg-slate-900/90 border border-slate-700 rounded-full py-1.5 px-4 mb-6 text-xs text-slate-300 w-fit mx-auto">
+    <!-- Плашка локации -->
+    <div class="flex items-center justify-center gap-2 bg-slate-900/90 border border-slate-700 rounded-full py-1.5 px-4 mb-4 text-xs text-slate-300 w-fit mx-auto">
       <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span>Ваша локация: <strong id="location-name" class="text-cyan-400 font-semibold">Определяем...</strong></span>
+      <span>Локация: <strong id="location-name" class="text-cyan-400 font-semibold">Астана (Ишим)</strong></span>
+    </div>
+
+    <!-- Текст-приветствие -->
+    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60 mb-5 text-left">
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <strong class="text-cyan-400 font-semibold block mb-1">Уважаемые гости и любители сапбординга!</strong>
+        Через данный сайт вы можете посмотреть погодные условия перед выходом на воду. Сервис автоматически анализирует ветер, грозовую активность и время суток, чтобы сделать ваш отдых безопасным.
+      </p>
     </div>
 
     <!-- Выбор даты и времени -->
@@ -49,14 +57,14 @@
     </div>
 
     <button onclick="checkSafety()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 active:scale-95 transition rounded-xl font-semibold text-sm">
-      🔄 Пересчитать статус
+      🔄 Обновить статус
     </button>
   </div>
 
   <script>
     const API_KEY = "bd5e378503939ddaee76f12ad7a97608";
     
-    // Координаты по умолчанию (Астана)
+    // По умолчанию — р. Ишим в Астане
     let currentLat = "51.16939";
     let currentLon = "71.44907";
     let cityName = "Астана";
@@ -64,11 +72,17 @@
     function initDateTimePicker() {
       const picker = document.getElementById('datetime-picker');
       const now = new Date();
-      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      picker.value = now.toISOString().slice(0, 16);
+      
+      // Форматирование текущей локальной даты в YYYY-MM-THH:mm
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      picker.value = `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
-    // Запрос реальных координат пользователя (GPS)
     function detectLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -78,13 +92,12 @@
             checkSafety();
           },
           () => {
-            // В случае отказа доступа берем Астану по умолчанию
-            document.getElementById('location-name').innerText = `${cityName} (по умолчанию)`;
+            document.getElementById('location-name').innerText = "Астана";
             checkSafety();
           }
         );
       } else {
-        document.getElementById('location-name').innerText = `${cityName} (по умолчанию)`;
+        document.getElementById('location-name').innerText = "Астана";
         checkSafety();
       }
     }
@@ -95,7 +108,7 @@
 
       const selectedDate = new Date(pickerVal);
       const now = new Date();
-      
+
       const title = document.getElementById('status-title');
       const windEl = document.getElementById('wind-speed');
       const weatherEl = document.getElementById('weather-condition');
@@ -103,28 +116,44 @@
 
       title.innerText = "Загрузка...";
 
+      // Сравнение дней
+      const isToday = selectedDate.toDateString() === now.toDateString();
+      const diffInHours = (selectedDate - now) / (1000 * 60 * 60);
+      const diffInDays = diffInHours / 24;
+
+      if (diffInDays > 5) {
+        setStatus('yellow', '📅', 'Слишком далекая дата', 'Прогноз погоды доступен только на ближайшие 5 дней.');
+        windEl.innerText = "-- м/с";
+        weatherEl.innerText = "--";
+        return;
+      }
+
       try {
         let windSpeed = 0;
         let windGust = 0;
         let weatherMain = "";
         let weatherDesc = "";
 
-        const diffInHours = (selectedDate - now) / (1000 * 60 * 60);
-
-        if (Math.abs(diffInHours) < 1) {
+        // Если дата — Сегодня (или близко к текущему моменту)
+        if (isToday || Math.abs(diffInHours) <= 2) {
           const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentLat}&lon=${currentLon}&appid=${API_KEY}&units=metric&lang=ru`);
+          
+          if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
           const data = await response.json();
 
           windSpeed = data.wind.speed;
           windGust = data.wind.gust || windSpeed;
           weatherMain = data.weather[0].main.toLowerCase();
           weatherDesc = data.weather[0].description;
-          cityName = data.name || "Астана";
+          if (data.name) cityName = data.name;
         } else {
+          // Прогноз на будущие дни (в пределах 5 суток)
           const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${currentLat}&lon=${currentLon}&appid=${API_KEY}&units=metric&lang=ru`);
+          
+          if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
           const data = await response.json();
 
-          cityName = data.city.name || "Астана";
+          if (data.city && data.city.name) cityName = data.city.name;
           const targetTimestamp = Math.floor(selectedDate.getTime() / 1000);
           
           let closestMatch = data.list[0];
@@ -148,24 +177,24 @@
         windEl.innerText = `${Math.round(windSpeed)} м/с (порывы ${Math.round(windGust)})`;
         weatherEl.innerText = weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1);
 
-        // --- ЛОГИКА ПРАВИЛ ---
+        // --- ЛОГИКА ПРАВИЛ БЕЗОПАСНОСТИ ---
         const hours = selectedDate.getHours();
 
         // 1. Темное время суток (после 22:00 или до 06:00)
         if (hours >= 22 || hours < 6) {
-          setStatus('red', '🌙', 'Темное время суток', `В ${hours}:00 выходить на воду не рекомендуется из соображений безопасности.`);
+          setStatus('red', '🌙', 'Темное время суток', `В ${hours}:00 не рекомендуется выходить на воду в темное время суток из соображений безопасности.`);
           return;
         }
 
-        // 2. Гроза или шторм
+        // 2. Гроза / Шторм
         if (weatherMain.includes('thunderstorm') || weatherMain.includes('squall') || weatherMain.includes('tornado')) {
-          setStatus('red', '⚡', 'Опасность! Гроза / Шторм', 'Прогнозируется гроза или опасные явления. Выход на воду запрещен!');
+          setStatus('red', '⚡', 'Опасность! Гроза / Шторм', 'Прогнозируется гроза или опасное явление. Выход на воду запрещен!');
           return;
         }
 
         // 3. Сильный ветер (>8 м/с)
         if (windSpeed > 8 || windGust > 10) {
-          setStatus('red', '💨', 'Опасно! Сильный ветер', `Ветер ${Math.round(windSpeed)} м/с с порывами до ${Math.round(windGust)} м/с. Выход запрещен.`);
+          setStatus('red', '💨', 'Опасно! Сильный ветер', `Ветер ${Math.round(windSpeed)} м/с с порывами до ${Math.round(windGust)} м/с. Выход на воду запрещен.`);
           return;
         }
 
@@ -175,11 +204,12 @@
           return;
         }
 
-        // 5. Отличные условия
-        setStatus('green', '🏄‍♂️', 'Благоприятные условия!', 'Отличное время для катания на сапе. Обязательно надевайте спасательный жилет.');
+        // 5. Благоприятные условия
+        setStatus('green', '🏄‍♂️', 'Погода отличная!', 'Отличное время для катания на сапе. Обязательно надевайте спасательный жилет.');
 
       } catch (error) {
-        setStatus('red', '❌', 'Ошибка данных', 'Не удалось получить данные о погоде на указанную дату.');
+        console.error(error);
+        setStatus('red', '❌', 'Ошибка загрузки', 'Не удалось получить данные о погоде. Проверьте интернет.');
       }
     }
 
@@ -200,7 +230,7 @@
       document.getElementById('status-desc').innerText = descText;
     }
 
-    // Старт
+    // Инициализация
     initDateTimePicker();
     detectLocation();
   </script>
