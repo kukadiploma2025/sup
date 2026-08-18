@@ -449,7 +449,7 @@
             }
 
             const myPhone = '77479416498';
-            const message = `Нас ${spots} человек на ${selectedTime} по маршруту: ${routeText}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone} (содержимое готового сообщений не менять! чтобы не потерять важную информацию и не ввести в заблуждение)`;
+            const message = `Нас ${spots} человек на ${selectedTime} по маршруту: ${routeText}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone} (содержимое готового сообщений не менять!))`;
             window.open(`https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`, '_blank');
             
             document.getElementById('clientName').value = '';
