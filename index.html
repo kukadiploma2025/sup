@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    <!-- Цвет для строки состояния Safari на iPhone (убирает белую полосу сверху) -->
+    <!-- Цвет для строки состояния Safari на iPhone -->
     <meta name="theme-color" content="#0d2b45">
 
     <!-- Open Graph мета-теги -->
@@ -31,13 +31,12 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            background-color: #0d2b45; /* Скрывает белые стыки сверху на iOS */
+            background-color: #0d2b45;
         }
         .yellow-accent {
             color: #FFD700;
         }
         
-        /* Убираем белую полосу у шапки */
         header {
             margin-top: 0 !important;
             padding-top: env(safe-area-inset-top, 0px);
@@ -49,25 +48,26 @@
         .hero {
             position: relative;
             width: 100%;
-            height: calc(100vh - 70px); /* Высота экрана с учетом шапки */
+            height: calc(100vh - 65px); /* Высота экрана */
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Центрируем контент */
+            justify-content: flex-start;
             align-items: center;
             text-align: center;
         }
 
-        /* Текст строго по центру экрана */
+        /* Текст в верхней третьем блоке, чтобы освободить середину */
         .hero-text {
             position: relative;
             z-index: 2;
             padding: 0 20px;
+            margin-top: 25vh; /* Фиксирует текст чуть выше центра */
         }
 
-        /* Кнопка WhatsApp снизу с защитой от панели Safari */
+        /* Кнопка строго снизу экранов iOS/Android */
         .hero-btn-container {
             position: absolute;
-            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            bottom: calc(15px + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
             z-index: 5;
@@ -80,13 +80,13 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 14px 28px;
+            padding: 12px 24px;
             background-color: #25D366;
             color: #ffffff;
             text-decoration: none;
             border-radius: 30px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             box-shadow: 0 4px 14px rgba(37, 211, 102, 0.5);
             transition: transform 0.2s ease, background-color 0.2s ease;
         }
@@ -109,9 +109,11 @@
         }
 
         @media (max-width: 480px) {
+            .hero-text {
+                margin-top: 20vh;
+            }
             .hero-btn-container {
-                /* Отступ снизу для iPhone, чтобы панель адресной строки не перекрывала кнопку */
-                bottom: 65px; 
+                bottom: 20px; /* Фиксация внизу экрана над панелью */
             }
             .countdown-box {
                 font-size: 1.4rem;
@@ -140,13 +142,13 @@
             <source src="video.mp4" type="video/mp4">
         </video>
         
-        <!-- Текст посредине экрана -->
+        <!-- Текст над центром -->
         <div class="hero-text">
             <h1>SUP CLUB <span class="yellow-accent">ASTANA</span></h1>
             <p>До встречи в новом летнем сезоне!</p>
         </div>
         
-        <!-- Кнопка поверх видео в самом низу (выше меню Safari) -->
+        <!-- Кнопка в самом низу видео -->
         <div class="hero-btn-container">
             <a href="https://wa.me/+77054055142" target="_blank" class="btn-hero-whatsapp">
                 💬 Написать в WhatsApp
