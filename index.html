@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    <!-- Цвет для строки состояния Safari на iPhone -->
-    <meta name="theme-color" content="#0d2b45">
-
     <!-- Open Graph мета-теги -->
     <meta property="og:title" content="SUP CLUB ASTANA | Премиальный отдых на воде" />
     <meta property="og:description" content="SUP CLUB ASTANA: До встречи в новом сезоне!" />
@@ -21,6 +18,7 @@
     <link rel="icon" type="image/png" href="logo.jpg">
     <link rel="apple-touch-icon" href="logo.jpg">
     <link rel="stylesheet" href="style.css">
+    
     <style>
         * {
             box-sizing: border-box;
@@ -31,48 +29,66 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            background-color: #0d2b45;
+            background-color: #ffffff !important; /* Убираем темно-синий фон */
         }
         .yellow-accent {
             color: #FFD700;
         }
         
         header {
-            margin-top: 0 !important;
-            padding-top: env(safe-area-inset-top, 0px);
+            margin: 0 !important;
             position: relative;
             z-index: 10;
         }
 
-        /* Баннер на весь экран */
+        /* Главный блок без темных фильтров */
         .hero {
             position: relative;
             width: 100%;
-            height: calc(100vh - 65px); /* Высота экрана */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             text-align: center;
+            overflow: hidden;
+            background: none !important;
         }
 
-        /* Текст в верхней третьем блоке, чтобы освободить середину */
+        /* Отключаем возможные темные маски из style.css */
+        .hero::before, .hero::after {
+            display: none !important;
+        }
+
+        /* Чистое видео в оригинальном качестве без фильтров */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover !important;
+            z-index: 1;
+            filter: none !important; /* Отключает любые CSS-фильтры */
+            opacity: 1 !important;
+        }
+
+        /* Текст над видео */
         .hero-text {
             position: relative;
             z-index: 2;
             padding: 0 20px;
-            margin-top: 25vh; /* Фиксирует текст чуть выше центра */
+            margin-top: 14vh;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* Легкая тень, чтобы текст читался без темного фильтра */
         }
 
-        /* Кнопка строго снизу экранов iOS/Android */
+        /* Кнопка WhatsApp над нижней панелью Safari/Chrome */
         .hero-btn-container {
-            position: absolute;
-            bottom: calc(15px + env(safe-area-inset-bottom, 0px));
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             z-index: 5;
             width: 100%;
             text-align: center;
+            margin-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
         }
 
         .btn-hero-whatsapp {
@@ -87,7 +103,7 @@
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.95rem;
-            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.5);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
             transition: transform 0.2s ease, background-color 0.2s ease;
         }
         .btn-hero-whatsapp:hover {
@@ -109,12 +125,6 @@
         }
 
         @media (max-width: 480px) {
-            .hero-text {
-                margin-top: 20vh;
-            }
-            .hero-btn-container {
-                bottom: 20px; /* Фиксация внизу экрана над панелью */
-            }
             .countdown-box {
                 font-size: 1.4rem;
                 gap: 4px;
@@ -138,17 +148,18 @@
 
     <!-- Главный баннер -->
     <div class="hero">
-        <video autoplay muted loop playsinline class="hero-video" poster="image_3948c2.jpg">
+        <!-- Чистый вывод видео без постер-заглушки и наложений -->
+        <video autoplay muted loop playsinline class="hero-video">
             <source src="video.mp4" type="video/mp4">
         </video>
         
-        <!-- Текст над центром -->
+        <!-- Текст над видео -->
         <div class="hero-text">
             <h1>SUP CLUB <span class="yellow-accent">ASTANA</span></h1>
             <p>До встречи в новом летнем сезоне!</p>
         </div>
         
-        <!-- Кнопка в самом низу видео -->
+        <!-- Кнопка внизу над меню браузера -->
         <div class="hero-btn-container">
             <a href="https://wa.me/+77054055142" target="_blank" class="btn-hero-whatsapp">
                 💬 Написать в WhatsApp
