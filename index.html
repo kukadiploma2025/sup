@@ -31,32 +31,23 @@
             color: #FFD700;
         }
         
-        /* Фиксация фонового сектора (Hero) */
+        /* Главный баннер пролистывается с сайтом */
         .hero {
-            position: fixed;
-            top: 0;
-            left: 0;
+            position: relative;
             width: 100%;
             height: 100vh;
-            z-index: -1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Прижимает элементы к верху и низу */
+            justify-content: space-between;
             align-items: center;
-            padding-top: 120px; /* Отступ сверху для заголовков */
-            padding-bottom: 40px; /* Отступ снизу для кнопки, чтобы была у самого края */
+            padding-top: 120px;
+            padding-bottom: 40px;
         }
 
         .hero-text {
             text-align: center;
-        }
-
-        /* Контент под фиксированным баннером */
-        .main-content-wrapper {
-            margin-top: 100vh;
-            background: #ffffff;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .btn-hero-whatsapp {
@@ -72,6 +63,8 @@
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
             transition: transform 0.2s ease, background-color 0.2s ease;
+            position: relative;
+            z-index: 2;
         }
         .btn-hero-whatsapp:hover {
             background-color: #20ba5a;
@@ -94,7 +87,7 @@
         @media (max-width: 480px) {
             .hero {
                 padding-top: 100px;
-                padding-bottom: 30px; /* Фиксация кнопки прямо над нижним краем экрана iPhone */
+                padding-bottom: 30px;
             }
             .countdown-box {
                 font-size: 1.5rem;
@@ -112,12 +105,12 @@
 </head>
 <body>
 
-    <header style="position: relative; z-index: 10;">
+    <header>
         <div class="logo">SUP CLUB <span class="yellow-accent">ASTANA</span></div>
         <a href="https://www.instagram.com/sup.club.astana" target="_blank" class="insta-link">Мы в Instagram</a>
     </header>
 
-    <!-- Главный баннер (закреплен) -->
+    <!-- Главный баннер (пролистывается вместе с контентом) -->
     <div class="hero">
         <video autoplay muted loop playsinline class="hero-video" poster="image_3948c2.jpg">
             <source src="video.mp4" type="video/mp4">
@@ -128,7 +121,7 @@
             <p>До встречи в новом летнем сезоне!</p>
         </div>
         
-        <!-- Кнопка опущена в самый низ видео -->
+        <!-- Кнопка в самом низу видео -->
         <div>
             <a href="https://wa.me/+77054055142" target="_blank" class="btn-hero-whatsapp">
                 💬 Написать в WhatsApp
@@ -136,61 +129,58 @@
         </div>
     </div>
 
-    <!-- Обёртка для основной информации -->
-    <div class="main-content-wrapper">
-        <!-- Секция завершения сезона и обратного отсчета -->
-        <section class="season-countdown-section" style="padding: 60px 20px; text-align: center; margin: 0 auto; max-width: 1200px;">
+    <!-- Секция завершения сезона и обратного отсчета -->
+    <section class="season-countdown-section" style="padding: 60px 20px; text-align: center; margin: 0 auto; max-width: 1200px; background: #ffffff;">
+        
+        <div class="feature-card" style="padding: 40px 20px; max-width: 900px; margin: 0 auto;">
             
-            <div class="feature-card" style="padding: 40px 20px; max-width: 900px; margin: 0 auto;">
-                
-                <h2 style="font-size: 2rem; margin-top: 0; margin-bottom: 12px;">Спасибо, что провели этот сезон с нами! ❤️</h2>
-                
-                <p style="font-size: 1.05rem; max-width: 700px; margin: 0 auto 30px; line-height: 1.6; color: #4a5568;">
-                    Мы завершили яркий сезон сплавов и туров. Спасибо каждому райдеру за эмоции, доверие и атмосферу на воде! Мы уже активно готовимся к открытию следующего сезона.
+            <h2 style="font-size: 2rem; margin-top: 0; margin-bottom: 12px;">Спасибо, что провели этот сезон с нами! ❤️</h2>
+            
+            <p style="font-size: 1.05rem; max-width: 700px; margin: 0 auto 30px; line-height: 1.6; color: #4a5568;">
+                Мы завершили яркий сезон сплавов и туров. Спасибо каждому райдеру за эмоции, доверие и атмосферу на воде! Мы уже активно готовимся к открытию следующего сезона.
+            </p>
+
+            <!-- Таймер обратного отсчета -->
+            <div class="countdown-wrapper" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; display: inline-block; margin-bottom: 30px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); max-width: 100%;">
+                <div style="font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #124076; margin-bottom: 15px;">
+                    ⏳ До старта нового сезона (1 мая):
+                </div>
+                <div id="countdown" class="countdown-box">
+                    <div><span id="days">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Дней</div></div>
+                    <span style="color: #cbd5e0;">:</span>
+                    <div><span id="hours">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Часов</div></div>
+                    <span style="color: #cbd5e0;">:</span>
+                    <div><span id="minutes">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Минут</div></div>
+                    <span style="color: #cbd5e0;">:</span>
+                    <div><span id="seconds">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Секунд</div></div>
+                </div>
+            </div>
+
+            <!-- Блок розыгрыша -->
+            <div style="background: #FFF9E6; border: 1px dashed #FEC02A; padding: 25px 20px; border-radius: 12px; max-width: 650px; margin: 0 auto; text-align: center;">
+                <div style="color: #ff4a4a; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+                    ✈️ Главный приз сезона
+                </div>
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem; color: #124076;">Скоро объявим победителя путевки в Египет!</h3>
+                <p style="margin: 0 0 18px 0; font-size: 0.95rem; color: #4a5568; line-height: 1.5;">
+                    Итоги и прямой эфир розыгрыша будут опубликованы в нашем Instagram. Следите за анонсами!
                 </p>
-
-                <!-- Таймер обратного отсчета -->
-                <div class="countdown-wrapper" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; display: inline-block; margin-bottom: 30px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); max-width: 100%;">
-                    <div style="font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #124076; margin-bottom: 15px;">
-                        ⏳ До старта нового сезона (1 мая):
-                    </div>
-                    <div id="countdown" class="countdown-box">
-                        <div><span id="days">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Дней</div></div>
-                        <span style="color: #cbd5e0;">:</span>
-                        <div><span id="hours">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Часов</div></div>
-                        <span style="color: #cbd5e0;">:</span>
-                        <div><span id="minutes">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Минут</div></div>
-                        <span style="color: #cbd5e0;">:</span>
-                        <div><span id="seconds">00</span><div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #718096; margin-top: 2px;">Секунд</div></div>
-                    </div>
-                </div>
-
-                <!-- Блок розыгрыша -->
-                <div style="background: #FFF9E6; border: 1px dashed #FEC02A; padding: 25px 20px; border-radius: 12px; max-width: 650px; margin: 0 auto; text-align: center;">
-                    <div style="color: #ff4a4a; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
-                        ✈️ Главный приз сезона
-                    </div>
-                    <h3 style="margin: 0 0 10px 0; font-size: 1.3rem; color: #124076;">Скоро объявим победителя путевки в Египет!</h3>
-                    <p style="margin: 0 0 18px 0; font-size: 0.95rem; color: #4a5568; line-height: 1.5;">
-                        Итоги и прямой эфир розыгрыша будут опубликованы в нашем Instagram. Следите за анонсами!
-                    </p>
-                    <a href="https://www.instagram.com/sup.club.astana" target="_blank" class="btn-cta" style="padding: 12px 28px; font-size: 0.95rem; display: inline-block;">
-                        Следить в Instagram
-                    </a>
-                </div>
-
+                <a href="https://www.instagram.com/sup.club.astana" target="_blank" class="btn-cta" style="padding: 12px 28px; font-size: 0.95rem; display: inline-block;">
+                    Следить в Instagram
+                </a>
             </div>
 
-        </section>
+        </div>
 
-        <!-- Подвал -->
-        <footer>
-            <h2>Лови волну, держи баланс!</h2>
-            <div class="credits" style="margin-top: 20px;">
-                © 2024-2026 SUP CLUB <span class="yellow-accent">ASTANA</span>. Все права защищены. Лето в столице.
-            </div>
-        </footer>
-    </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <h2>Лови волну, держи баланс!</h2>
+        <div class="credits" style="margin-top: 20px;">
+            © 2024-2026 SUP CLUB <span class="yellow-accent">ASTANA</span>. Все права защищены. Лето в столице.
+        </div>
+    </footer>
 
     <!-- Скрипт обратного отсчета -->
     <script>
