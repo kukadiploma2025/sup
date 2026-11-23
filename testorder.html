@@ -597,7 +597,7 @@ async function handleBooking(){
     }
 
     const myPhone = '77479416498';
-    const message = `Нас ${seatsList.length} человек на ${selectedTime} по маршруту: ${routeText}. Сапы: ${seatsList.map(n => '№'+n).join(', ')}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone} (содержимое готового сообщений не менять!))`;
+    const message = `Здравствуйте Инструктор Қуаныш!, Нас ${seatsList.length} человек на ${selectedTime} по маршруту: ${routeText}. Сапы: ${seatsList.map(n => '№'+n).join(', ')}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone} (содержимое готового сообщений не менять!))`;
     const waUrl = `https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`;
     savePendingWa(waUrl, message);
     showWaScreen(waUrl, message, false);
