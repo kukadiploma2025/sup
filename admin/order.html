@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Панель управления — SUP CLUB ASTANA</title>
+<style>
+:root{
+  --bg:#0b1220; --bg2:#111a2e; --card:#17223a; --card2:#1c2a47;
+  --line:#2a3a5c; --text:#f1f5f9; --muted:#8b9bb8;
+  --yellow:#f59e0b; --yellow-soft:rgba(245,158,11,.14);
+  --green:#10b981; --green-soft:rgba(16,185,129,.14);
+  --red:#ef4444; --red-soft:rgba(239,68,68,.14);
+  --blue:#38bdf8; --wa:#25d366;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);
+  background:radial-gradient(1200px 600px at 80% -10%,#16264a 0%,transparent 60%),var(--bg);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+
+/* ---------- Login ---------- */
+.login-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9999;
+  background:radial-gradient(900px 500px at 50% 0%,#16264a,var(--bg));padding:20px}
+.login-box{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:32px 28px;text-align:center;
+  box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.login-logo{font-size:44px;margin-bottom:6px}
+.login-box h2{margin:0 0 4px;font-size:22px}
+.login-box p{margin:0 0 22px;color:var(--muted);font-size:14px}
+.login-box input{width:100%;padding:13px 14px;margin-bottom:12px;background:var(--bg2);border:1px solid var(--line);
+  color:#fff;border-radius:12px;font-size:16px;outline:none;transition:border .2s}
+.login-box input:focus{border-color:var(--yellow)}
+.btn-login{width:100%;padding:13px;border:0;border-radius:12px;background:var(--yellow);color:#111827;font-weight:700;font-size:16px}
+.btn-login:hover{filter:brightness(1.08)}
+
+/* ---------- Layout ---------- */
+.admin-container{display:none;max-width:1280px;margin:0 auto;padding:22px 16px 60px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--yellow),#f97316);
+  display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand h1{margin:0;font-size:20px;line-height:1.1}
+.brand span{color:var(--muted);font-size:13px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;transition:.15s}
+.btn:hover{background:var(--card2)}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:#111827}
+.btn.primary:hover{filter:brightness(1.08)}
+
+/* Date navigator */
+.date-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.date-nav{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.date-nav button{background:none;border:0;color:var(--text);padding:12px 16px;font-size:18px}
+.date-nav button:hover{background:var(--card2)}
+.date-nav input{background:none;border:0;color:var(--text);font-size:16px;font-weight:600;padding:10px 6px;outline:none;color-scheme:dark}
+.date-label{color:var(--muted);font-size:14px;margin-left:6px}
+.date-label b{color:var(--text)}
+
+/* Weekend panel */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:20px;display:none}
+.panel h3{margin:0 0 12px;color:var(--yellow);font-size:16px}
+.panel-row{display:flex;gap:10px;flex-wrap:wrap}
+.panel-row input,.panel-row select{padding:10px 12px;background:var(--bg2);border:1px solid var(--line);color:var(--text);border-radius:10px;font-size:15px;color-scheme:dark}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-block{display:inline-flex;align-items:center;gap:8px;background:var(--red-soft);border:1px solid rgba(239,68,68,.35);color:#fca5a5;
+  padding:6px 8px 6px 12px;border-radius:999px;font-size:13px}
+.chip-block button{background:none;border:0;color:#fca5a5;font-size:16px;line-height:1;padding:0 4px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;right:-20px;top:-20px;width:80px;height:80px;border-radius:50%;background:var(--yellow-soft)}
+.stat .label{color:var(--muted);font-size:13px}
+.stat .value{font-size:26px;font-weight:800;margin-top:4px}
+.stat.green .value{color:var(--green)} .stat.green::after{background:var(--green-soft)}
+.stat.red .value{color:#fb7185} .stat.red::after{background:var(--red-soft)}
+.stat.yellow .value{color:var(--yellow)}
+
+/* Toolbar */
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;padding:12px 14px 12px 40px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--text);font-size:15px;outline:none}
+.search input:focus{border-color:var(--yellow)}
+.search::before{content:"🔍";position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.7}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter{background:var(--card);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px;font-weight:600}
+.filter.active{background:var(--yellow-soft);border-color:var(--yellow);color:var(--yellow)}
+.filter .n{opacity:.7;margin-left:4px}
+
+/* Booking cards */
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:16px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 10px;background:var(--card);border:1px dashed var(--line);border-radius:var(--radius)}
+.empty .big{font-size:40px;margin-bottom:8px}
+.booking{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:14px;
+  border-left:4px solid var(--red);transition:.2s}
+.booking.paid{border-left-color:var(--yellow)}
+.booking.settled{border-left-color:var(--green)}
+.booking.completed{opacity:.55;border-left-color:#475569}
+.booking.dirty{box-shadow:0 0 0 2px var(--yellow-soft),0 0 0 1px var(--yellow)}
+.b-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.b-time{font-size:26px;font-weight:800;color:var(--yellow);line-height:1}
+.b-created{font-size:11px;color:var(--muted);margin-top:5px}
+.b-seats{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.b-name{font-size:17px;font-weight:700}
+.completed .b-name{text-decoration:line-through;text-decoration-color:var(--yellow)}
+.b-route{color:var(--muted);font-size:13px;margin-top:2px}
+.b-phone{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.wa-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(37,211,102,.14);border:1px solid rgba(37,211,102,.4);color:var(--wa);
+  text-decoration:none;font-weight:700;font-size:14px;padding:8px 12px;border-radius:10px}
+.wa-btn:hover{background:rgba(37,211,102,.25)}
+.call-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--line);color:var(--text);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:10px}
+.money{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.money div{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.money small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.money b{font-size:15px}
+.money .rest-due{color:#fb7185} .money .rest-ok{color:var(--green)}
+.money input{width:100%;background:none;border:0;color:var(--yellow);font-weight:700;font-size:15px;outline:none;padding:0}
+.paid-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);cursor:pointer;user-select:none}
+.paid-row input{width:20px;height:20px;accent-color:var(--yellow);cursor:pointer}
+.note-input{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:10px;font-size:14px;outline:none}
+.note-input:focus{border-color:var(--yellow)}
+.b-actions{display:flex;gap:8px}
+.b-actions button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);font-weight:700;font-size:13px;background:var(--bg2);color:var(--text)}
+.b-actions .save{background:var(--yellow);border-color:var(--yellow);color:#111827}
+.b-actions .save:disabled{background:var(--bg2);border-color:var(--line);color:var(--muted);cursor:default}
+.b-actions .done{color:var(--green);border-color:rgba(16,185,129,.5)}
+.b-actions .done.on{background:var(--green);color:#fff}
+.b-actions .del{flex:0 0 auto;color:#fb7185;border-color:rgba(239,68,68,.4)}
+.b-actions .del:hover{background:var(--red);color:#fff}
+
+/* Toast */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:10000;align-items:center}
+.toast{background:var(--card2);border:1px solid var(--line);padding:12px 18px;border-radius:12px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:in .2s}
+.toast.ok{border-color:var(--green)} .toast.err{border-color:var(--red)}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9998;padding:20px}
+.modal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;max-width:380px;width:100%;text-align:center}
+.modal h3{margin:0 0 8px} .modal p{color:var(--muted);margin:0 0 18px;font-size:14px}
+.modal .row{display:flex;gap:10px} .modal .row button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-weight:700}
+.modal .row .danger{background:var(--red);border-color:var(--red);color:#fff}
+
+@media(max-width:480px){
+  .list{grid-template-columns:1fr}
+  .brand h1{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<!-- Авторизация -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">🏄</div>
+    <h2>SUP CLUB ASTANA</h2>
+    <p>Вход в панель управления</p>
+    <input type="text" id="username" placeholder="Логин" autocomplete="username">
+    <input type="password" id="password" placeholder="Пароль" autocomplete="current-password">
+    <button class="btn-login" onclick="checkAuth()">Войти</button>
+  </div>
+</div>
+
+<div class="admin-container" id="adminContainer">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">🏄</div>
+      <div><h1>SUP CLUB ASTANA</h1><span>Управление бронированиями</span></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" onclick="loadAdminData(true)">🔄 Обновить</button>
+      <button class="btn" onclick="toggleWeekendPanel()">🚫 Выходные</button>
+      <button class="btn" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+
+  <div class="date-bar">
+    <div class="date-nav">
+      <button onclick="shiftDate(-1)" title="Предыдущий день">‹</button>
+      <input type="date" id="adminDate" onchange="loadAdminData()">
+      <button onclick="shiftDate(1)" title="Следующий день">›</button>
+    </div>
+    <button class="btn primary" onclick="goToday()">Сегодня</button>
+    <span class="date-label" id="dateLabel"></span>
+  </div>
+
+  <!-- Закрытые даты -->
+  <div class="panel" id="weekendPanel">
+    <h3>Закрытые даты / часы</h3>
+    <div class="panel-row">
+      <input type="date" id="blockDate">
+      <select id="blockTime">
+        <option value="ALL">Весь день</option>
+        <option value="06:00">06:00</option><option value="08:00">08:00</option>
+        <option value="10:00">10:00</option><option value="12:00">12:00</option>
+        <option value="14:00">14:00</option><option value="16:00">16:00</option>
+        <option value="18:00">18:00</option><option value="20:00">20:00</option>
+      </select>
+      <button class="btn primary" onclick="addDisabledSlot()">Заблокировать</button>
+    </div>
+    <div class="chips" id="disabledSlotsList"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat yellow"><div class="label">Всего человек</div><div id="totalPeople" class="value">0</div></div>
+    <div class="stat"><div class="label">Общий чек</div><div id="totalSum" class="value">0 ₸</div></div>
+    <div class="stat green"><div class="label">Собрано предоплат</div><div id="totalPrepaid" class="value">0 ₸</div></div>
+    <div class="stat red"><div class="label">Осталось собрать</div><div id="totalRemaining" class="value">0 ₸</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search"><input type="search" id="searchInput" placeholder="Поиск по имени, телефону, маршруту…" oninput="renderList()"></div>
+    <div class="filters" id="filters">
+      <button class="filter active" data-f="all">Все<span class="n"></span></button>
+      <button class="filter" data-f="wait">Ждут оплаты<span class="n"></span></button>
+      <button class="filter" data-f="paid">Оплачены<span class="n"></span></button>
+      <button class="filter" data-f="done">Завершены<span class="n"></span></button>
+    </div>
+  </div>
+
+  <div class="list" id="bookingList"></div>
+</div>
+
+<!-- Подтверждение удаления -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Удалить бронь?</h3>
+    <p id="modalText"></p>
+    <div class="row">
+      <button onclick="closeModal()">Отмена</button>
+      <button class="danger" id="modalOk">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+const API_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/bookings';
+const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
+const AUTH_LOGIN = 'admin';
+const AUTH_PASS = 'supastana2026';
+const PRICE_PER_SPOT = 10000;
+
+let bookings = [];
+let currentFilter = 'all';
+const dirty = new Set();
+
+const headers = {
+  'apikey': ANON_KEY,
+  'Authorization': `Bearer ${ANON_KEY}`,
+  'Content-Type': 'application/json'
+};
+
+/* ---------- Утилиты ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Number(n || 0).toLocaleString('ru-RU') + ' ₸';
+const pad = n => String(n).padStart(2, '0');
+const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+
+/* ---------- Авторизация ---------- */
+function checkAuth() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  if (u === AUTH_LOGIN && p === AUTH_PASS) {
+    sessionStorage.setItem('sup_authenticated', 'true');
+    initAdmin();
+  } else {
+    toast('Неверный логин или пароль', 'err');
+  }
+}
+function logout() {
+  sessionStorage.removeItem('sup_authenticated');
+  location.reload();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginOverlay').style.display !== 'none') checkAuth();
+});
+window.onload = () => {
+  if (sessionStorage.getItem('sup_authenticated') === 'true') initAdmin();
+};
+
+function initAdmin() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('adminContainer').style.display = 'block';
+  document.getElementById('adminDate').value = toISO(new Date());
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('.filter'); if (!b) return;
+    currentFilter = b.dataset.f;
+    document.querySelectorAll('.filter').forEach(x => x.classList.toggle('active', x === b));
+    renderList();
+  });
+  loadAdminData();
+  renderDisabledSlots();
+  // авто-обновление раз в минуту, если нет несохранённых правок
+  setInterval(() => { if (!dirty.size && !document.hidden) loadAdminData(false, true); }, 60000);
+}
+
+/* ---------- Навигация по датам ---------- */
+function shiftDate(delta) {
+  const inp = document.getElementById('adminDate');
+  const d = new Date((inp.value || toISO(new Date())) + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  inp.value = toISO(d);
+  loadAdminData();
+}
+function goToday() {
+  document.getElementById('adminDate').value = toISO(new Date());
+  loadAdminData();
+}
+function updateDateLabel() {
+  const v = document.getElementById('adminDate').value;
+  if (!v) return;
+  const d = new Date(v + 'T00:00:00');
+  const txt = d.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  const isToday = v === toISO(new Date());
+  document.getElementById('dateLabel').innerHTML = `<b>${txt}</b>${isToday ? ' · сегодня' : ''}`;
+}
+
+/* ---------- Закрытые слоты ---------- */
+function toggleWeekendPanel() {
+  const p = document.getElementById('weekendPanel');
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+function getSlots() {
+  try { return JSON.parse(localStorage.getItem('sup_disabled_slots')) || []; } catch (e) { return []; }
+}
+function addDisabledSlot() {
+  const date = document.getElementById('blockDate').value;
+  const time = document.getElementById('blockTime').value;
+  if (!date) return toast('Выберите дату', 'err');
+  const slots = getSlots();
+  slots.push({ date, time });
+  localStorage.setItem('sup_disabled_slots', JSON.stringify(slots));
+  renderDisabledSlots();
+  toast('Слот заблокирован');
+}
+function removeDisabledSlot(i) {
+  const slots = getSlots();
+  slots.splice(i, 1);
+  localStorage.setItem('sup_disabled_slots', JSON.stringify(slots));
+  renderDisabledSlots();
+}
+function renderDisabledSlots() {
+  const c = document.getElementById('disabledSlotsList');
+  const slots = getSlots();
+  if (!slots.length) { c.innerHTML = '<span style="color:var(--muted);font-size:14px">Нет заблокированных дат.</span>'; return; }
+  c.innerHTML = slots.map((s, i) =>
+    `<span class="chip-block">${esc(s.date)} · ${s.time === 'ALL' ? 'весь день' : esc(s.time)}<button onclick="removeDisabledSlot(${i})" title="Убрать">×</button></span>`
+  ).join('');
+}
+
+/* ---------- Загрузка данных ---------- */
+async function loadAdminData(manual = false, silent = false) {
+  if (sessionStorage.getItem('sup_authenticated') !== 'true') return;
+  const date = document.getElementById('adminDate').value;
+  updateDateLabel();
+  if (!silent) document.getElementById('bookingList').innerHTML = '<div class="empty"><div class="big">⏳</div>Загрузка бронирований…</div>';
+
+  try {
+    const res = await fetch(`${API_URL}?booking_date=eq.${encodeURIComponent(date)}&order=booking_time.asc`, { headers });
+    if (!res.ok) throw new Error('Не удалось прочитать таблицу Supabase');
+    const data = await res.json();
+    bookings = data.map(parseBooking);
+    dirty.clear();
+    renderList();
+    if (manual) toast('Данные обновлены');
+  } catch (e) {
+    document.getElementById('bookingList').innerHTML = `<div class="empty"><div class="big">⚠️</div>Ошибка связи: ${esc(e.message)}</div>`;
+  }
+}
+
+function parseBooking(item) {
+  const notes = item.notes || '';
+  const prepay = parseFloat(item.payment_method) || 0;
+  return {
+    ...item,
+    total: (item.spots_count || 0) * PRICE_PER_SPOT,
+    prepay,
+    paid: notes.includes('[PAID]'),
+    completed: notes.includes('[COMPLETED]'),
+    cleanNotes: notes.replaceAll('[PAID]', '').replaceAll('[COMPLETED]', '').trim()
+  };
+}
+
+/* ---------- WhatsApp (сообщение клиенту) ---------- */
+function buildWaUrl(item) {
+  const rawPhone = String(item.customer_phone || '').replace(/\D/g, '');
+  const msg = encodeURIComponent(
+    `WhasSAP🏄🌊! На связи инструктор SUP.CLUB.ASTANA, Меня зовут Қуаныш.\n\n` +
+    `Вижу вашу бронь на ${item.booking_date} в ${item.booking_time} на городской сплав на сапбордах.\n\n` +
+    `Чтобы подтвердить бронирование, необходимо внести предоплату 50% по каспий кюару, TOO BECK BECK https://qr.kaspi.kz/1524674035091395294334825994265661294697. Это позволит нам заранее подготовить всё необходимое к вашему приезду.\n\n` +
+    `Обратите внимание: при неявке, отмене бронирования менее чем за 2 часа до начала сплава предоплата не возвращается.\n\n` +
+    `После оплаты отправьте, пожалуйста, чек в ответ на это сообщение. До встречи на воде! 🌊`
+  );
+  return `https://wa.me/${rawPhone}?text=${msg}`;
+}
+
+/* ---------- Отрисовка ---------- */
+function statusOf(b) {
+  if (b.completed) return 'done';
+  if (b.paid || b.prepay > 0) return 'paid';
+  return 'wait';
+}
+
+function updateStats() {
+  const active = bookings;
+  const people = active.reduce((s, b) => s + b.spots_count, 0);
+  const sum = active.reduce((s, b) => s + b.total, 0);
+  const pre = active.reduce((s, b) => s + b.prepay, 0);
+  document.getElementById('totalPeople').textContent = people;
+  document.getElementById('totalSum').textContent = money(sum);
+  document.getElementById('totalPrepaid').textContent = money(pre);
+  document.getElementById('totalRemaining').textContent = money(Math.max(sum - pre, 0));
+
+  const counts = { all: bookings.length, wait: 0, paid: 0, done: 0 };
+  bookings.forEach(b => counts[statusOf(b)]++);
+  document.querySelectorAll('.filter').forEach(f => f.querySelector('.n').textContent = counts[f.dataset.f]);
+}
+
+function renderList() {
+  updateStats();
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const list = bookings.filter(b => {
+    if (currentFilter !== 'all' && statusOf(b) !== currentFilter) return false;
+    if (!q) return true;
+    return [b.customer_name, b.customer_phone, b.route_name, b.cleanNotes, b.booking_time]
+      .some(v => String(v || '').toLowerCase().includes(q));
+  });
+
+  const box = document.getElementById('bookingList');
+  if (!list.length) {
+    box.innerHTML = bookings.length
+      ? '<div class="empty"><div class="big">🔎</div>Ничего не найдено по выбранным фильтрам</div>'
+      : '<div class="empty"><div class="big">🌊</div>На этот день записей нет</div>';
+    return;
+  }
+  box.innerHTML = list.map(cardHTML).join('');
+}
+
+function cardHTML(b) {
+  const rest = b.total - b.prepay;
+  const cls = b.completed ? 'completed' : (rest <= 0 && b.prepay > 0 ? 'settled' : (b.paid || b.prepay > 0 ? 'paid' : ''));
+  let created = '';
+  if (b.created_at) {
+    const c = new Date(b.created_at);
+    created = `Создано: ${pad(c.getDate())}.${pad(c.getMonth() + 1)} в ${pad(c.getHours())}:${pad(c.getMinutes())}`;
+  }
+  const phone = esc(b.customer_phone);
+  return `
+  <div class="booking ${cls}" id="card-${b.id}">
+    <div class="b-head">
+      <div>
+        <div class="b-time">${esc(b.booking_time)}</div>
+        <div class="b-created">${created}</div>
+      </div>
+      <div class="b-seats">👥 ${b.spots_count}</div>
+    </div>
+    <div>
+      <div class="b-name">${esc(b.customer_name)}</div>
+      <div class="b-route">📍 ${esc(b.route_name)}</div>
+      <div class="b-phone">
+        <a class="wa-btn" href="${esc(buildWaUrl(b))}" target="_blank" rel="noopener" title="Написать клиенту в WhatsApp">💬 WhatsApp</a>
+        <a class="call-btn" href="tel:${phone}">📞 ${phone}</a>
+      </div>
+    </div>
+    <div class="money">
+      <div><small>Общий чек</small><b>${money(b.total)}</b></div>
+      <div><small>Предоплата, ₸</small>
+        <input type="number" id="prepay-${b.id}" value="${b.prepay || ''}" placeholder="0" min="0" oninput="onChange(${b.id})"></div>
+      <div><small>Остаток на пирсе</small><b id="rest-${b.id}" class="${rest <= 0 ? 'rest-ok' : 'rest-due'}">${money(Math.max(rest, 0))}</b></div>
+    </div>
+    <label class="paid-row"><input type="checkbox" id="check-${b.id}" ${b.paid ? 'checked' : ''} onchange="onChange(${b.id})"> Предоплата внесена</label>
+    <input type="text" class="note-input" id="note-${b.id}" value="${esc(b.cleanNotes)}" placeholder="Особые отметки / комментарий" oninput="onChange(${b.id})">
+    <div class="b-actions">
+      <button class="save" id="save-${b.id}" onclick="saveAdminRow(${b.id})" disabled>Сохранить</button>
+      <button class="done ${b.completed ? 'on' : ''}" onclick="toggleCompleteRow(${b.id})">${b.completed ? '↩️ Вернуть' : '✅ Готово'}</button>
+      <button class="del" onclick="deleteAdminRow(${b.id})" title="Удалить">🗑</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- Изменения в карточке ---------- */
+function onChange(id) {
+  const b = bookings.find(x => x.id === id); if (!b) return;
+  const prepay = parseFloat(document.getElementById(`prepay-${id}`).value) || 0;
+  const rest = b.total - prepay;
+  const el = document.getElementById(`rest-${id}`);
+  el.textContent = money(Math.max(rest, 0));
+  el.className = rest <= 0 ? 'rest-ok' : 'rest-due';
+
+  // Авто-отметка "внесена", если введена сумма
+  const chk = document.getElementById(`check-${id}`);
+  if (prepay > 0 && !chk.checked && document.activeElement?.id === `prepay-${id}`) chk.checked = true;
+
+  dirty.add(id);
+  document.getElementById(`card-${id}`).classList.add('dirty');
+  document.getElementById(`save-${id}`).disabled = false;
+}
+
+function collectNotes(id, completed) {
+  const paid = document.getElementById(`check-${id}`).checked;
+  let note = document.getElementById(`note-${id}`).value.trim();
+  if (paid) note = ('[PAID] ' + note).trim();
+  if (completed) note = ('[COMPLETED] ' + note).trim();
+  return note;
+}
+
+async function patchRow(id, body) {
+  const res = await fetch(`${API_URL}?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { ...headers, 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('Supabase отказал в обновлении');
+}
+
+async function saveAdminRow(id) {
+  const b = bookings.find(x => x.id === id); if (!b) return;
+  const prepay = document.getElementById(`prepay-${id}`).value.trim();
+  try {
+    await patchRow(id, { payment_method: prepay, notes: collectNotes(id, b.completed) });
+    toast('Сохранено ✓');
+    dirty.delete(id);
+    await loadAdminData(false, true);
+  } catch (e) {
+    toast('Не удалось сохранить: ' + e.message, 'err');
+  }
+}
+
+async function toggleCompleteRow(id) {
+  const b = bookings.find(x => x.id === id); if (!b) return;
+  const prepay = document.getElementById(`prepay-${id}`).value.trim();
+  try {
+    await patchRow(id, { payment_method: prepay, notes: collectNotes(id, !b.completed) });
+    toast(b.completed ? 'Бронь возвращена в работу' : 'Отмечено как выполненное ✓');
+    dirty.delete(id);
+    await loadAdminData(false, true);
+  } catch (e) {
+    toast('Ошибка изменения статуса: ' + e.message, 'err');
+  }
+}
+
+/* ---------- Удаление ---------- */
+function deleteAdminRow(id) {
+  const b = bookings.find(x => x.id === id); if (!b) return;
+  document.getElementById('modalText').textContent = `Бронирование «${b.customer_name}» на ${b.booking_time} будет удалено без возможности восстановления.`;
+  document.getElementById('modalBg').style.display = 'flex';
+  document.getElementById('modalOk').onclick = async () => {
+    closeModal();
+    try {
+      const res = await fetch(`${API_URL}?id=eq.${id}`, { method: 'DELETE', headers });
+      if (!res.ok) throw new Error('Не удалось удалить запись');
+      toast('Бронь удалена');
+      dirty.delete(id);
+      await loadAdminData(false, true);
+    } catch (e) {
+      toast('Сбой при удалении: ' + e.message, 'err');
+    }
+  };
+}
+function closeModal() { document.getElementById('modalBg').style.display = 'none'; }
+document.getElementById('modalBg').addEventListener('click', e => { if (e.target.id === 'modalBg') closeModal(); });
+</script>
+</body>
+</html>
