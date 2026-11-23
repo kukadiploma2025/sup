@@ -159,6 +159,23 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.85) sepia(1) 
 .btn-details{display:inline-block;padding:12px 22px;border-radius:12px;text-decoration:none;font-weight:800;font-size:13px;
   letter-spacing:.8px;text-transform:uppercase;color:#1a1204;background:linear-gradient(135deg,var(--gold2),var(--gold))}
 
+/* WHATSAPP SCREEN */
+.wa-overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px;
+  background:rgba(4,8,20,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.wa-overlay.show{display:flex}
+.wa-box{width:100%;max-width:420px;text-align:center;padding:30px 22px 24px;border-radius:26px;
+  background:linear-gradient(160deg,#10224d,#0a1330);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.wa-ok{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(135deg,#34d399,#16a34a);box-shadow:0 8px 24px rgba(34,197,94,.35)}
+.wa-box h3{margin:0 0 8px;font-size:20px}
+.wa-box p{margin:0 0 18px;color:var(--muted);font-size:13.5px;line-height:1.55}
+.wa-box p b{color:var(--gold2)}
+.wa-btn{display:block;width:100%;padding:18px;border-radius:16px;text-decoration:none;font-weight:800;font-size:16px;
+  letter-spacing:.6px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#25d366,#128c7e);
+  box-shadow:0 12px 30px rgba(37,211,102,.35)}
+.wa-copy,.wa-close{display:block;width:100%;margin-top:10px;padding:13px;border-radius:14px;cursor:pointer;
+  font:700 13px 'Montserrat',sans-serif;color:var(--muted);background:transparent;border:1.5px solid rgba(255,255,255,.1)}
+.wa-close{border:none;font-weight:600;font-size:12px}
 .foot{text-align:center;color:#56637f;font-size:11.5px;margin-top:22px;letter-spacing:1px}
 @media(min-width:520px){.seats{grid-template-columns:1fr 1fr 1fr}.row2{grid-template-columns:1fr 1fr}}
 </style>
@@ -246,6 +263,17 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.85) sepia(1) 
   </main>
 
   <div class="foot">SUP CLUB ASTANA · supclubastana.kz</div>
+</div>
+
+<div class="wa-overlay" id="waOverlay">
+  <div class="wa-box">
+    <div class="wa-ok">✓</div>
+    <h3 id="waTitle">Запись сохранена!</h3>
+    <p id="waText">Остался последний шаг: <b>нажмите кнопку ниже и отправьте сообщение в WhatsApp</b>. Без этого мы не подтвердим вашу запись.</p>
+    <a id="waLink" class="wa-btn" href="#" target="_self" rel="noopener">Открыть WhatsApp</a>
+    <button type="button" class="wa-copy" id="waCopy">Скопировать сообщение</button>
+    <button type="button" class="wa-close" id="waClose">Закрыть</button>
+  </div>
 </div>
 
 <script>
@@ -537,26 +565,44 @@ async function handleBooking(){
     }
 
     const seatsList = [...selectedSeats].sort((a,b) => a-b);
-    const response = await fetch(`${BASE_SUPABASE_URL}/bookings`, {
+    const payload = {
+      route_name: routeText, booking_date: date, booking_time: selectedTime,
+      customer_name: name, customer_phone: phone,
+      spots_count: seatsList.length, payment_method: payment,
+      seats: seatsList.join(',')
+    };
+    const send = body => fetch(`${BASE_SUPABASE_URL}/bookings`, {
       method: 'POST',
       headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
-      body: JSON.stringify({
-        route_name: routeText, booking_date: date, booking_time: selectedTime,
-        customer_name: name, customer_phone: phone,
-        spots_count: seatsList.length, payment_method: payment,
-        seats: seatsList.join(',')
-      })
+      body: JSON.stringify(body)
     });
 
+    let response = await send(payload);
+    let errText = '';
     if (!response.ok) {
-      alert('Ошибка сервера при записи. Попробуйте еще раз.');
+      errText = await response.text().catch(() => '');
+      // В таблице ещё нет колонки seats: сохраняем запись без неё, чтобы клиент не терял бронь
+      if (/seats/i.test(errText)) {
+        const { seats, ...withoutSeats } = payload;
+        response = await send(withoutSeats);
+        if (!response.ok) errText = await response.text().catch(() => '');
+      }
+    }
+
+    if (!response.ok) {
+      console.error('Supabase error:', response.status, errText);
+      alert('Ошибка сервера при записи. Попробуйте еще раз.\n(код ' + response.status + ')');
       reset();
       return;
     }
 
     const myPhone = '77479416498';
     const message = `Нас ${seatsList.length} человек на ${selectedTime} по маршруту: ${routeText}. Сапы: ${seatsList.map(n => '№'+n).join(', ')}. Дата: ${date}. Оплата: ${payment}. Имя: ${name}. Тел: ${phone} (содержимое готового сообщений не менять!))`;
-    window.open(`https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`, '_blank');
+    const waUrl = `https://wa.me/${myPhone}?text=${encodeURIComponent(message)}`;
+    savePendingWa(waUrl, message);
+    showWaScreen(waUrl, message, false);
+    // Переход в той же вкладке: его не блокируют ни Safari, ни браузер Instagram
+    setTimeout(() => { window.location.href = waUrl; }, 1200);
 
     document.getElementById('clientName').value = '';
     document.getElementById('clientPhone').value = '';
@@ -569,6 +615,40 @@ async function handleBooking(){
     reset();
   }
 }
+
+/* ---------- ЭКРАН WHATSAPP ---------- */
+const PENDING_KEY = 'sup_pending_wa';
+function savePendingWa(url, msg){
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify({ url, msg, t: Date.now() })); } catch(e){}
+}
+function clearPendingWa(){ try { localStorage.removeItem(PENDING_KEY); } catch(e){} }
+
+function showWaScreen(url, msg, returning){
+  document.getElementById('waTitle').textContent = returning ? 'Вы не завершили запись' : 'Запись сохранена!';
+  document.getElementById('waText').innerHTML = returning
+    ? 'Ваша запись уже в базе, но сообщение в WhatsApp не отправлено. <b>Нажмите кнопку и отправьте его</b>, чтобы мы подтвердили запись.'
+    : 'Сейчас откроется WhatsApp. Если этого не произошло, <b>нажмите зелёную кнопку</b> и отправьте сообщение. Без этого мы не подтвердим вашу запись.';
+  const link = document.getElementById('waLink');
+  link.href = url;
+  link.onclick = () => { clearPendingWa(); };
+  document.getElementById('waCopy').onclick = async function(){
+    try { await navigator.clipboard.writeText(msg); this.textContent = 'Скопировано ✓'; }
+    catch(e) { prompt('Скопируйте сообщение и отправьте на номер +7 747 941 64 98:', msg); }
+  };
+  document.getElementById('waClose').onclick = () => {
+    document.getElementById('waOverlay').classList.remove('show'); clearPendingWa();
+  };
+  document.getElementById('waOverlay').classList.add('show');
+}
+
+// Если клиент вернулся и не отправил сообщение, напоминаем (в течение суток)
+(function(){
+  try {
+    const d = JSON.parse(localStorage.getItem(PENDING_KEY) || 'null');
+    if (d && Date.now() - d.t < 24*3600*1000) showWaScreen(d.url, d.msg, true);
+    else clearPendingWa();
+  } catch(e){}
+})();
 
 renderSlots();
 </script>
