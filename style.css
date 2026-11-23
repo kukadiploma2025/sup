@@ -844,6 +844,15 @@ footer p {
         font-size: 0.8rem;
     }
 }
+h2.reveal .serif {
+    display: inline;
+    white-space: normal !important;
+}
+
+h2.reveal .nowrap {
+    display: inline-block;
+    white-space: nowrap !important;
+}
 
 /* Уменьшение анимации по настройкам устройства */
 @media (prefers-reduced-motion: reduce) {
@@ -856,3 +865,4 @@ footer p {
         transition-duration: 0.01ms !important;
     }
 }
+
