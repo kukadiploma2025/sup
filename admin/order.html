@@ -193,10 +193,10 @@ input,select{font-family:inherit}
       <input type="date" id="blockDate">
       <select id="blockTime">
         <option value="ALL">Весь день</option>
-        <option value="06:00">06:00</option><option value="08:00">08:00</option>
-        <option value="10:00">10:00</option><option value="12:00">12:00</option>
-        <option value="14:00">14:00</option><option value="16:00">16:00</option>
-        <option value="18:00">18:00</option><option value="20:00">20:00</option>
+        <option value="06:00">06:00</option><option value="07:00">07:00</option>
+        <option value="08:00">08:00</option><option value="09:00">09:00</option>
+        <option value="10:00">10:00</option><option value="13:00">13:00</option>
+        <option value="16:00">16:00</option><option value="18:00">18:00</option>
       </select>
       <button class="btn primary" onclick="addDisabledSlot()">Заблокировать</button>
     </div>
@@ -294,6 +294,7 @@ function initAdmin() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('adminContainer').style.display = 'block';
   document.getElementById('adminDate').value = toISO(new Date());
+  document.getElementById('blockDate').value = toISO(new Date());
   document.getElementById('filters').addEventListener('click', e => {
     const b = e.target.closest('.filter'); if (!b) return;
     currentFilter = b.dataset.f;
@@ -332,32 +333,55 @@ function toggleWeekendPanel() {
   const p = document.getElementById('weekendPanel');
   p.style.display = p.style.display === 'block' ? 'none' : 'block';
 }
-function getSlots() {
-  try { return JSON.parse(localStorage.getItem('sup_disabled_slots')) || []; } catch (e) { return []; }
-}
-function addDisabledSlot() {
+/* Блокировки хранятся в Supabase (таблица blocked_slots), поэтому их видит и сайт бронирования */
+const BLOCKS_URL = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1/blocked_slots';
+
+async function addDisabledSlot() {
   const date = document.getElementById('blockDate').value;
   const time = document.getElementById('blockTime').value;
   if (!date) return toast('Выберите дату', 'err');
-  const slots = getSlots();
-  slots.push({ date, time });
-  localStorage.setItem('sup_disabled_slots', JSON.stringify(slots));
-  renderDisabledSlots();
-  toast('Слот заблокирован');
+  try {
+    const res = await fetch(BLOCKS_URL, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ block_date: date, slot_time: time })
+    });
+    if (!res.ok) {
+      let msg = res.statusText;
+      try { msg = (await res.json()).message || msg; } catch (e) {}
+      throw new Error(msg);
+    }
+    toast('Слот заблокирован 🔒');
+    renderDisabledSlots();
+  } catch (e) {
+    toast('Ошибка: ' + e.message, 'err');
+  }
 }
-function removeDisabledSlot(i) {
-  const slots = getSlots();
-  slots.splice(i, 1);
-  localStorage.setItem('sup_disabled_slots', JSON.stringify(slots));
-  renderDisabledSlots();
+
+async function removeDisabledSlot(id) {
+  try {
+    const res = await fetch(`${BLOCKS_URL}?id=eq.${id}`, { method: 'DELETE', headers });
+    if (!res.ok) throw new Error('Не удалось разблокировать');
+    toast('Слот разблокирован');
+    renderDisabledSlots();
+  } catch (e) {
+    toast('Ошибка: ' + e.message, 'err');
+  }
 }
-function renderDisabledSlots() {
+
+async function renderDisabledSlots() {
   const c = document.getElementById('disabledSlotsList');
-  const slots = getSlots();
-  if (!slots.length) { c.innerHTML = '<span style="color:var(--muted);font-size:14px">Нет заблокированных дат.</span>'; return; }
-  c.innerHTML = slots.map((s, i) =>
-    `<span class="chip-block">${esc(s.date)} · ${s.time === 'ALL' ? 'весь день' : esc(s.time)}<button onclick="removeDisabledSlot(${i})" title="Убрать">×</button></span>`
-  ).join('');
+  try {
+    const res = await fetch(`${BLOCKS_URL}?order=block_date.asc,slot_time.asc`, { headers });
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error(data.message || 'Не удалось загрузить');
+    if (!data.length) { c.innerHTML = '<span style="color:var(--muted);font-size:14px">Нет заблокированных дат.</span>'; return; }
+    c.innerHTML = data.map(s =>
+      `<span class="chip-block">${esc(s.block_date)} · ${s.slot_time === 'ALL' ? 'весь день' : esc(s.slot_time)}<button onclick="removeDisabledSlot(${Number(s.id)})" title="Разблокировать">×</button></span>`
+    ).join('');
+  } catch (e) {
+    c.innerHTML = `<span style="color:#fca5a5;font-size:14px">Ошибка: ${esc(e.message)}</span>`;
+  }
 }
 
 /* ---------- Загрузка данных ---------- */
