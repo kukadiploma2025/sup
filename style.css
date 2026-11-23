@@ -146,7 +146,7 @@ header {
     text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
 }
 
-/* Исправление заголовка «Мы не прощаемся...» */
+/* Заголовок благодарности */
 h2.reveal {
     display: block;
     width: 100%;
@@ -161,7 +161,8 @@ h2.reveal .serif {
     white-space: normal;
 }
 
-h2.reveal .nowrap {
+h2.reveal .nowrap,
+h2.reveal .meeting {
     display: inline-block;
     white-space: nowrap !important;
 }
@@ -799,7 +800,6 @@ footer p {
         font-size: 1.8rem;
     }
 
-    /* Заголовок благодарности */
     h2.reveal {
         font-size: clamp(24px, 6vw, 34px);
         line-height: 1.3;
@@ -810,7 +810,8 @@ footer p {
         white-space: normal;
     }
 
-    h2.reveal .nowrap {
+    h2.reveal .nowrap,
+    h2.reveal .meeting {
         display: inline-block;
         white-space: nowrap !important;
     }
