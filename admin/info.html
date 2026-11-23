@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUP CLUB ASTANA — Записи на день</title>
+<style>
+:root{
+  --bg:#0b1220; --bg2:#111a2e; --card:#17223a; --card2:#1c2a47;
+  --line:#2a3a5c; --text:#f1f5f9; --muted:#8b9bb8;
+  --yellow:#f59e0b; --yellow-soft:rgba(245,158,11,.14);
+  --green:#10b981; --green-soft:rgba(16,185,129,.12);
+  --red:#fb7185; --wa:#25d366;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--text);
+  background:radial-gradient(1000px 500px at 80% -10%,#16264a 0%,transparent 60%),var(--bg);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:720px;margin:0 auto;padding:18px 14px 50px}
+
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.brand-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--yellow),#f97316);display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand h1{margin:0;font-size:19px;line-height:1.1}
+.brand span{color:var(--muted);font-size:13px}
+
+.date-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.date-nav{display:flex;align-items:center;flex:1;min-width:230px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.date-nav button{background:none;border:0;color:var(--text);padding:12px 16px;font-size:18px}
+.date-nav button:hover{background:var(--card2)}
+.date-nav input{flex:1;min-width:0;background:none;border:0;color:var(--text);font-size:16px;font-weight:600;padding:10px 4px;outline:none;text-align:center;color-scheme:dark}
+.btn-today{background:var(--yellow);border:0;color:#111827;font-weight:700;padding:12px 16px;border-radius:14px;font-size:14px}
+.date-label{color:var(--muted);font-size:14px;margin:8px 2px 16px}
+.date-label b{color:var(--text)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat .v{font-size:22px;font-weight:800;color:var(--yellow)}
+.stat.g .v{color:var(--green)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+.search{position:relative;margin-bottom:18px}
+.search input{width:100%;padding:12px 14px 12px 40px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--text);font-size:15px;outline:none}
+.search input:focus{border-color:var(--yellow)}
+.search::before{content:"🔍";position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.7}
+
+/* Slot groups */
+.slot{margin-bottom:22px}
+.slot-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.slot-time{font-size:22px;font-weight:800;color:var(--yellow)}
+.slot-bar{flex:1;height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.slot-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),#f97316);border-radius:999px}
+.slot-bar i.full{background:linear-gradient(90deg,#fb7185,#ef4444)}
+.slot-count{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600}
+
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:16px;padding:14px;margin-bottom:10px;transition:.2s}
+.card.paid{border-left-color:var(--yellow)}
+.card.settled{border-left-color:var(--green)}
+.card.attended{background:var(--green-soft);border-color:rgba(16,185,129,.45);border-left-color:var(--green)}
+.card.completed{opacity:.5}
+.c-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.c-name{font-size:17px;font-weight:700}
+.attended .c-name,.completed .c-name{text-decoration:line-through;text-decoration-color:var(--green)}
+.c-meta{color:var(--muted);font-size:13px;margin-top:3px}
+.seats{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.pay{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--muted)}
+.tag.due{color:var(--red);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08)}
+.tag.ok{color:var(--green);border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.08)}
+.tag.pre{color:var(--yellow);border-color:rgba(245,158,11,.4);background:var(--yellow-soft)}
+.note{margin-top:10px;font-size:13px;color:#fde68a;background:var(--yellow-soft);border-radius:10px;padding:8px 10px}
+.c-actions{display:flex;gap:8px;margin-top:12px;align-items:center}
+.btn-wa,.btn-call{display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:700;font-size:14px;padding:10px 14px;border-radius:12px}
+.btn-wa{background:rgba(37,211,102,.14);border:1px solid rgba(37,211,102,.45);color:var(--wa)}
+.btn-wa:hover{background:rgba(37,211,102,.26)}
+.btn-call{background:var(--bg2);border:1px solid var(--line);color:var(--text)}
+.here{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;
+  background:var(--bg2);border:1px solid var(--line);padding:9px 14px;border-radius:12px}
+.here input{width:20px;height:20px;accent-color:var(--green);cursor:pointer}
+.attended .here{border-color:var(--green);color:var(--green)}
+
+.c-actions{flex-wrap:wrap}
+.btn-review{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14px;padding:10px 14px;border-radius:12px;
+  background:var(--yellow-soft);border:1px solid rgba(245,158,11,.5);color:var(--yellow)}
+.btn-review:hover{background:rgba(245,158,11,.25)}
+.btn-review.sent{background:var(--bg2);border-color:var(--line);color:var(--muted)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.slot .tools{margin:-2px 0 10px}
+.mini{background:var(--card);border:1px solid var(--line);color:var(--text);padding:9px 14px;border-radius:12px;font-size:13px;font-weight:700}
+.mini:hover{background:var(--card2)}
+.mini.star{background:var(--yellow-soft);border-color:rgba(245,158,11,.5);color:var(--yellow)}
+.mini.big{padding:11px 16px;font-size:14px}
+.empty{text-align:center;color:var(--muted);padding:50px 10px;background:var(--card);border:1px dashed var(--line);border-radius:16px}
+.empty .big{font-size:38px;margin-bottom:8px}
+.updated{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-logo">🏄</div>
+    <div><h1>SUP CLUB ASTANA</h1><span>Записи на день · кто где и когда</span></div>
+  </div>
+
+  <div class="date-bar">
+    <div class="date-nav">
+      <button onclick="shiftDate(-1)" aria-label="Предыдущий день">‹</button>
+      <input type="date" id="filterDate" onchange="loadData()">
+      <button onclick="shiftDate(1)" aria-label="Следующий день">›</button>
+    </div>
+    <button class="btn-today" onclick="goToday()">Сегодня</button>
+  </div>
+  <div class="date-label" id="dateLabel"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="sPeople">0</div><div class="l">человек</div></div>
+    <div class="stat"><div class="v" id="sGroups">0</div><div class="l">записей</div></div>
+    <div class="stat g"><div class="v" id="sHere">0</div><div class="l">пришли</div></div>
+  </div>
+
+  <div class="search"><input type="search" id="searchInput" placeholder="Поиск по имени или телефону…" oninput="render()"></div>
+
+  <div class="tools" id="dayTools"></div>
+
+  <div id="bookingsList"></div>
+  <div class="updated" id="updated"></div>
+</div>
+
+<script>
+const BASE = 'https://ununcobobksowzkvbypf.supabase.co/rest/v1';
+const ANON_KEY = 'sb_publishable_G3mrUyo8-jeujpG_Cr56Ew_nHoYTxWN';
+const headers = { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
+const PRICE_PER_SPOT = 10000;
+const SLOT_CAPACITY = 6;
+
+let bookings = [];
+
+const pad = n => String(n).padStart(2, '0');
+const toISO = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n => Number(n || 0).toLocaleString('ru-RU') + ' ₸';
+
+/* Отметка «Пришёл» хранится в браузере (localStorage) */
+const getAttended = id => { try { return localStorage.getItem(`attended_${id}`) === 'true'; } catch (e) { return false; } };
+const setAttended = (id, v) => { try { localStorage.setItem(`attended_${id}`, v ? 'true' : 'false'); } catch (e) {} };
+
+/* ---------- Даты ---------- */
+function shiftDate(delta) {
+  const inp = document.getElementById('filterDate');
+  const d = new Date((inp.value || toISO(new Date())) + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  inp.value = toISO(d);
+  loadData();
+}
+function goToday() {
+  document.getElementById('filterDate').value = toISO(new Date());
+  loadData();
+}
+function updateDateLabel() {
+  const v = document.getElementById('filterDate').value;
+  if (!v) return;
+  const txt = new Date(v + 'T00:00:00').toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('dateLabel').innerHTML = `<b>${txt}</b>${v === toISO(new Date()) ? ' · сегодня' : ''}`;
+}
+
+/* ---------- Данные ---------- */
+async function loadData(silent) {
+  const date = document.getElementById('filterDate').value;
+  if (!date) return;
+  updateDateLabel();
+  const list = document.getElementById('bookingsList');
+  if (!silent) list.innerHTML = '<div class="empty"><div class="big">⏳</div>Загрузка…</div>';
+
+  try {
+    const res = await fetch(`${BASE}/bookings?booking_date=eq.${encodeURIComponent(date)}&order=booking_time.asc`, { headers });
+    if (!res.ok) throw new Error('Ошибка загрузки');
+    const data = await res.json();
+    bookings = data.map(b => {
+      const notes = b.notes || '';
+      const total = (b.spots_count || 0) * PRICE_PER_SPOT;
+      const prepay = parseFloat(b.payment_method) || 0;
+      return {
+        ...b, total, prepay,
+        paid: notes.includes('[PAID]'),
+        completed: notes.includes('[COMPLETED]'),
+        cleanNotes: notes.replaceAll('[PAID]', '').replaceAll('[COMPLETED]', '').trim()
+      };
+    });
+    render();
+    document.getElementById('updated').textContent = `Обновлено в ${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
+  } catch (e) {
+    list.innerHTML = '<div class="empty"><div class="big">⚠️</div>Ошибка загрузки данных</div>';
+  }
+}
+
+/* ---------- WhatsApp: «Через сколько вы будете?» ---------- */
+function waLink(b) {
+  const phone = String(b.customer_phone || '').replace(/\D/g, '');
+  const msg = `WhasSAP🏄🌊!, на связи инструктор SUP.CLUB.ASTANA Қуаныш, ${b.customer_name}?! Через сколько вы будете? 🏄‍♂️ Мы на месте!`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+}
+
+/* ---------- Сообщение после сплава: отзыв в 2ГИС + сторис ---------- */
+const REVIEW_URL = 'https://go.2gis.com/Qoc7s';
+const IG_ACCOUNT = '@sup.club.astana';
+
+const getSent = id => { try { return localStorage.getItem(`review_sent_${id}`) === 'true'; } catch (e) { return false; } };
+const setSent = (id, v) => { try { localStorage.setItem(`review_sent_${id}`, v ? 'true' : 'false'); } catch (e) {} };
+
+function reviewLink(b) {
+  const phone = String(b.customer_phone || '').replace(/\D/g, '');
+  const msg =
+    `${b.customer_name}, спасибо, что были с нами на SUP.CLUB.ASTANA! 🏄🌊\n\n` +
+    `Будем очень благодарны, если оставите отзыв о нас в 2ГИС ⭐:\n${REVIEW_URL}\n\n` +
+    `И выложите сторис, отметив наш аккаунт ${IG_ACCOUNT} 📸 — мы обязательно репостнем!\n\n` +
+    `До новых встреч на воде! 🌊`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+}
+
+function markSent(id, el) {
+  setSent(id, true);
+  el.classList.add('sent');
+  el.textContent = '✓ Отправлено';
+  setTimeout(render, 500);
+}
+
+/* ---------- Массовые действия: все / за выбранное время ---------- */
+const inScope = (b, time) => time === 'ALL' || b.booking_time === time;
+
+function bulkAttend(time) {
+  const targets = bookings.filter(b => inScope(b, time));
+  const allOn = targets.every(b => getAttended(b.id));
+  targets.forEach(b => setAttended(b.id, !allOn));
+  render();
+}
+
+function pendingReviews(time) {
+  return bookings.filter(b => inScope(b, time) && getAttended(b.id) && !getSent(b.id));
+}
+
+/* WhatsApp не даёт отправить всем сразу: каждое нажатие открывает чат со следующим клиентом */
+function nextReview(time) {
+  const b = pendingReviews(time)[0];
+  if (!b) return;
+  setSent(b.id, true);
+  window.open(reviewLink(b), '_blank');
+  render();
+}
+
+function toolsHTML(time, label) {
+  const targets = bookings.filter(b => inScope(b, time));
+  const allOn = targets.length > 0 && targets.every(b => getAttended(b.id));
+  const pend = pendingReviews(time).length;
+  return `<button class="mini ${time === 'ALL' ? 'big' : ''}" onclick="bulkAttend('${time}')">${allOn ? '↩ Снять отметки' : '✓ ' + label}</button>` +
+    (pend ? `<button class="mini star ${time === 'ALL' ? 'big' : ''}" onclick="nextReview('${time}')">⭐ Отзыв следующему (${pend})</button>` : '');
+}
+
+/* ---------- Отрисовка ---------- */
+function render() {
+  const list = document.getElementById('bookingsList');
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  // сводка по всему дню (без учёта поиска)
+  document.getElementById('sPeople').textContent = bookings.reduce((s, b) => s + b.spots_count, 0);
+  document.getElementById('sGroups').textContent = bookings.length;
+  document.getElementById('sHere').textContent = bookings.filter(b => getAttended(b.id)).reduce((s, b) => s + b.spots_count, 0);
+
+  const dayTools = document.getElementById('dayTools');
+  dayTools.innerHTML = bookings.length ? toolsHTML('ALL', 'Все пришли (весь день)') : '';
+
+  if (!bookings.length) {
+    list.innerHTML = '<div class="empty"><div class="big">🌊</div>На этот день записей нет</div>';
+    return;
+  }
+
+  const shown = bookings.filter(b => !q || [b.customer_name, b.customer_phone, b.route_name].some(v => String(v || '').toLowerCase().includes(q)));
+  if (!shown.length) {
+    list.innerHTML = '<div class="empty"><div class="big">🔎</div>Ничего не найдено</div>';
+    return;
+  }
+
+  // группировка по времени
+  const slots = {};
+  bookings.forEach(b => { slots[b.booking_time] = (slots[b.booking_time] || 0) + b.spots_count; });
+  const groups = {};
+  shown.forEach(b => (groups[b.booking_time] = groups[b.booking_time] || []).push(b));
+
+  list.innerHTML = Object.keys(groups).sort().map(time => {
+    const taken = slots[time];
+    const pct = Math.min(100, Math.round(taken / SLOT_CAPACITY * 100));
+    return `
+    <div class="slot">
+      <div class="slot-head">
+        <div class="slot-time">${esc(time)}</div>
+        <div class="slot-bar"><i class="${taken >= SLOT_CAPACITY ? 'full' : ''}" style="width:${pct}%"></i></div>
+        <div class="slot-count">${taken}/${SLOT_CAPACITY} чел.</div>
+      </div>
+      <div class="tools">${toolsHTML(time, 'Все пришли (' + time + ')')}</div>
+      ${groups[time].map(cardHTML).join('')}
+    </div>`;
+  }).join('');
+}
+
+function cardHTML(b) {
+  const attended = getAttended(b.id);
+  const rest = Math.max(b.total - b.prepay, 0);
+  const cls = attended ? 'attended' : b.completed ? 'completed' : (b.prepay > 0 && rest === 0 ? 'settled' : (b.paid || b.prepay > 0 ? 'paid' : ''));
+  const phone = esc(b.customer_phone);
+
+  const tags = [];
+  if (b.prepay > 0) tags.push(`<span class="tag pre">Предоплата ${money(b.prepay)}</span>`);
+  else tags.push(`<span class="tag due">Без предоплаты</span>`);
+  tags.push(rest > 0 ? `<span class="tag due">Остаток ${money(rest)}</span>` : `<span class="tag ok">Оплачено полностью</span>`);
+
+  return `
+  <div class="card ${cls}" id="card_${b.id}">
+    <div class="c-top">
+      <div>
+        <div class="c-name">${esc(b.customer_name)}</div>
+        <div class="c-meta">📍 ${esc(b.route_name)} · ${phone}</div>
+      </div>
+      <div class="seats">👥 ${b.spots_count}</div>
+    </div>
+    <div class="pay">${tags.join('')}</div>
+    ${b.cleanNotes ? `<div class="note">📝 ${esc(b.cleanNotes)}</div>` : ''}
+    <div class="c-actions">
+      <a class="btn-wa" href="${esc(waLink(b))}" target="_blank" rel="noopener">💬 Чат</a>
+      <a class="btn-call" href="tel:${phone}">📞</a>
+      ${attended ? `<a class="btn-review ${getSent(b.id) ? 'sent' : ''}" href="${esc(reviewLink(b))}" target="_blank" rel="noopener" onclick="markSent(${Number(b.id)}, this)">${getSent(b.id) ? '✓ Отправлено' : '⭐ Отзыв'}</a>` : ''}
+      <label class="here"><input type="checkbox" ${attended ? 'checked' : ''} onchange="toggleAttendance(${Number(b.id)}, this)"> Пришёл</label>
+    </div>
+  </div>`;
+}
+
+function toggleAttendance(id, cb) {
+  setAttended(id, cb.checked);
+  render();
+}
+
+/* ---------- Старт ---------- */
+document.getElementById('filterDate').value = toISO(new Date());
+loadData();
+setInterval(() => { if (!document.hidden) loadData(true); }, 60000);
+</script>
+</body>
+</html>
